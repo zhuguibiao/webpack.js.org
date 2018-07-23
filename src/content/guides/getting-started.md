@@ -13,14 +13,17 @@ contributors:
   - TheDutchCoder
   - sudarsangp
   - Vanguard90
+  - chenxsan
   - EugeneHlushko
   - ATGardner
   - ayvarot
   - bjarki
+  - ztomasze
+  - Spiral90210
+  - byzyk
 ---
 
 webpack 用于编译 JavaScript 模块。一旦完成[安装](/guides/installation)，你就可以通过 webpack 的 [CLI](/api/cli) 或 [API](/api/node) 与其配合交互。如果你还不熟悉 webpack，请阅读[核心概念](/concepts)和[打包器对比](/comparison)，了解为什么你要使用 webpack，而不是社区中的其他工具。
-
 
 ## 基本安装
 
@@ -113,7 +116,6 @@ __package.json__
 
 让我们使用 webpack 来管理这些脚本。
 
-
 ## 创建一个 bundle 文件
 
 首先，我们稍微调整下目录结构，将“源”代码(`/src`)从我们的“分发”代码(`/dist`)中分离出来。“源”代码是用于书写和编辑的代码。“分发”代码是构建过程产生的代码最小化和优化后的“输出”目录，最终将在浏览器中加载：
@@ -171,32 +173,32 @@ __dist/index.html__
    </head>
    <body>
 -    <script src="./src/index.js"></script>
-+    <script src="bundle.js"></script>
++    <script src="main.js"></script>
    </body>
   </html>
 ```
 
 在这个设置中，`index.js` 显式要求引入的 `lodash` 必须存在，然后将它绑定为 `_`（没有全局作用域污染）。通过声明模块所需的依赖，webpack 能够利用这些信息去构建依赖图，然后使用图生成一个优化过的，会以正确顺序执行的 bundle。
 
-可以这样说，执行 `npx webpack`，会将我们的脚本作为[入口起点](/concepts/entry-points)，然后 [输出](/concepts/output) 为 `bundle.js`。Node 8.2+ 版本提供的 `npx` 命令，可以运行在初始安装的 webpack 包(package)的 webpack 二进制文件（`./node_modules/.bin/webpack`）：
+可以这样说，执行 `npx webpack`，会将我们的脚本 `src/index.js` 作为 [入口起点](/concepts/entry-points)，也会生成 `dist/main.js` 作为 [输出](/concepts/output)。Node 8.2/npm 5.2.0 以上版本提供的 `npx` 命令，可以运行在初始安装的 webpack 包(package)的 webpack 二进制文件（`./node_modules/.bin/webpack`）：
 
 ``` bash
 npx webpack
 
 Hash: dabab1bac2b940c1462b
-Version: webpack 4.0.1
-Time: 3003ms
-Built at: 2018-2-26 22:42:11
-    Asset      Size  Chunks             Chunk Names
-bundle.js  69.6 KiB       0  [emitted]  main
-Entrypoint main = bundle.js
-   [1] (webpack)/buildin/module.js 519 bytes {0} [built]
-   [2] (webpack)/buildin/global.js 509 bytes {0} [built]
-   [3] ./src/index.js 256 bytes {0} [built]
+Version: webpack 4.12.0
+Time: 287ms
+Built at: 13/06/2018 11:52:07
+  Asset      Size  Chunks             Chunk Names
+main.js  70.4 KiB       0  [emitted]  main
+[1] (webpack)/buildin/module.js 497 bytes {0} [built]
+[2] (webpack)/buildin/global.js 489 bytes {0} [built]
+[3] ./src/index.js 216 bytes {0} [built]
     + 1 hidden module
 
 WARNING in configuration(配置警告)
-The 'mode' option has not been set. Set 'mode' option to 'development' or 'production' to enable defaults for this environment.('mode' 选项还未设置。将 'mode' 选项设置为 'development' 或 'production'，来启用环境默认值。)
+The 'mode' option has not been set, webpack will fallback to 'production' for this value. Set 'mode' option to 'development' or 'production' to enable defaults for each environment.('mode' 选项还未设置，webpack 会将其值回退至 'production'。将 'mode' 选项设置为 'development' 或 'production'，来启用对应环境的默认优化设置。)
+You can also set it to 'none' to disable any default behavior. Learn more: https://webpack.js.org/concepts/mode/(你也可以将其设置为 'none'，以禁用所有默认行为。了解更多 https://webpack.js.org/concepts/mode/)
 ```
 
 T> 输出可能会稍有不同，但是只要构建成功，那么你就可以继续。并且不要担心，稍后我们就会解决。
@@ -206,9 +208,9 @@ T> 输出可能会稍有不同，但是只要构建成功，那么你就可以�
 
 ## 模块
 
-[ES2015](https://babeljs.io/learn-es2015/) 中的 [`import`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import) 和 [`export`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/export) 语句已经被标准化。虽然大多数浏览器还无法支持它们，但是 webpack 却能够提供开箱即用般的支持。
+[ES2015](https://babeljs.io/learn-es2015/) 中的 [`import`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import) 和 [`export`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/export) 语句已经被标准化，并且 [多数浏览器已经能够支持](https://caniuse.com/#search=modules)。一些旧有版本浏览器还无法支持它们，但是 webpack 却能够提供开箱即用般的支持。
 
-事实上，webpack 在幕后会将代码“转译”，以便旧版本浏览器可以执行。如果你检查 `dist/bundle.js`，你可以看到 webpack 具体如何实现，这是独创精巧的设计！除了 `import` 和 `export`，webpack 还能够很好地支持多种其他模块语法，更多信息请查看[模块 API](/api/module-methods)。
+事实上，webpack 在幕后会将代码“转译”，以便旧版本浏览器可以执行。如果你检查 `dist/main.js`，你可以看到 webpack 具体如何实现，这是独创精巧的设计！除了 `import` 和 `export`，webpack 还能够很好地支持多种其他模块语法，更多信息请查看[模块 API](/api/module-methods)。
 
 注意，webpack 不会更改代码中除 `import` 和 `export` 语句以外的部分。如果你在使用其它 [ES2015 特性](http://es6-features.org/)，请确保你在 webpack 的 [loader 系统](/concepts/loaders/)中使用了一个像是 [Babel](https://babeljs.io/) 或 [Bublé](https://buble.surge.sh/guide/) 的[转译器](/loaders/#transpiling)。
 
@@ -237,7 +239,7 @@ const path = require('path');
 module.exports = {
   entry: './src/index.js',
   output: {
-    filename: 'bundle.js',
+    filename: 'main.js',
     path: path.resolve(__dirname, 'dist')
   }
 };
@@ -249,22 +251,22 @@ module.exports = {
 npx webpack --config webpack.config.js
 
 Hash: dabab1bac2b940c1462b
-Version: webpack 4.0.1
-Time: 328ms
-Built at: 2018-2-26 22:47:43
-    Asset      Size  Chunks             Chunk Names
-bundle.js  69.6 KiB       0  [emitted]  main
-Entrypoint main = bundle.js
-   [1] (webpack)/buildin/module.js 519 bytes {0} [built]
-   [2] (webpack)/buildin/global.js 509 bytes {0} [built]
-   [3] ./src/index.js 256 bytes {0} [built]
+Version: webpack 4.12.0
+Time: 283ms
+Built at: 13/06/2018 11:53:51
+  Asset      Size  Chunks             Chunk Names
+main.js  70.4 KiB       0  [emitted]  main
+[1] (webpack)/buildin/module.js 497 bytes {0} [built]
+[2] (webpack)/buildin/global.js 489 bytes {0} [built]
+[3] ./src/index.js 216 bytes {0} [built]
     + 1 hidden module
 
 WARNING in configuration(配置警告)
-The 'mode' option has not been set. Set 'mode' option to 'development' or 'production' to enable defaults for this environment.('mode' 选项还未设置。将 'mode' 选项设置为 'development' 或 'production'，来启用环境默认值。)
+The 'mode' option has not been set, webpack will fallback to 'production' for this value. Set 'mode' option to 'development' or 'production' to enable defaults for each environment.('mode' 选项还未设置，webpack 会将其值回退至 'production'。将 'mode' 选项设置为 'development' 或 'production'，来启用对应环境的默认优化设置。)
+You can also set it to 'none' to disable any default behavior. Learn more: https://webpack.js.org/concepts/mode/(你也可以将其设置为 'none'，以禁用所有默认行为。了解更多 https://webpack.js.org/concepts/mode/)
 ```
 
-W> 注意，当在 windows 中通过调用路径去调用 `webpack` 时，必须使用反斜线(\)。例如 `node_modules\.bin\webpack --config webpack.config.js`。
+W> 注意，当在 Windows 中通过调用路径去调用 `webpack` 时，必须使用反斜线(\)。例如 `node_modules\.bin\webpack --config webpack.config.js`。
 
 T> 如果 `webpack.config.js` 存在，则 `webpack` 命令将默认选择使用它。我们在这里使用 `--config` 选项只是向你表明，可以传递任何名称的配置文件。这对于需要拆分成多个文件的复杂配置是非常有用。
 
@@ -282,7 +284,6 @@ __package.json__
     "name": "webpack-demo",
     "version": "1.0.0",
     "description": "",
-    "main": "index.js",
     "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
 +     "build": "webpack"
@@ -296,7 +297,6 @@ __package.json__
       "lodash": "^4.17.5"
     }
   }
-
 ```
 
 现在，可以使用 `npm run build` 命令，来替代我们之前使用的 `npx` 命令。注意，使用 npm 的 `scripts`，我们可以像使用 `npx` 那样通过模块名引用本地安装的 npm 包。这是大多数基于 npm 的项目遵循的标准，因为它允许所有贡献者使用同一组通用脚本（如果必要，每个 flag 都带有 `--config` 标志）。
@@ -307,19 +307,19 @@ __package.json__
 npm run build
 
 Hash: dabab1bac2b940c1462b
-Version: webpack 4.0.1
-Time: 323ms
-Built at: 2018-2-26 22:50:25
-    Asset      Size  Chunks             Chunk Names
-bundle.js  69.6 KiB       0  [emitted]  main
-Entrypoint main = bundle.js
-   [1] (webpack)/buildin/module.js 519 bytes {0} [built]
-   [2] (webpack)/buildin/global.js 509 bytes {0} [built]
-   [3] ./src/index.js 256 bytes {0} [built]
+Version: webpack 4.12.0
+Time: 278ms
+Built at: 13/06/2018 11:54:54
+  Asset      Size  Chunks             Chunk Names
+main.js  70.4 KiB       0  [emitted]  main
+[1] (webpack)/buildin/module.js 497 bytes {0} [built]
+[2] (webpack)/buildin/global.js 489 bytes {0} [built]
+[3] ./src/index.js 216 bytes {0} [built]
     + 1 hidden module
 
 WARNING in configuration(配置警告)
-The 'mode' option has not been set. Set 'mode' option to 'development' or 'production' to enable defaults for this environment.('mode' 选项还未设置。将 'mode' 选项设置为 'development' 或 'production'，来启用环境默认值。)
+The 'mode' option has not been set, webpack will fallback to 'production' for this value. Set 'mode' option to 'development' or 'production' to enable defaults for each environment.('mode' 选项还未设置，webpack 会将其值回退至 'production'。将 'mode' 选项设置为 'development' 或 'production'，来启用对应环境的默认优化设置。)
+You can also set it to 'none' to disable any default behavior. Learn more: https://webpack.js.org/concepts/mode/(你也可以将其设置为 'none'，以禁用所有默认行为。了解更多 https://webpack.js.org/concepts/mode/)
 ```
 
 T> 通过向 `npm run build` 命令和你的参数之间添加两个中横线，可以将自定义参数传递给 webpack，例如：`npm run build -- --colors`。
@@ -336,7 +336,7 @@ webpack-demo
 |- package.json
 |- webpack.config.js
 |- /dist
-  |- bundle.js
+  |- main.js
   |- index.html
 |- /src
   |- index.js

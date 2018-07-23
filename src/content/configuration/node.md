@@ -6,6 +6,7 @@ contributors:
   - skipjack
   - oneforwonder
   - Rob--W
+  - byzyk
 ---
 
 这些选项可以配置是否 polyfill 或 mock 某些 [Node.js 全局变量](https://nodejs.org/docs/latest/api/globals.html)和模块。这可以使最初为 Node.js 环境编写的代码，在其他环境（如浏览器）中运行。
@@ -29,17 +30,20 @@ W> 注意，不是每个 Node 全局变量都支持所有选项。对于不支�
 这里是默认值：
 
 ```js
-node: {
-  console: false,
-  global: true,
-  process: true,
-  __filename: "mock",
-  __dirname: "mock",
-  Buffer: true,
-  setImmediate: true
+module.exports = {
+  //...
+  node: {
+    console: false,
+    global: true,
+    process: true,
+    __filename: 'mock',
+    __dirname: 'mock',
+    Buffer: true,
+    setImmediate: true
 
-  // 更多选项，请查看“其他 Node.js 核心库”
-}
+    // 更多选项，请查看“其他 Node.js 核心库”。
+  }
+};
 ```
 
 从 webpack 3.0.0 开始，`node` 选项可能被设置为 `false`，以完全关闭 `NodeStuffPlugin` 和 `NodeSourcePlugin` 插件。
@@ -125,10 +129,13 @@ T> 为了导入内置的模块，使用 [`__non_webpack_require__`](/api/module-
 示例：
 
 ```js
-node: {
-  dns: "mock",
-  fs: "empty",
-  path: true,
-  url: false
-}
+module.exports = {
+  //...
+  node: {
+    dns: 'mock',
+    fs: 'empty',
+    path: true,
+    url: false
+  }
+};
 ```

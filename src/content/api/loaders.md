@@ -2,9 +2,10 @@
 title: loader API
 sort: 4
 contributors:
-    - TheLarkInn
-    - jhnns
-    - tbroadley
+  - TheLarkInn
+  - jhnns
+  - tbroadley
+  - byzyk
 ---
 
 所谓 loader 只是一个导出为函数的 JavaScript 模块。[loader runner](https://github.com/webpack/loader-runner) 会调用这个函数，然后把上一个 loader 产生的结果或者资源文件(resource file)传入进去。函数的 `this` 上下文将由 webpack 填充，并且 [loader runner](https://github.com/webpack/loader-runner) 具有一些有用方法，可以使 loader 改变为异步调用方式，或者获取 query 参数。
@@ -80,10 +81,10 @@ __raw-loader.js__
 
 ``` js
 module.exports = function(content) {
-	assert(content instanceof Buffer);
-	return someSyncOperation(content);
-	// 返回值也可以是一个 `Buffer`
-	// 即使不是 raw loader 也没问题
+  assert(content instanceof Buffer);
+  return someSyncOperation(content);
+  // 返回值也可以是一个 `Buffer`
+  // 即使不是 raw loader 也没问题
 };
 module.exports.raw = true;
 ```
@@ -94,11 +95,21 @@ module.exports.raw = true;
 loader __总是__从右到左地被调用。有些情况下，loader 只关心 request 后面的__元数据(metadata)__，并且忽略前一个 loader 的结果。在实际（从右到左）执行 loader 之前，会先__从左到右__调用 loader 上的 `pitch` 方法。对于以下 [`use`](/configuration/module#rule-use) 配置：
 
 ``` js
-use: [
-  'a-loader',
-  'b-loader',
-  'c-loader'
-]
+module.exports = {
+  //...
+  module: {
+    rules: [
+      {
+        //...
+        use: [
+          'a-loader',
+          'b-loader',
+          'c-loader'
+        ]
+      }
+    ]
+  }
+};
 ```
 
 将会发生这些步骤：
@@ -119,11 +130,11 @@ use: [
 
 ``` js
 module.exports = function(content) {
-	return someSyncOperation(content, this.data.value);
+  return someSyncOperation(content, this.data.value);
 };
 
 module.exports.pitch = function(remainingRequest, precedingRequest, data) {
-	data.value = 42;
+  data.value = 42;
 };
 ```
 
@@ -136,7 +147,7 @@ module.exports = function(content) {
 
 module.exports.pitch = function(remainingRequest, precedingRequest, data) {
   if (someCondition()) {
-    return "module.exports = require(" + JSON.stringify("-!" + remainingRequest) + ");";
+    return 'module.exports = require(' + JSON.stringify('-!' + remainingRequest) + ');';
   }
 };
 ```
@@ -160,7 +171,7 @@ loader context 表示在 loader 内使用 `this` 可以访问的一些方法或�
 在 `/abc/file.js` 中：
 
 ``` js
-require("./loader1?xyz!loader2!./resource?rrr");
+require('./loader1?xyz!loader2!./resource?rrr');
 ```
 
 
@@ -176,6 +187,11 @@ require("./loader1?xyz!loader2!./resource?rrr");
 在我们的例子中：这个属性为 `/abc`，因为 `resource.js` 在这个目录中
 
 
+### `this.rootContext`
+
+从 webpack 4 开始，原先的 `this.options.context` 被改进为 `this.rootContext`。
+
+
 ### `this.request`
 
 被解析出来的 request 字符串。
@@ -188,14 +204,16 @@ require("./loader1?xyz!loader2!./resource?rrr");
 1. 如果这个 loader 配置了 [`options`](/configuration/module/#useentry) 对象的话，`this.query` 就指向这个 option 对象。
 2. 如果 loader 中没有 `options`，而是以 query 字符串作为参数调用时，`this.query` 就是一个以 `?` 开头的字符串。
 
-W> `options` 已取代 `query`，所以此属性废弃。使用 `loader-utils` 中的 [`getOptions` 方法](https://github.com/webpack/loader-utils#getoptions)来提取给定 loader 的 option。
+T> 使用 `loader-utils` 中提供的 [`getOptions` 方法](https://github.com/webpack/loader-utils#getoptions) 来提取给定 loader 的 option。
 
 
 ### `this.callback`
 
 一个可以同步或者异步调用的可以返回多个结果的函数。预期的参数是：
 
-``` js
+<!-- eslint-skip -->
+
+```js
 this.callback(
   err: Error | null,
   content: string | Buffer,
@@ -241,7 +259,9 @@ cacheable(flag = true: boolean)
 
 所有 loader 组成的数组。它在 pitch 阶段的时候是可以写入的。
 
-``` js
+<!-- eslint-skip -->
+
+```js
 loaders = [{request: string, path: string, query: string, module: function}]
 ```
 
@@ -250,18 +270,18 @@ loaders = [{request: string, path: string, query: string, module: function}]
 ``` js
 [
   {
-    request: "/abc/loader1.js?xyz",
-    path: "/abc/loader1.js",
-    query: "?xyz",
+    request: '/abc/loader1.js?xyz',
+    path: '/abc/loader1.js',
+    query: '?xyz',
     module: [Function]
   },
   {
-    request: "/abc/node_modules/loader2/index.js",
-    path: "/abc/node_modules/loader2/index.js",
-    query: "",
+    request: '/abc/node_modules/loader2/index.js',
+    path: '/abc/node_modules/loader2/index.js',
+    query: '',
     module: [Function]
   }
-]
+];
 ```
 
 
@@ -425,7 +445,7 @@ resolveSync(context: string, request: string) -> string
 
 ### `this.options`
 
-options 的值将会传递给 Complier
+W> `options` 属性，在 webpack 3 中已经废弃(deprecated)，在 webpack 4 中已经移除(removed)。
 
 
 ### `this.debug`

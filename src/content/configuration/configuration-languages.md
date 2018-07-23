@@ -8,6 +8,7 @@ contributors:
   - simon04
   - peterblazejewicz
   - youta1119
+  - byzyk
 ---
 
 webpack 接受以多种编程和数据语言编写的配置文件。支持的文件扩展名列表，可以在 [node-interpret](https://github.com/js-cli/js-interpret) 包中找到。使用 [node-interpret](https://github.com/js-cli/js-interpret)，webpack 可以处理许多不同类型的配置文件。
@@ -66,7 +67,8 @@ __tsconfig-for-webpack-config.json__
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es5"
+    "target": "es5",
+    "esModuleInterop": true
   }
 }
 ```
@@ -98,7 +100,9 @@ npm install --save-dev coffee-script
 
 __webpack.config.coffee__
 
-```javascript
+<!-- eslint-skip -->
+
+```js
 HtmlWebpackPlugin = require('html-webpack-plugin')
 webpack = require('webpack')
 path = require('path')
@@ -130,7 +134,7 @@ module.exports = config
 
 首先安装依赖：
 
-``` js
+``` bash
 npm install --save-dev babel-register jsxobj babel-preset-es2015
 ```
 

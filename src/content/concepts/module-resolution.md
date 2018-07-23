@@ -2,16 +2,17 @@
 title: 模块解析(module resolution)
 sort: 8
 contributors:
-    - pksjce
-    - pastelsky
+  - pksjce
+  - pastelsky
+  - byzyk
 ---
 
 resolver 是一个库(library)，用于帮助找到模块的绝对路径。一个模块可以作为另一个模块的依赖模块，然后被后者引用，如下：
 
 ```js
-import foo from 'path/to/module'
+import foo from 'path/to/module';
 // 或者
-require('path/to/module')
+require('path/to/module');
 ```
 
 所依赖的模块可以是来自应用程序代码或第三方的库(library)。resolver 帮助 webpack 找到 bundle 中需要引入的模块代码，这些代码在包含在每个 `require`/`import` 语句中。
@@ -26,9 +27,9 @@ require('path/to/module')
 ### 绝对路径
 
 ```js
-import "/home/me/file";
+import '/home/me/file';
 
-import "C:\\Users\\me\\file";
+import 'C:\\Users\\me\\file';
 ```
 
 由于我们已经取得文件的绝对路径，因此不需要进一步再做解析。
@@ -37,8 +38,8 @@ import "C:\\Users\\me\\file";
 ### 相对路径
 
 ```js
-import "../src/file1";
-import "./file2";
+import '../src/file1';
+import './file2';
 ```
 
 在这种情况下，使用 `import` 或 `require` 的资源文件(resource file)所在的目录被认为是上下文目录(context directory)。在 `import/require` 中给定的相对路径，会添加此上下文路径(context path)，以产生模块的绝对路径(absolute path)。
@@ -47,8 +48,8 @@ import "./file2";
 ### 模块路径
 
 ```js
-import "module";
-import "module/lib/file";
+import 'module';
+import 'module/lib/file';
 ```
 
 模块将在 [`resolve.modules`](/configuration/resolve/#resolve-modules) 中指定的所有目录内搜索。

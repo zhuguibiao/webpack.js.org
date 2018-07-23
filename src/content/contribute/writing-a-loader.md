@@ -4,6 +4,7 @@ sort: 3
 contributors:
   - asulaiman
   - michael-ciniawsky
+  - byzyk
 ---
 
 loader 是导出为一个函数的 node 模块。该函数在 loader 转换资源的时候调用。给定的函数将调用 [loader API](/api/loaders/)，并通过 `this` 上下文访问。
@@ -17,29 +18,39 @@ loader 是导出为一个函数的 node 模块。该函数在 loader 转换资�
 
 __webpack.config.js__
 
-``` js
-{
-  test: /\.js$/
-  use: [
-    {
-      loader: path.resolve('path/to/loader.js'),
-      options: {/* ... */}
-    }
-  ]
-}
+```js
+module.exports = {
+  //...
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        use: [
+          {
+            loader: path.resolve('path/to/loader.js'),
+            options: {/* ... */}
+          }
+        ]
+      }
+    ]
+  }
+};
 ```
 
 匹配(test)多个 loaders，你可以使用 `resolveLoader.modules` 配置，webpack 将会从这些目录中搜索这些 loaders。例如，如果你的项目中有一个 `/loaders` 本地目录：
 
 __webpack.config.js__
 
-``` js
-resolveLoader: {
-  modules: [
-    'node_modules',
-    path.resolve(__dirname, 'loaders')
-  ]
-}
+```js
+module.exports = {
+  //...
+  resolveLoader: {
+    modules: [
+      'node_modules',
+      path.resolve(__dirname, 'loaders')
+    ]
+  }
+};
 ```
 
 最后，相当重要的是，如果你已经为 loader 创建了独立的库和包，你可以使用 [`npm link`](https://docs.npmjs.com/cli/link)，来将其关联到你要测试的项目。
@@ -66,14 +77,21 @@ loader 会返回一个或者两个值。第一个值的类型是 JavaScript 代�
 
 __webpack.config.js__
 
-``` js
-{
-  test: /\.js/,
-  use: [
-    'bar-loader',
-    'foo-loader'
-  ]
-}
+```js
+module.exports = {
+  //...
+  module: {
+    rules: [
+      {
+        test: /\.js/,
+        use: [
+          'bar-loader',
+          'foo-loader'
+        ]
+      }
+    ]
+  }
+};
 ```
 
 
@@ -122,7 +140,7 @@ T> loader 可以被链式调用意味着不一定要输出 JavaScript。只要�
 
 __loader.js__
 
-``` js
+```js
 import { getOptions } from 'loader-utils';
 import validateOptions from 'schema-utils';
 
@@ -133,7 +151,7 @@ const schema = {
       type: 'string'
     }
   }
-}
+};
 
 export default function(source) {
   const options = getOptions(this);
@@ -143,7 +161,7 @@ export default function(source) {
   // 对资源应用一些转换……
 
   return `export default ${ JSON.stringify(source) }`;
-};
+}
 ```
 
 ### loader 依赖(Loader Dependencies)
@@ -152,7 +170,7 @@ export default function(source) {
 
 __loader.js__
 
-``` js
+```js
 import path from 'path';
 
 export default function(source) {
@@ -163,9 +181,9 @@ export default function(source) {
 
   fs.readFile(headerPath, 'utf-8', function(err, header) {
     if(err) return callback(err);
-    callback(null, header + "\n" + source);
+    callback(null, header + '\n' + source);
   });
-};
+}
 ```
 
 ### 模块依赖(Module Dependencies)
@@ -197,9 +215,11 @@ T> 如果语言只支持相对 url（例如 `url(file)` 总是指向 `./file`）
 
 例如，`sass-loader` [指定 `node-sass`](https://github.com/webpack-contrib/sass-loader/blob/master/package.json) 作为同等依赖，引用如下：
 
-``` js
-"peerDependencies": {
-  "node-sass": "^4.0.0"
+```json
+{
+  "peerDependencies": {
+    "node-sass": "^4.0.0"
+  }
 }
 ```
 
@@ -214,7 +234,7 @@ npm install --save-dev jest babel-jest babel-preset-env
 
 __.babelrc__
 
-``` json
+```json
 {
   "presets": [[
     "env",
@@ -231,7 +251,7 @@ __.babelrc__
 
 __src/loader.js__
 
-``` js
+```js
 import { getOptions } from 'loader-utils';
 
 export default function loader(source) {
@@ -240,7 +260,7 @@ export default function loader(source) {
   source = source.replace(/\[name\]/g, options.name);
 
   return `export default ${ JSON.stringify(source) }`;
-};
+}
 ```
 
 我们将会使用这个 loader 处理以下文件：
@@ -259,7 +279,7 @@ npm install --save-dev webpack memory-fs
 
 __test/compiler.js__
 
-``` js
+```js
 import path from 'path';
 import webpack from 'webpack';
 import memoryfs from 'memory-fs';
@@ -294,7 +314,7 @@ export default (fixture, options = {}) => {
       resolve(stats);
     });
   });
-}
+};
 ```
 
 T> 这种情况下，我们可以内联 webpack 配置，也可以把配置作为参数传给导出的函数。这允许我们使用相同的编译模块测试多个设置。
@@ -303,22 +323,24 @@ T> 这种情况下，我们可以内联 webpack 配置，也可以把配置作�
 
 __test/loader.test.js__
 
-``` js
+```js
 import compiler from './compiler.js';
 
 test('Inserts name and outputs JavaScript', async () => {
   const stats = await compiler('example.txt');
   const output = stats.toJson().modules[0].source;
 
-  expect(output).toBe(`export default "Hey Alice!\\n"`);
+  expect(output).toBe('export default "Hey Alice!\\n"');
 });
 ```
 
 __package.json__
 
-``` js
-"scripts": {
-  "test": "jest"
+```json
+{
+  "scripts": {
+    "test": "jest"
+  }
 }
 ```
 

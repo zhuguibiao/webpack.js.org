@@ -9,8 +9,6 @@ contributors:
 related:
   - title: 可预测的长效缓存
     url: https://medium.com/webpack/predictable-long-term-caching-with-webpack-d3eee1d3fa31
-  - title: Long Term Caching of Static Assets
-    url: https://codeburst.io/long-term-caching-of-static-assets-with-webpack-1ecb139adb95?gi=9e32667ae5c5#.vtwnssps4
   - title: Webpack & Caching
     url: https://gist.github.com/sokra/ff1b0290282bfa2c037bdb6dcca1a7aa
   - title: Advanced Webpack Presentation
@@ -116,13 +114,12 @@ W> 输出可能会因当前的 webpack 版本而稍有差异。新版本不一�
 
 ## 提取模板(Extracting Boilerplate)
 
-就像我们之前从[代码分离](/guides/code-splitting)了解到的，[`CommonsChunkPlugin`](/plugins/commons-chunk-plugin) 可以用于将模块分离到单独的文件中。然而 `CommonsChunkPlugin` 有一个较少有人知道的功能是，能够在每次修改后的构建结果中，将 webpack 的样板(boilerplate)和 manifest 提取出来。通过指定 `entry` 配置中未用到的名称，此插件会自动将我们需要的内容提取到单独的包中：
+正如我们在 [代码分离][code splitting](/guides/code-splitting) 中所学到的，[`SplitChunksPlugin`](/plugins/split-chunks-plugin/) 可以用于将模块分离到单独的文件中。 webpack 提供了一个优化功能，可以根据提供的选项将运行时代码拆分成单独的块，直接将 [`optimization.runtimeChunk`](/configuration/optimization/#optimization-runtimechunk) 设置为 `single`，就能创建单个运行时 bundle(one runtime bundle)：
 
 __webpack.config.js__
 
 ``` diff
   const path = require('path');
-+ const webpack = require('webpack');
   const CleanWebpackPlugin = require('clean-webpack-plugin');
   const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -132,92 +129,89 @@ __webpack.config.js__
       new CleanWebpackPlugin(['dist']),
       new HtmlWebpackPlugin({
         title: 'Caching'
--     })
-+     }),
-+     new webpack.optimize.CommonsChunkPlugin({
-+       name: 'manifest'
-+     })
     ],
     output: {
       filename: '[name].[chunkhash].js',
       path: path.resolve(__dirname, 'dist')
-    }
+    },
++   optimization: {
++     runtimeChunk: 'single'
++   }
   };
 ```
 
-让我们再次构建，然后查看提取出来的 `manifest` bundle：
+让我们再次构建，然后查看提取出来的 `runtime` bundle：
 
 ``` bash
-Hash: 80552632979856ddab34
-Version: webpack 3.3.0
-Time: 1512ms
-                           Asset       Size  Chunks                    Chunk Names
-    main.5ec8e954e32d66dee1aa.js     542 kB       0  [emitted]  [big]  main
-manifest.719796322be98041fff2.js    5.82 kB       1  [emitted]         manifest
-                      index.html  275 bytes          [emitted]
-   [0] ./src/index.js 336 bytes {0} [built]
-   [2] (webpack)/buildin/global.js 509 bytes {0} [built]
-   [3] (webpack)/buildin/module.js 517 bytes {0} [built]
+Hash: 82c9c385607b2150fab2
+Version: webpack 4.12.0
+Time: 3027ms
+                          Asset       Size  Chunks             Chunk Names
+runtime.cc17ae2a94ec771e9221.js   1.42 KiB       0  [emitted]  runtime
+   main.e81de2cf758ada72f306.js   69.5 KiB       1  [emitted]  main
+                     index.html  275 bytes          [emitted]
+[1] (webpack)/buildin/module.js 497 bytes {1} [built]
+[2] (webpack)/buildin/global.js 489 bytes {1} [built]
+[3] ./src/index.js 309 bytes {1} [built]
     + 1 hidden module
 ```
 
-将第三方库(library)（例如 `lodash` 或 `react`）提取到单独的 `vendor` chunk 文件中，是比较推荐的做法，这是因为，它们很少像本地的源代码那样频繁修改。因此通过实现以上步骤，利用客户端的长效缓存机制，可以通过命中缓存来消除请求，并减少向服务器获取资源，同时还能保证客户端代码和服务器端代码版本一致。这可以通过使用新的 `entry(入口)` 起点，以及再额外配置一个 `CommonsChunkPlugin` 实例的组合方式来实现：
+将第三方库(library)（例如 `lodash` 或 `react`）提取到单独的 `vendor` chunk 文件中，是比较推荐的做法，这是因为，它们很少像本地的源代码那样频繁修改。因此通过实现以上步骤，利用客户端的长效缓存机制，可以通过命中缓存来消除请求，并减少向服务器获取资源，同时还能保证客户端代码和服务器端代码版本一致。
+这可以通过使用 [SplitChunksPlugin 示例 2](/plugins/split-chunks-plugin/#split-chunks-example-2) 中演示的 [`SplitChunksPlugin`](/plugins/split-chunks-plugin/) 插件的 [`cacheGroups`](/plugins/split-chunks-plugin/#splitchunks-cachegroups) 选项来实现。我们在 `optimization.splitChunks` 添加如下 `cacheGroups` 参数并构建：
 
 __webpack.config.js__
 
 ``` diff
   var path = require('path');
-  const webpack = require('webpack');
   const CleanWebpackPlugin = require('clean-webpack-plugin');
   const HtmlWebpackPlugin = require('html-webpack-plugin');
 
   module.exports = {
--   entry: './src/index.js',
-+   entry: {
-+     main: './src/index.js',
-+     vendor: [
-+       'lodash'
-+     ]
-+   },
+    entry: './src/index.js',
     plugins: [
       new CleanWebpackPlugin(['dist']),
       new HtmlWebpackPlugin({
         title: 'Caching'
       }),
-+     new webpack.optimize.CommonsChunkPlugin({
-+       name: 'vendor'
-+     }),
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'manifest'
-      })
     ],
     output: {
       filename: '[name].[chunkhash].js',
       path: path.resolve(__dirname, 'dist')
+    },
+    optimization: {
+-     runtimeChunk: 'single'
++     runtimeChunk: 'single',
++     splitChunks: {
++       cacheGroups: {
++         vendor: {
++           test: /[\\/]node_modules[\\/]/,
++           name: 'vendors',
++           chunks: 'all'
++         }
++       }
++     }
     }
   };
 ```
 
-W> 注意，引入顺序在这里很重要。`CommonsChunkPlugin` 的 `'vendor'` 实例，必须在 `'manifest'` 实例之前引入。
-
 让我们再次构建，然后查看新的 `vendor` bundle：
 
 ``` bash
-Hash: 69eb92ebf8935413280d
-Version: webpack 3.3.0
-Time: 1502ms
-                           Asset       Size  Chunks                    Chunk Names
-  vendor.8196d409d2f988123318.js     541 kB       0  [emitted]  [big]  vendor
-    main.0ac0ae2d4a11214ccd19.js  791 bytes       1  [emitted]         main
-manifest.004a1114de8bcf026622.js    5.85 kB       2  [emitted]         manifest
-                      index.html  352 bytes          [emitted]
-   [1] ./src/index.js 336 bytes {1} [built]
-   [2] (webpack)/buildin/global.js 509 bytes {0} [built]
-   [3] (webpack)/buildin/module.js 517 bytes {0} [built]
-   [4] multi lodash 28 bytes {0} [built]
+Hash: 213f57fc3bb5cb47c719
+Version: webpack 4.12.0
+Time: 475ms
+                          Asset       Size  Chunks             Chunk Names
+runtime.cc17ae2a94ec771e9221.js   1.42 KiB       0  [emitted]  runtime
+vendors.a42c3ca0d742766d7a28.js   69.4 KiB       1  [emitted]  vendors
+   main.abf44fedb7d11d4312d7.js  240 bytes       2  [emitted]  main
+                     index.html  353 bytes          [emitted]
+[1] (webpack)/buildin/module.js 497 bytes {1} [built]
+[2] (webpack)/buildin/global.js 489 bytes {1} [built]
+[3] ./src/index.js 309 bytes {2} [built]
     + 1 hidden module
 ```
 
+现在，我们可以看到 `main` 不再含有来自 `node_modules` 目录的 `vendor` 代码，并且体积减少到 `240 bytes`！
 
 ## 模块标识符(Module Identifiers)
 

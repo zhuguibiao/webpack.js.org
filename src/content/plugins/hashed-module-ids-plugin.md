@@ -2,14 +2,15 @@
 title: HashedModuleIdsPlugin
 contributors:
   - shaodahong
+  - byzyk
 ---
 
 该插件会根据模块的相对路径生成一个四位数的hash作为模块id, 建议用于生产环境。
 
 ``` js
 new webpack.HashedModuleIdsPlugin({
-  // 参数...
-})
+  // 选项……
+});
 ```
 
 
@@ -31,5 +32,5 @@ new webpack.HashedModuleIdsPlugin({
   hashFunction: 'sha256',
   hashDigest: 'hex',
   hashDigestLength: 20
-})
+});
 ```

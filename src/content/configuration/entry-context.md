@@ -5,6 +5,8 @@ contributors:
   - sokra
   - skipjack
   - tarang9211
+  - byzyk
+  - madhavarshney
 ---
 
 entry 对象是用于 webpack 查找启动并构建 bundle。其上下文是入口文件所处的目录的绝对路径的字符串。
@@ -17,7 +19,10 @@ entry 对象是用于 webpack 查找启动并构建 bundle。其上下文是入�
 基础目录，**绝对路径**，用于从配置中解析入口起点(entry point)和 loader
 
 ``` js
-context: path.resolve(__dirname, "app")
+module.exports = {
+  //...
+  context: path.resolve(__dirname, 'app')
+};
 ```
 
 默认使用当前目录，但是推荐在配置中传递一个值。这使得你的配置独立于 CWD(current working directory - 当前执行路径)。
@@ -36,11 +41,14 @@ context: path.resolve(__dirname, "app")
 简单规则：每个 HTML 页面都有一个入口起点。单页应用(SPA)：一个入口起点，多页应用(MPA)：多个入口起点。
 
 ```js
-entry: {
-  home: "./home.js",
-  about: "./about.js",
-  contact: "./contact.js"
-}
+module.exports = {
+  //...
+  entry: {
+    home: './home.js',
+    about: './about.js',
+    contact: './contact.js'
+  }
+};
 ```
 
 
@@ -52,13 +60,19 @@ entry: {
 ### 动态入口
 
 ```js
-entry: () => './demo'
+module.exports = {
+  //...
+  entry: () => './demo'
+};
 ```
 
 或
 
 ```js
-entry: () => new Promise((resolve) => resolve(['./demo', './demo2']))
+module.exports = {
+  //...
+  entry: () => new Promise((resolve) => resolve(['./demo', './demo2']))
+};
 ```
 
 当结合 [`output.library`](/configuration/output#output-library) 选项时：如果传入数组，则只导出最后一项。

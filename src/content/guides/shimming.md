@@ -85,7 +85,7 @@ __webpack.config.js__
 
 本质上，我们所做的，就是告诉 webpack……
 
-> 如果你遇到了至少一处用到 `lodash` 变量的模块实例，那请你将 `lodash` package 包引入进来，并将其提供给需要用到它的模块。
+> 如果你遇到了至少一处用到 `_` 变量的模块实例，那请你将 `lodash` package 包引入进来，并将其提供给需要用到它的模块。
 
 如果我们 run build，将会看到同样的输出：
 
@@ -216,7 +216,7 @@ var file = 'blah.txt';
 var helpers = {
   test: function() { console.log('test something'); },
   parse: function() { console.log('parse something'); }
-}
+};
 ```
 
 你可能从来没有在自己的源码中做过这些事情，但是你也许遇到过一个老旧的库(library)，和上面所展示的代码类似。在这个用例中，我们可以使用 [`exports-loader`](/loaders/exports-loader/)，将一个全局变量作为一个普通的模块来导出。例如，为了将 `file` 导出为 `file` 以及将 `helpers.parse` 导出为 `parse`，做如下调整：
@@ -458,7 +458,7 @@ W> 当使用 `script-loader` 时，模块将转化为字符串，然后添加到
 
 W> 例如 `ProvidePlugin`，任何需要 AST 的功能，都无法正常运行。
 
-最后，有一些模块支持不同的[模块格式](/concepts/modules)，比如 AMD 规范、CommonJS 规范和遗留模块(legacy)。在大多数情况下，他们首先检查`define`，然后使用一些古怪的代码来导出一些属性。在这些情况下，可以通过[`imports-loader`](/loaders/imports-loader/)设置 `define=>false` 来强制 CommonJS 路径。
+最后，有一些模块支持多种 [模块格式](/concepts/modules)，比如混合有 AMD 规范、CommonJS 规范和遗留模块(legacy)。在大多数情况下，他们首先检查`define`，然后使用一些古怪的代码来导出一些属性。在这些情况下，可以通过[`imports-loader`](/loaders/imports-loader/)设置 `define=>false` 来强制 CommonJS 路径。
 
 ***
 

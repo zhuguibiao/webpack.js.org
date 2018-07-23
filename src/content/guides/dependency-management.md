@@ -5,6 +5,7 @@ contributors:
   - ndelangen
   - chrisVillanueva
   - sokra
+  - byzyk
 ---
 
 > es6 modules
@@ -21,12 +22,12 @@ contributors:
 示例：
 
 ```javascript
-require("./template/" + name + ".ejs");
+require('./template/' + name + '.ejs');
 ```
 
 webpack 解析 `require()` 的调用，提取出来如下这些信息：
 
-```diff
+```code
 Directory: ./template
 Regular expression: /^.*\.ejs$/
 ```
@@ -37,11 +38,11 @@ Regular expression: /^.*\.ejs$/
 
 示例：
 
-```javascript
+```json
 {
-    "./table.ejs": 42,
-    "./table-row.ejs": 43,
-    "./directory/folder.ejs": 44
+  "./table.ejs": 42,
+  "./table-row.ejs": 43,
+  "./directory/folder.ejs": 44
 }
 ```
 
@@ -61,18 +62,18 @@ webpack 会在构建的时候解析代码中的 `require.context()` 。
 语法如下：
 
 ```javascript
-require.context(directory, useSubdirectories = false, regExp = /^\.\//)
+require.context(directory, useSubdirectories = false, regExp = /^\.\//);
 ```
 
 示例：
 
 ```javascript
-require.context("./test", false, /\.test\.js$/);
+require.context('./test', false, /\.test\.js$/);
 // （创建了）一个包含了 test 文件夹（不包含子目录）下面的、所有文件名以 `.test.js` 结尾的、能被 require 请求到的文件的上下文。
 ```
 
 ```javascript
-require.context("../", true, /\.stories\.js$/);
+require.context('../', true, /\.stories\.js$/);
 // （创建了）一个包含了父级文件夹（包含子目录）下面，所有文件名以 `.stories.js` 结尾的文件的上下文。
 ```
 

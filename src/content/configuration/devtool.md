@@ -6,8 +6,9 @@ contributors:
   - skipjack
   - SpaceK33z
   - lricoy
+  - madhavarshney
 related:
-  - title: 启用 source map
+  - title: 启用 Source Maps
     url: https://survivejs.com/webpack/developing-with-webpack/enabling-sourcemaps/
   - title: 在 webpack 的 devtool 中配置 source map
     url: http://cheng.logdown.com/posts/2016/03/25/679045
@@ -35,8 +36,8 @@ eval                           | +++   | +++     | no         | 生成后的代�
 cheap-eval-source-map          | +     | ++      | no         | 转换过的代码（仅限行）
 cheap-module-eval-source-map   | o     | ++      | no         | 原始源代码（仅限行）
 eval-source-map                | --    | +       | no         | 原始源代码
-cheap-source-map               | +     | o       | no         | 转换过的代码（仅限行）
-cheap-module-source-map        | o     | -       | no         | 原始源代码（仅限行）
+cheap-source-map               | +     | o       | yes        | 转换过的代码（仅限行）
+cheap-module-source-map        | o     | -       | yes        | 原始源代码（仅限行）
 inline-cheap-source-map        | +     | o       | no         | 转换过的代码（仅限行）
 inline-cheap-module-source-map | o     | -       | no         | 原始源代码（仅限行）
 source-map                     | --    | --      | yes        | 原始源代码

@@ -2,6 +2,7 @@
 title: AggressiveSplittingPlugin
 contributors:
   - pierreneter
+  - byzyk
 ---
 
 `AggressiveSplittingPlugin` 可以将 bundle 拆分成更小的 chunk，直到各个 chunk 的大小达到 `option` 设置的 `maxSize`。它通过目录结构将模块组织在一起。
@@ -13,11 +14,13 @@ contributors:
 如果模块更改，chunk 可能会无效。无效 chunk 中的模块会回到模块池(module pool)中，会同时创建一个新的模块。
 
 ```js
-new webpack.optimize.AggressiveSplittingPlugin(options)
+new webpack.optimize.AggressiveSplittingPlugin(options);
 ```
 
 
 ## 选项
+
+<!-- eslint-skip -->
 
 ```js
 {

@@ -7,6 +7,7 @@ contributors:
   - spacek33z
   - charlespwd
   - orteth01
+  - byzyk
 ---
 
 webpack-dev-server 能够用于快速开发应用程序。请查看 [“如何开发？”](/guides/development) 入门。
@@ -23,11 +24,14 @@ T> 与 [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middlewar
 通过来自 [webpack-dev-server](https://github.com/webpack/webpack-dev-server) 的这些选项，能够用多种方式改变其行为。这里有一个简单的例子，所有来自 `dist/` 目录的文件都做 gzip 压缩和提供为服务：
 
 ```js
-devServer: {
-  contentBase: path.join(__dirname, "dist"),
-  compress: true,
-  port: 9000
-}
+module.exports = {
+  //...
+  devServer: {
+    contentBase: path.join(__dirname, 'dist'),
+    compress: true,
+    port: 9000
+  }
+};
 ```
 
 当服务器启动时，在解析模块列表之前会有一条消息：
@@ -54,9 +58,14 @@ T> 如果遇到问题，导航到 `/webpack-dev-server` 路径，可以显示出
 提供执行自定义中间件的功能。
 
 ```js
-after(app){
-  // 做些有趣的事
-}
+module.exports = {
+  //...
+  devServer: {
+    after: function(app) {
+      // 做些有趣的事
+    }
+  }
+};
 ```
 
 ## `devServer.allowedHosts`
@@ -66,24 +75,34 @@ after(app){
 此选项允许你添加白名单服务，允许一些开发服务器访问。
 
 ```js
-allowedHosts: [
-  'host.com',
-  'subdomain.host.com',
-  'subdomain2.host.com',
-  'host2.com'
-]
+module.exports = {
+  //...
+  devServer: {
+    allowedHosts: [
+      'host.com',
+      'subdomain.host.com',
+      'subdomain2.host.com',
+      'host2.com'
+    ]
+  }
+};
 ```
 
 模仿 django 的 `ALLOWED_HOSTS`，以 `.` 开头的值可以用作子域通配符。`.host.com` 将会匹配 `host.com`, `www.host.com` 和 `host.com` 的任何其他子域名。
 
 ```js
-// 这实现了与第一个示例相同的效果，
-// 如果新的子域名需要访问 dev server，
-// 则无需更新您的配置
-allowedHosts: [
-    '.host.com',
-    'host2.com'
-]
+module.exports = {
+  //...
+  devServer: {
+    // 这实现了与第一个示例相同的效果，
+    // 如果新的子域名需要访问 dev server，
+    // 则无需更新您的配置
+    allowedHosts: [
+      '.host.com',
+      'host2.com'
+    ]
+  }
+};
 ```
 
 想要在 CLI 中使用这个选项，请向 `--allowed-hosts` 选项传入一个以逗号分隔的字符串。
@@ -101,11 +120,16 @@ webpack-dev-server --entry /entry/file --output-path /output/path --allowed-host
 这可以用来配置自定义处理程序，例如：
 
 ```js
-before(app){
-  app.get('/some/path', function(req, res) {
-    res.json({ custom: 'response' });
-  });
-}
+module.exports = {
+  //...
+  devServer: {
+    before: function(app) {
+      app.get('/some/path', function(req, res) {
+        res.json({ custom: 'response' });
+      });
+    }
+  }
+};
 ```
 
 ## `devServer.bonjour`
@@ -113,7 +137,12 @@ before(app){
 此选项在启动时，通过 ZeroConf 网络广播服务
 
 ```js
-bonjour: true
+module.exports = {
+  //...
+  devServer: {
+    bonjour: true
+  }
+};
 ```
 
 通过 CLI 使用
@@ -132,7 +161,12 @@ webpack-dev-server --bonjour
 你可以阻止所有这些消息显示，使用这个选项：
 
 ```js
-clientLogLevel: "none"
+module.exports = {
+  //...
+  devServer: {
+    clientLogLevel: 'none'
+  }
+};
 ```
 
 通过 CLI 使用
@@ -162,7 +196,12 @@ webpack-dev-server --color
 一切服务都启用 [gzip 压缩](https://betterexplained.com/articles/how-to-optimize-your-site-with-gzip-compression/)：
 
 ```js
-compress: true
+module.exports = {
+  //...
+  devServer: {
+    compress: true
+  }
+};
 ```
 
 通过 CLI 使用
@@ -181,7 +220,12 @@ webpack-dev-server --compress
 默认情况下，将使用当前工作目录作为提供内容的目录，但是你可以修改为其他目录：
 
 ```js
-contentBase: path.join(__dirname, "public")
+module.exports = {
+  //...
+  devServer: {
+    contentBase: path.join(__dirname, 'public')
+  }
+};
 ```
 
 注意，推荐使用绝对路径。
@@ -189,13 +233,23 @@ contentBase: path.join(__dirname, "public")
 但是也可以从多个目录提供内容：
 
 ```js
-contentBase: [path.join(__dirname, "public"), path.join(__dirname, "assets")]
+module.exports = {
+  //...
+  devServer: {
+    contentBase: [path.join(__dirname, 'public'), path.join(__dirname, 'assets')]
+  }
+};
 ```
 
 禁用 `contentBase`：
 
 ```js
-contentBase: false
+module.exports = {
+  //...
+  devServer: {
+    contentBase: false
+  }
+};
 ```
 
 通过 CLI 使用
@@ -212,7 +266,12 @@ webpack-dev-server --content-base /path/to/content/dir
 设置为 true 时，此选项绕过主机检查。**不建议这样做**，因为不检查主机的应用程序容易受到 DNS 重新连接攻击。
 
 ```js
-disableHostCheck: true
+module.exports = {
+  //...
+  devServer: {
+    disableHostCheck: true
+  }
+};
 ```
 
 通过 CLI 使用
@@ -232,8 +291,13 @@ webpack-dev-server --disable-host-check
 如果 `output.filename` 设置为 `bundle.js` ，`filename` 使用如下：
 
 ```js
-lazy: true,
-filename: "bundle.js"
+module.exports = {
+  //...
+  devServer: {
+    lazy: true,
+    filename: 'bundle.js'
+  }
+};
 ```
 
 现在只有在请求 `/bundle.js` 时候，才会编译 bundle。
@@ -248,9 +312,14 @@ T> `filename` 在不使用**惰性加载**时没有效果。
 在所有响应中添加首部内容：
 
 ```js
-headers: {
-  "X-Custom-Foo": "bar"
-}
+module.exports = {
+  //...
+  devServer: {
+    headers: {
+      'X-Custom-Foo': 'bar'
+    }
+  }
+};
 ```
 
 
@@ -261,27 +330,42 @@ headers: {
 当使用 [HTML5 History API](https://developer.mozilla.org/en-US/docs/Web/API/History) 时，任意的 `404` 响应都可能需要被替代为 `index.html`。通过传入以下启用：
 
 ```js
-historyApiFallback: true
+module.exports = {
+  //...
+  devServer: {
+    historyApiFallback: true
+  }
+};
 ```
 
 通过传入一个对象，比如使用 `rewrites` 这个选项，此行为可进一步地控制：
 
 ```js
-historyApiFallback: {
-  rewrites: [
-    { from: /^\/$/, to: '/views/landing.html' },
-    { from: /^\/subpage/, to: '/views/subpage.html' },
-    { from: /./, to: '/views/404.html' }
-  ]
-}
+module.exports = {
+  //...
+  devServer: {
+    historyApiFallback: {
+      rewrites: [
+        { from: /^\/$/, to: '/views/landing.html' },
+        { from: /^\/subpage/, to: '/views/subpage.html' },
+        { from: /./, to: '/views/404.html' }
+      ]
+    }
+  }
+};
 ```
 
 当路径中使用点(dot)（常见于 Angular），你可能需要使用 `disableDotRule`：
 
 ```js
-historyApiFallback: {
-  disableDotRule: true
-}
+module.exports = {
+  //...
+  devServer: {
+    historyApiFallback: {
+      disableDotRule: true
+    }
+  }
+};
 ```
 
 通过 CLI 使用
@@ -300,7 +384,12 @@ webpack-dev-server --history-api-fallback
 指定使用一个 host。默认是 `localhost`。如果你希望服务器外部可访问，指定如下：
 
 ```js
-host: "0.0.0.0"
+module.exports = {
+  //...
+  devServer: {
+    host: '0.0.0.0'
+  }
+};
 ```
 
 通过 CLI 使用
@@ -317,7 +406,12 @@ webpack-dev-server --host 0.0.0.0
 启用 webpack 的模块热替换特性：
 
 ```js
-hot: true
+module.exports = {
+  //...
+  devServer: {
+    hot: true
+  }
+};
 ```
 
 T> 注意，必须有 `webpack.HotModuleReplacementPlugin` 才能完全启用 HMR。如果 `webpack` 或 `webpack-dev-server` 是通过 `--hot` 选项启动的，那么这个插件会被自动添加，所以你可能不需要把它添加到 `webpack.config.js` 中。关于更多信息，请查看 [HMR 概念](/concepts/hot-module-replacement) 页面。
@@ -330,7 +424,12 @@ T> 注意，必须有 `webpack.HotModuleReplacementPlugin` 才能完全启用 HM
 Enables Hot Module Replacement (see [`devServer.hot`](#devserver-hot)) without page refresh as fallback in case of build failures.
 
 ```js
-hotOnly: true
+module.exports = {
+  //...
+  devServer: {
+    hotOnly: true
+  }
+};
 ```
 
 通过 CLI 使用
@@ -347,17 +446,27 @@ webpack-dev-server --hot-only
 默认情况下，dev-server 通过 HTTP 提供服务。也可以选择带有 HTTPS 的 HTTP/2 提供服务：
 
 ```js
-https: true
+module.exports = {
+  //...
+  devServer: {
+    https: true
+  }
+};
 ```
 
 以上设置使用了自签名证书，但是你可以提供自己的：
 
 ```js
-https: {
-  key: fs.readFileSync("/path/to/server.key"),
-  cert: fs.readFileSync("/path/to/server.crt"),
-  ca: fs.readFileSync("/path/to/ca.pem"),
-}
+module.exports = {
+  //...
+  devServer: {
+    https: {
+      key: fs.readFileSync('/path/to/server.key'),
+      cert: fs.readFileSync('/path/to/server.crt'),
+      ca: fs.readFileSync('/path/to/ca.pem'),
+    }
+  }
+};
 ```
 
 此对象直接传递到 Node.js HTTPS 模块，所以更多信息请查看 [HTTPS 文档](https://nodejs.org/api/https.html)。
@@ -381,7 +490,12 @@ webpack-dev-server --https --key /path/to/server.key --cert /path/to/server.crt 
 被作为索引文件的文件名。
 
 ```javascript
-index: 'index.htm'
+module.exports = {
+  //...
+  devServer: {
+    index: 'index.htm'
+  }
+};
 ```
 
 
@@ -405,7 +519,12 @@ webpack-dev-server --info=false
 也可以使用 **iframe 模式**，它在通知栏下面使用 `<iframe>` 标签，包含了关于构建的消息。切换到 **iframe 模式**：
 
 ```js
-inline: false
+module.exports = {
+  //...
+  devServer: {
+    inline: false
+  }
+};
 ```
 
 通过 CLI 使用
@@ -424,7 +543,12 @@ T> 推荐使用模块热替换的内联模式，因为它包含来自 websocket 
 当启用 `lazy` 时，dev-server 只有在请求时才编译包(bundle)。这意味着 webpack 不会监视任何文件改动。我们称之为**惰性模式**。
 
 ```js
-lazy: true
+module.exports = {
+  //...
+  devServer: {
+    lazy: true
+  }
+};
 ```
 
 通过 CLI 使用
@@ -445,7 +569,12 @@ T> 如果使用命令行工具(CLI)，请确保**内联模式(inline mode)**被�
 启用 `noInfo` 后，诸如「启动时和每次保存之后，那些显示的 webpack 包(bundle)信息」的消息将被隐藏。错误和警告仍然会显示。
 
 ```js
-noInfo: true
+module.exports = {
+  //...
+  devServer: {
+    noInfo: true
+  }
+};
 ```
 
 
@@ -456,7 +585,12 @@ noInfo: true
 启用 `open` 后，dev server 会打开浏览器。
 
 ```js
-open: true
+module.exports = {
+  //...
+  devServer: {
+    open: true
+  }
+};
 ```
 
 通过 CLI 使用
@@ -479,7 +613,12 @@ webpack-dev-server --open 'Google Chrome'
 指定打开浏览器时的导航页面。
 
 ```js
-openPage: '/different/page'
+module.exports = {
+  //...
+  devServer: {
+    openPage: '/different/page'
+  }
+};
 ```
 
 通过 CLI 使用
@@ -496,16 +635,26 @@ webpack-dev-server --open-page "/different/page"
 当出现编译器错误或警告时，在浏览器中显示全屏覆盖层。默认禁用。如果你想要只显示编译器错误：
 
 ```js
-overlay: true
+module.exports = {
+  //...
+  devServer: {
+    overlay: true
+  }
+};
 ```
 
 如果想要显示警告和错误：
 
 ```js
-overlay: {
-  warnings: true,
-  errors: true
-}
+module.exports = {
+  //...
+  devServer: {
+    overlay: {
+      warnings: true,
+      errors: true
+    }
+  }
+};
 ```
 
 
@@ -516,7 +665,12 @@ overlay: {
 当通过 CLI 使用时，路径是一个 .pfx 后缀的 SSL 文件。如果用在选项中，它应该是 .pfx 文件的字节流(bytestream)。
 
 ```js
-pfx: '/path/to/file.pfx'
+module.exports = {
+  //...
+  devServer: {
+    pfx: '/path/to/file.pfx'
+  }
+};
 ```
 
 通过 CLI 使用
@@ -533,7 +687,12 @@ webpack-dev-server --pfx /path/to/file.pfx
 SSL PFX文件的密码。
 
 ```js
-pfxPassphrase: 'passphrase'
+module.exports = {
+  //...
+  devServer: {
+    pfxPassphrase: 'passphrase'
+  }
+};
 ```
 
 通过 CLI 使用
@@ -550,7 +709,12 @@ webpack-dev-server --pfx-passphrase passphrase
 指定要监听请求的端口号：
 
 ```js
-port: 8080
+module.exports = {
+  //...
+  devServer: {
+    port: 8080
+  }
+};
 ```
 
 通过 CLI 使用
@@ -571,9 +735,14 @@ dev-server 使用了非常强大的 [http-proxy-middleware](https://github.com/c
 在 `localhost:3000` 上有后端服务的话，你可以这样启用代理：
 
 ```js
-proxy: {
-  "/api": "http://localhost:3000"
-}
+module.exports = {
+  //...
+  devServer: {
+    proxy: {
+      '/api': 'http://localhost:3000'
+    }
+  }
+};
 ```
 
 请求到 `/api/users` 现在会被代理到请求 `http://localhost:3000/api/users`。
@@ -581,23 +750,33 @@ proxy: {
 如果你不想始终传递 `/api` ，则需要重写路径：
 
 ```js
-proxy: {
-  "/api": {
-    target: "http://localhost:3000",
-    pathRewrite: {"^/api" : ""}
+module.exports = {
+  //...
+  devServer: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        pathRewrite: {'^/api' : ''}
+      }
+    }
   }
-}
+};
 ```
 
 默认情况下，不接受运行在 HTTPS 上，且使用了无效证书的后端服务器。如果你想要接受，修改配置如下：
 
 ```js
-proxy: {
-  "/api": {
-    target: "https://other-server.example.com",
-    secure: false
+module.exports = {
+  //...
+  devServer: {
+    proxy: {
+      '/api': {
+        target: 'https://other-server.example.com',
+        secure: false
+      }
+    }
   }
-}
+};
 ```
 
 有时你不想代理所有的请求。可以基于一个函数的返回值绕过代理。
@@ -607,40 +786,53 @@ proxy: {
 例如：对于浏览器请求，你想要提供一个 HTML 页面，但是对于 API 请求则保持代理。你可以这样做：
 
 ```js
-proxy: {
-  "/api": {
-    target: "http://localhost:3000",
-    bypass: function(req, res, proxyOptions) {
-      if (req.headers.accept.indexOf("html") !== -1) {
-        console.log("Skipping proxy for browser request.");
-        return "/index.html";
+module.exports = {
+  //...
+  devServer: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        bypass: function(req, res, proxyOptions) {
+          if (req.headers.accept.indexOf('html') !== -1) {
+            console.log('Skipping proxy for browser request.');
+            return '/index.html';
+          }
+        }
       }
     }
   }
-}
+};
 ```
 
 如果你想要代理多个路径特定到同一个 target 下，你可以使用由一个或多个「具有 `context` 属性的对象」构成的数组：
 
 ```js
-proxy: [{
-  context: ["/auth", "/api"],
-  target: "http://localhost:3000",
-}]
+module.exports = {
+  //...
+  devServer: {
+    proxy: [{
+      context: ['/auth', '/api'],
+      target: 'http://localhost:3000',
+    }]
+  }
+};
 ```
 
 注意，默认情况下，根请求不会被代理。要启用根代理，应该将 `devServer.index` 选项指定为 falsy 值：
 
-``` js
-devServer: {
-  index: '', // specify to enable root proxying
-  host: '...',
-  contentBase: '...',
-  proxy: {
-    context: () => true,
-    target: 'http://localhost:1234'
+```js
+module.exports = {
+  //...
+  devServer: {
+    index: '', // specify to enable root proxying
+    host: '...',
+    contentBase: '...',
+    proxy: {
+      context: () => true,
+      target: 'http://localhost:1234'
+    }
   }
-}
+};
 ```
 
 ## `devServer.progress` - 只用于命令行工具(CLI)
@@ -663,7 +855,12 @@ webpack-dev-server --progress
 例如，dev-server 被代理到 nginx，并且在 `myapp.test` 上可用：
 
 ```js
-public: "myapp.test:80"
+module.exports = {
+  //...
+  devServer: {
+    public: 'myapp.test:80'
+  }
+};
 ```
 
 通过 CLI 使用
@@ -684,7 +881,12 @@ webpack-dev-server --public myapp.test:80
 可以修改 `publicPath`，将 bundle 放在一个目录：
 
 ```js
-publicPath: "/assets/"
+module.exports = {
+  //...
+  devServer: {
+    publicPath: '/assets/'
+  }
+};
 ```
 
 现在可以通过 `http://localhost:8080/assets/bundle.js` 访问 bundle。
@@ -694,7 +896,12 @@ T> 确保 `publicPath` 总是以斜杠(/)开头和结尾。
 也可以使用一个完整的 URL。这是模块热替换所必需的。
 
 ```js
-publicPath: "http://localhost:8080/assets/"
+module.exports = {
+  //...
+  devServer: {
+    publicPath: 'http://localhost:8080/assets/'
+  }
+};
 ```
 
 可以通过 `http://localhost:8080/assets/bundle.js` 访问 bundle。
@@ -709,7 +916,12 @@ T> `devServer.publicPath` 和 `output.publicPath` 一样被推荐。
 启用 `quiet` 后，除了初始启动信息之外的任何内容都不会被打印到控制台。这也意味着来自 webpack 的错误或警告在控制台不可见。
 
 ```js
-quiet: true
+module.exports = {
+  //...
+  devServer: {
+    quiet: true
+  }
+};
 ```
 
 通过 CLI 使用
@@ -729,11 +941,16 @@ W> 此选项__已废弃_。在 v3.0.0 前的版本中支持，并将在 v3.0.0 �
 例如，想要为一些路径定义自定义处理函数：
 
 ```js
-setup(app){
-  app.get('/some/path', function(req, res) {
-    res.json({ custom: 'response' });
-  });
-}
+module.exports = {
+  //...
+  devServer: {
+    setup: function(app) {
+      app.get('/some/path', function(req, res) {
+        res.json({ custom: 'response' });
+      });
+    }
+  }
+};
 ```
 
 
@@ -744,7 +961,12 @@ setup(app){
 用于监听的 Unix socket（而不是 host）。
 
 ```js
-socket: 'socket'
+module.exports = {
+  //...
+  devServer: {
+    socket: 'socket'
+  }
+};
 ```
 
 通过 CLI 使用
@@ -759,9 +981,14 @@ webpack-dev-server --socket socket
 可以用于对 `contentBase` 路径下提供的静态文件，进行高级选项配置。有关可能的选项，请查看 [Express文档](http://expressjs.com/en/4x/api.html#express.static)。一个示例：
 
 ```js
-staticOptions: {
-  redirect: false
-}
+module.exports = {
+  //...
+  devServer: {
+    staticOptions: {
+      redirect: false
+    }
+  }
+};
 ```
 
 T> 这只有在使用 `contentBase` 是一个 `string` 时才有效。
@@ -776,7 +1003,12 @@ T> 这只有在使用 `contentBase` 是一个 `string` 时才有效。
 想要在 bundle 中只显示错误：
 
 ```js
-stats: "errors-only"
+module.exports = {
+  //...
+  devServer: {
+    stats: 'errors-only'
+  }
+};
 ```
 
 关于更多信息，请查看 [**stats 文档**](/configuration/stats)。
@@ -802,7 +1034,12 @@ webpack-dev-server --stdin
 此选项允许浏览器使用本地 IP 打开。
 
 ```js
-useLocalIp: true
+module.exports = {
+  //...
+  devServer: {
+    useLocalIp: true
+  }
+};
 ```
 
 通过 CLI 使用
@@ -819,7 +1056,12 @@ webpack-dev-server --useLocalIp
 告知服务器，观察 `devServer.contentBase` 下的文件。文件修改后，会触发一次完整的页面重载。
 
 ```js
-watchContentBase: true
+module.exports = {
+  //...
+  devServer: {
+    watchContentBase: true
+  }
+};
 ```
 
 默认禁用。
@@ -840,9 +1082,14 @@ webpack-dev-server --watch-content-base
 webpack 使用文件系统(file system)获取文件改动的通知。在某些情况下，不会正常工作。例如，当使用 Network File System (NFS) 时。[Vagrant](https://www.vagrantup.com/) 也有很多问题。在这些情况下，请使用轮询：
 
 ```js
-watchOptions: {
-  poll: true
-}
+module.exports = {
+  //...
+  devServer: {
+    watchOptions: {
+      poll: true
+    }
+  }
+};
 ```
 
 如果这对文件系统来说太重了的话，你可以修改间隔时间（以毫秒为单位），将其设置为一个整数。

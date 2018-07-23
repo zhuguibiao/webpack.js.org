@@ -3,11 +3,14 @@ title: 模式(mode)
 sort: 4
 contributors:
   - EugeneHlushko
+  - byzyk
 ---
 
 提供 `mode` 配置选项，告知 webpack 使用相应模式的内置优化。
 
 `string`
+
+T> `mode` 的默认值是 `production`。
 
 ## 用法
 
@@ -26,7 +29,7 @@ module.exports = {
 webpack --mode=production
 ```
 
-如果不设置，webpack 会将 `production` 设为 `mode` 的默认值。mode 支持以下值：
+支持以下字符串值：
 
 选项                | 描述
 --------------------- | -----------------------
@@ -34,7 +37,9 @@ webpack --mode=production
 `production`          | 会将 `process.env.NODE_ENV` 的值设为 `production`。启用 `FlagDependencyUsagePlugin`, `FlagIncludedChunksPlugin`, `ModuleConcatenationPlugin`, `NoEmitOnErrorsPlugin`, `OccurrenceOrderPlugin`, `SideEffectsFlagPlugin` 和 `UglifyJsPlugin`.
 `none`                | 不选用任何默认优化选项
 
-T> 记住，只设置 `NODE_ENV`，则不会自动设置 `mode`。
+如果不设置，webpack 会将 `production` 作为 `mode` 的默认值去设置。其中，mode 支持一下值：
+
+T> 记住，只设置 `NODE_ENV` 时，不会自动设置 `mode`。
 
 
 ### mode: development
@@ -46,6 +51,7 @@ module.exports = {
 + mode: 'development'
 - plugins: [
 -   new webpack.NamedModulesPlugin(),
+-   new webpack.NamedChunksPlugin(),
 -   new webpack.DefinePlugin({ "process.env.NODE_ENV": JSON.stringify("development") }),
 - ]
 }
@@ -79,4 +85,26 @@ module.exports = {
 -  plugins: [
 -  ]
 }
+```
+
+如果你想要根据 *webpack.config.js* 中的 **mode** 变量去影响编译行为，那你必须将导出对象，改为导出一个函数：
+
+```javascript
+var config = {
+  entry: './app.js'
+  //...
+};
+
+module.exports = (env, argv) => {
+
+  if (argv.mode === 'development') {
+    config.devtool = 'source-map';
+  }
+
+  if (argv.mode === 'production') {
+    //...
+  }
+
+  return config;
+};
 ```

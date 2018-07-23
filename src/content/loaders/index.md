@@ -4,6 +4,7 @@ sort: 1
 contributors:
   - simon04
   - bajras
+  - rhys-vdw
 ---
 
 webpack 可以使用 [loader](/concepts/loaders) 来预处理文件。这允许你打包除 JavaScript 之外的任何静态资源。你可以使用 Node.js 来很简单地编写自己的 loader。
@@ -34,6 +35,7 @@ loader 通过在 `require()` 语句中使用 `loadername!` 前缀来激活，或
 * `traceur-loader` 加载 ES2015+ 代码，然后使用 [Traceur](https://github.com/google/traceur-compiler#readme) 转译为 ES5
 * [`ts-loader`](https://github.com/TypeStrong/ts-loader) 或 [`awesome-typescript-loader`](https://github.com/s-panferov/awesome-typescript-loader) 像 JavaScript 一样加载 [TypeScript](https://www.typescriptlang.org/) 2.0+
 * [`coffee-loader`](/loaders/coffee-loader) 像 JavaScript 一样加载 [CoffeeScript](http://coffeescript.org/)
+* [`fengari-loader`](https://github.com/fengari-lua/fengari-loader/) 使用 [fengari](https://fengari.io/) 加载 Lua 代码
 
 
 ## 模板(Templating)
@@ -46,6 +48,7 @@ loader 通过在 `require()` 语句中使用 `loadername!` 前缀来激活，或
 * `posthtml-loader` 使用 [PostHTML](https://github.com/posthtml/posthtml) 加载并转换 HTML 文件
 * `handlebars-loader` 将 Handlebars 转移为 HTML
 * [`markup-inline-loader`](https://github.com/asnowwolf/markup-inline-loader) 将内联的 SVG/MathML 文件转换为 HTML。在应用于图标字体，或将 CSS 动画应用于 SVG 时非常有用。
+* [`twig-loader`](https://github.com/zimmo-be/twig-loader) 编译 Twig 模板，然后返回一个函数
 
 ## 样式
 

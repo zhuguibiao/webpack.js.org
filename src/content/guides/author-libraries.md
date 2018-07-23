@@ -7,6 +7,7 @@ contributors:
   - simon04
   - 5angel
   - marioacc
+  - byzyk
 ---
 
 除了打包应用程序代码，webpack 还可以用于打包 JavaScript library。以下指南适用于希望流水线化(streamline)打包策略的 library 作者。
@@ -39,24 +40,24 @@ __src/ref.json__
 
 ```javascript
 [{
-  "num": 1,
-  "word": "One"
+  'num': 1,
+  'word': 'One'
 }, {
-  "num": 2,
-  "word": "Two"
+  'num': 2,
+  'word': 'Two'
 }, {
-  "num": 3,
-  "word": "Three"
+  'num': 3,
+  'word': 'Three'
 }, {
-  "num": 4,
-  "word": "Four"
+  'num': 4,
+  'word': 'Four'
 }, {
-  "num": 5,
-  "word": "Five"
+  'num': 5,
+  'word': 'Five'
 }, {
-  "num": 0,
-  "word": "Zero"
-}]
+  'num': 0,
+  'word': 'Zero'
+}];
 ```
 
 __src/index.js__
@@ -69,32 +70,39 @@ export function numToWord(num) {
   return _.reduce(numRef, (accum, ref) => {
     return ref.num === num ? ref.word : accum;
   }, '');
-};
+}
 
 export function wordToNum(word) {
   return _.reduce(numRef, (accum, ref) => {
     return ref.word === word && word.toLowerCase() ? ref.num : accum;
   }, -1);
-};
+}
 ```
 
 该 library 的使用方式如下：
 
+* __ES2015 模块导入：__
+
 ``` js
-// ES2015 模块引入
 import * as webpackNumbers from 'webpack-numbers';
-// CommonJS 模块引入
+// ...
+webpackNumbers.wordToNum('Two');
+```
+
+* __CommonJS 模块导入：__
+
+``` js
 var webpackNumbers = require('webpack-numbers');
 // ...
-// ES2015 和 CommonJS 模块调用
 webpackNumbers.wordToNum('Two');
-// ...
-// AMD 模块引入
+```
+
+* __AMD 模块导入：__
+
+``` js
 require(['webpackNumbers'], function ( webpackNumbers) {
   // ...
-  // AMD 模块调用
   webpackNumbers.wordToNum('Two');
-  // ...
 });
 ```
 
@@ -118,8 +126,8 @@ require(['webpackNumbers'], function ( webpackNumbers) {
 
 注意，我们还可以通过以下配置方式，将 library 暴露：
 
-- global 对象中的属性，用于 Node.js。
-- `this` 对象中的属性。
+* global 对象中的属性，用于 Node.js。
+* `this` 对象中的属性。
 
 完整的 library 配置和相关代码请参阅 [webpack library 示例](https://github.com/kalcifer/webpack-library-example)。
 
@@ -128,16 +136,16 @@ require(['webpackNumbers'], function ( webpackNumbers) {
 
 现在，让我们以某种方式打包这个 library，能够实现以下几个目标：
 
-- 不打包 `lodash`，而是使用 `externals` 来 require 用户加载好的 lodash。
-- 设置 library 的名称为 `webpack-numbers`.
-- 将 library 暴露为一个名为 `webpackNumbers`的变量。
-- 能够访问其他 Node.js 中的 library。
+* 不打包 `lodash`，而是使用 `externals` 来 require 用户加载好的 lodash。
+* 设置 library 的名称为 `webpack-numbers`.
+* 将 library 暴露为一个名为 `webpackNumbers`的变量。
+* 能够访问其他 Node.js 中的 library。
 
 此外，用户应该能够通过以下方式访问 library：
 
-- ES2015 模块。例如 `import webpackNumbers from 'webpack-numbers'`。
-- CommonJS 模块。例如 `require('webpack-numbers')`.
-- 全局变量，当通过 `script` 脚本引入时
+* ES2015 模块。例如 `import webpackNumbers from 'webpack-numbers'`。
+* CommonJS 模块。例如 `require('webpack-numbers')`.
+* 全局变量，当通过 `script` 脚本引入时
 
 我们可以从这个基本的 webpack 配置开始：
 
@@ -204,12 +212,15 @@ import B from 'library/two';
 无法通过在 externals 中指定 `library` 目录的方式，将它们从 bundle 中排除。你需要逐个排除它们，或者使用正则表达式排除。
 
 ``` js
-externals: [
-  'library/one',
-  'library/two',
-  // Everything that starts with "library/"
-  /^library\/.+$/
-]
+module.exports = {
+  //...
+  externals: [
+    'library/one',
+    'library/two',
+    // 所有以 "library/" 开始的
+    /^library\/.+$/
+  ]
+};
 ```
 
 
@@ -272,10 +283,10 @@ __webpack.config.js__
 
 可以通过以下方式暴露 library：
 
-- 遍历：作为一个全局变量，通过 `script` 标签来访问（`libraryTarget:'var'`）。
-- this：通过 `this` 对象访问（`libraryTarget:'this'`）。
-- window：通过 `window` 对象访问，在浏览器中（`libraryTarget:'window'`）。
-- UMD：在 AMD 或 CommonJS 的 `require` 之后可访问（`libraryTarget:'umd'`）。
+* 遍历：作为一个全局变量，通过 `script` 标签来访问（`libraryTarget:'var'`）。
+* this：通过 `this` 对象访问（`libraryTarget:'this'`）。
+* window：通过 `window` 对象访问，在浏览器中（`libraryTarget:'window'`）。
+* UMD：在 AMD 或 CommonJS 的 `require` 之后可访问（`libraryTarget:'umd'`）。
 
 如果设置了 `library` 但没设置 `libraryTarget`，则 `libraryTarget` 默认为 `var`，详细说明请查看 [output 配置文档](/configuration/output)。查看 [`output.libraryTarget`](/configuration/output#output-librarytarget)，以获取所有可用选项的详细列表。
 

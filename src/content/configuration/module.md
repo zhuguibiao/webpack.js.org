@@ -7,6 +7,8 @@ contributors:
   - jouni-kantola
   - jhnns
   - dylanonelson
+  - byzyk
+  - pnevares
 ---
 
 这些选项决定了如何处理项目中的[不同类型的模块](/concepts/modules)。
@@ -21,14 +23,18 @@ contributors:
 防止 webpack 解析那些任何与给定正则表达式相匹配的文件。忽略的文件中**不应该含有** `import`, `require`, `define` 的调用，或任何其他导入机制。忽略大型的 library 可以提高构建性能。
 
 ```js
-noParse: /jquery|lodash/
+module.exports = {
+  //...
+  module: {
+    noParse: /jquery|lodash/,
 
-// 从 webpack 3.0.0 开始
-noParse: function(content) {
-  return /jquery|lodash/.test(content);
-}
+    // 从 webpack 3.0.0 开始
+    noParse: function(content) {
+      return /jquery|lodash/.test(content);
+    }
+  }
+};
 ```
-
 
 ## `module.rules`
 
@@ -92,7 +98,10 @@ W> 小心！resource 是文件的_解析_路径，这意味着符号链接的资
 
 还有一个额外的种类"行内 loader"，loader 被应用在 import/require 行内。
 
-所有 loader 通过 `前置, 行内, 普通, 后置` 排序，并按此顺序使用。
+所有一个接一个地进入的 loader，都有两个阶段：
+
+1. __pitching__ 阶段：loader 上的 pitch 方法，按照 `后置(post)、行内(normal)、普通(inline)、前置(pre)` 的顺序调用。更多详细信息，请查看 [ 越过 loader(pitching loader)](/api/loaders/#pitching-loader)。
+2. __normal__阶段：loader 上的 常规方法，按照 `前置(pre)、行内(normal)、普通(inline)、后置(post)` 的顺序调用。模块源码的转换，发生在这个阶段。
 
 所有普通 loader 可以通过在请求中加上 `!` 前缀来忽略（覆盖）。
 
@@ -119,8 +128,8 @@ W> 小心！resource 是文件的_解析_路径，这意味着符号链接的资
 
 __index.js__
 
-``` js
-import A from './a.js'
+```js
+import A from './a.js';
 ```
 
 这个选项可以用来将 loader 应用到一个特定模块或一组模块的依赖中。
@@ -143,19 +152,26 @@ W> 由于需要支持 `Rule.use`，此选项__已废弃__。
 [`规则`](#rule)数组，当规则匹配时，只使用第一个匹配规则。
 
 ```javascript
-{
-  test: /.css$/,
-  oneOf: [
-    {
-      resourceQuery: /inline/, // foo.css?inline
-      use: 'url-loader'
-    },
-    {
-      resourceQuery: /external/, // foo.css?external
-      use: 'file-loader'
-    }
-  ]
-}
+module.exports = {
+  //...
+  module: {
+    rules: [
+      {
+        test: /.css$/,
+        oneOf: [
+          {
+            resourceQuery: /inline/, // foo.css?inline
+            use: 'url-loader'
+          },
+          {
+            resourceQuery: /external/, // foo.css?external
+            use: 'file-loader'
+          }
+        ]
+      }
+    ]
+  }
+};
 ```
 
 ## `Rule.options / Rule.query`
@@ -178,20 +194,31 @@ W> 由于需要支持 `Rule.options` 和 `UseEntry.options`，`Rule.use`，`Rule
 
 **示例**（默认的插件解析器选项）：
 
-``` js-with-links
-parser: {
-  amd: false, // 禁用 AMD
-  commonjs: false, // 禁用 CommonJS
-  system: false, // 禁用 SystemJS
-  harmony: false, // 禁用 ES2015 Harmony import/export
-  requireInclude: false, // 禁用 require.include
-  requireEnsure: false, // 禁用 require.ensure
-  requireContext: false, // 禁用 require.context
-  browserify: false, // 禁用特殊处理的 browserify bundle
-  requireJs: false, // 禁用 requirejs.*
-  node: false, // 禁用 __dirname, __filename, module, require.extensions, require.main 等。
-  node: {...} // 在模块级别(module level)上重新配置 [node](/configuration/node) 层(layer)
+```js-with-links
+module.exports = {
+  //...
+  module: {
+    rules: [
+      {
+        //...
+        parser: {
+          amd: false, // 禁用 AMD
+          commonjs: false, // 禁用 CommonJS
+          system: false, // 禁用 SystemJS
+          harmony: false, // 禁用 ES2015 Harmony import/export
+          requireInclude: false, // 禁用 require.include
+          requireEnsure: false, // 禁用 require.ensure
+          requireContext: false, // 禁用 require.context
+          browserify: false, // 禁用特殊处理的 browserify bundle
+          requireJs: false, // 禁用 requirejs.*
+          node: false, // 禁用 __dirname, __filename, module, require.extensions, require.main 等。
+          node: {...} // 在模块级别(module level)上重新配置 [node](/configuration/node) 层(layer)
+        }
+      }
+    ]
+  }
 }
+        }
 ```
 
 
@@ -204,18 +231,32 @@ parser: {
 
 A [`Condition`](#condition) matched with the resource query. This option is used to test against the query section of a request string (i.e. from the question mark onwards). If you were to `import Foo from './foo.css?inline'`, the following condition would match:
 
-``` js
-{
-  test: /.css$/,
-  resourceQuery: /inline/,
-  use: 'url-loader'
-}
+```js
+module.exports = {
+  //...
+  module: {
+    rules: [
+      {
+        test: /.css$/,
+        resourceQuery: /inline/,
+        use: 'url-loader'
+      }
+    ]
+  }
+};
 ```
 
 
 ## `Rule.rules`
 
 [`规则`](#rule)数组，当规则匹配时使用。
+
+
+## `Rule.sideEffects`
+
+可能的值：`false | 路径(path)构成的数组`
+
+标示出模块的哪些部分包含外部作用(side effect)。更多详细信息，请查看 [tree shaking](/guides/tree-shaking/#mark-the-file-as-side-effect-free)。
 
 
 ## `Rule.test`
@@ -232,21 +273,31 @@ A [`Condition`](#condition) matched with the resource query. This option is used
 Loaders can be chained by passing multiple loaders, which will be applied from right to left (last to first configured).
 
 ```javascript
-use: [
-  'style-loader',
-  {
-    loader: 'css-loader',
-    options: {
-      importLoaders: 1
-    }
-  },
-  {
-    loader: 'less-loader',
-    options: {
-      noIeCompat: true
-    }
+module.exports = {
+  //...
+  module: {
+    rules: [
+      {
+        //...
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1
+            }
+          },
+          {
+            loader: 'less-loader',
+            options: {
+              noIeCompat: true
+            }
+          }
+        ]
+      }
+    ]
   }
-]
+};
 ```
 
 详细请查看 [UseEntry](#useentry)。
@@ -276,14 +327,21 @@ use: [
 
 **示例:**
 
-``` js
-{
-  test: /\.css$/,
-  include: [
-    path.resolve(__dirname, "app/styles"),
-    path.resolve(__dirname, "vendor/styles")
-  ]
-}
+```js
+module.exports = {
+  //...
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        include: [
+          path.resolve(__dirname, 'app/styles'),
+          path.resolve(__dirname, 'vendor/styles')
+        ]
+      }
+    ]
+  }
+};
 ```
 
 
@@ -299,13 +357,20 @@ use: [
 
 **Example:**
 
-``` js
-{
-  loader: "css-loader",
-  options: {
-    modules: true
+```js
+module.exports = {
+  //...
+  module: {
+    rules: [
+      {
+        loader: 'css-loader',
+        options: {
+          modules: true
+        }
+      }
+    ]
   }
-}
+};
 ```
 
 注意，webpack 需要生成资源和所有 loader 的独立模块标识，包括选项。它尝试对选项对象使用 `JSON.stringify`。这在 99.9% 的情况下是可以的，但是如果将相同的 loader 应用于相同资源的不同选项，并且选项具有一些带字符的值，则可能不是唯一的。
@@ -329,20 +394,23 @@ use: [
 以下是其[默认值](https://github.com/webpack/webpack/blob/master/lib/WebpackOptionsDefaulter.js)的可用选项
 
 ```js
-module: {
-  exprContextCritical: true,
-  exprContextRecursive: true,
-  exprContextRegExp: false,
-  exprContextRequest: ".",
-  unknownContextCritical: true,
-  unknownContextRecursive: true,
-  unknownContextRegExp: false,
-  unknownContextRequest: ".",
-  wrappedContextCritical: false
-  wrappedContextRecursive: true,
-  wrappedContextRegExp: /.*/,
-  strictExportPresence: false // since webpack 2.3.0
-}
+module.exports = {
+  //...
+  module: {
+    exprContextCritical: true,
+    exprContextRecursive: true,
+    exprContextRegExp: false,
+    exprContextRequest: '.',
+    unknownContextCritical: true,
+    unknownContextRecursive: true,
+    unknownContextRegExp: false,
+    unknownContextRequest: '.',
+    wrappedContextCritical: false,
+    wrappedContextRecursive: true,
+    wrappedContextRegExp: /.*/,
+    strictExportPresence: false // since webpack 2.3.0
+  }
+};
 ```
 
 T> 你可以使用 `ContextReplacementPlugin` 来修改这些单个依赖的值。这也会删除警告。

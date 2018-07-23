@@ -10,6 +10,8 @@ contributors:
   - fvgs
   - dhurlburtusa
   - MagicDuck
+  - byzyk
+  - madhavarshney
 ---
 
 `output` 位于对象最顶级键(key)，包括了一组选项，指示 webpack 如何去输出、以及在哪里输出你的「bundle、asset 和其他你所打包或使用 webpack 载入的任何内容」。
@@ -21,31 +23,34 @@ contributors:
 
 在和 [`output.library`](#output-library) 和 [`output.libraryTarget`](#output-librarytarget) 一起使用时，此选项允许用户向导出容器(export wrapper)中插入注释。要为 `libraryTarget` 每种类型都插入相同的注释，将 `auxiliaryComment` 设置为一个字符串：
 
-``` js
-output: {
-  library: "someLibName",
-  libraryTarget: "umd",
-  filename: "someLibName.js",
-  auxiliaryComment: "Test Comment"
-}
+```js
+module.exports = {
+  //...
+  output: {
+    library: 'someLibName',
+    libraryTarget: 'umd',
+    filename: 'someLibName.js',
+    auxiliaryComment: 'Test Comment'
+  }
+};
 ```
 
 将会生成如下：
 
-``` js
+```js
 (function webpackUniversalModuleDefinition(root, factory) {
   // Test Comment
   if(typeof exports === 'object' && typeof module === 'object')
-    module.exports = factory(require("lodash"));
+    module.exports = factory(require('lodash'));
   // Test Comment
   else if(typeof define === 'function' && define.amd)
-    define(["lodash"], factory);
+    define(['lodash'], factory);
   // Test Comment
   else if(typeof exports === 'object')
-    exports["someLibName"] = factory(require("lodash"));
+    exports['someLibName'] = factory(require('lodash'));
   // Test Comment
   else
-    root["someLibName"] = factory(root["_"]);
+    root['someLibName'] = factory(root['_']);
 })(this, function(__WEBPACK_EXTERNAL_MODULE_1__) {
   // ...
 });
@@ -53,19 +58,25 @@ output: {
 
 对于 `libraryTarget` 每种类型的注释进行更细粒度地控制，请传入一个对象：
 
-``` js
-auxiliaryComment: {
-  root: "Root Comment",
-  commonjs: "CommonJS Comment",
-  commonjs2: "CommonJS2 Comment",
-  amd: "AMD Comment"
-}
+```js
+module.exports = {
+  //...
+  output: {
+    //...
+    auxiliaryComment: {
+      root: 'Root Comment',
+      commonjs: 'CommonJS Comment',
+      commonjs2: 'CommonJS2 Comment',
+      amd: 'AMD Comment'
+    }
+  }
+};
 ```
 
 
 ## `output.chunkFilename`
 
-`string` `function`
+`string`
 
 此选项决定了非入口(non-entry) chunk 文件的名称。有关可取的值的详细信息，请查看 [`output.filename`](#output-filename) 选项。
 
@@ -125,8 +136,13 @@ chunk 请求到期之前的毫秒数，默认为 120 000。从 webpack 2.6.0 开
 
 传入 boolean 值，对所有模块启用或禁用此功能（默认 `false`）。对象可有 `test`, `include`, `exclude` 三种属性。例如，对某个特定目录中所有 javascript 文件启用此功能：
 
-``` js
-devtoolLineToLine: { test: /\.js$/, include: 'src/utilities' }
+```js
+module.exports = {
+  //...
+  output: {
+    devtoolLineToLine: { test: /\.js$/, include: 'src/utilities' }
+  }
+};
 ```
 
 
@@ -138,8 +154,13 @@ devtoolLineToLine: { test: /\.js$/, include: 'src/utilities' }
 
 自定义每个 source map 的 `sources` 数组中使用的名称。可以通过传递模板字符串(template string)或者函数来完成。例如，当使用 `devtool: 'eval'`，默认值是：
 
-``` js
-devtoolModuleFilenameTemplate: "webpack://[namespace]/[resource-path]?[loaders]"
+```js
+module.exports = {
+  //...
+  output: {
+    devtoolModuleFilenameTemplate: 'webpack://[namespace]/[resource-path]?[loaders]'
+  }
+};
 ```
 
 模板字符串(template string)中做以下替换（通过 webpack 内部的 [`ModuleFilenameHelpers`](https://github.com/webpack/webpack/blob/master/lib/ModuleFilenameHelpers.js)）：
@@ -157,10 +178,15 @@ devtoolModuleFilenameTemplate: "webpack://[namespace]/[resource-path]?[loaders]"
 
 当使用一个函数，同样的选项要通过 `info` 参数并使用驼峰式(camel-cased)：
 
-``` js
-devtoolModuleFilenameTemplate: info => {
-  return `webpack:///${info.resourcePath}?${info.loaders}`
-}
+```js
+module.exports = {
+  //...
+  output: {
+    devtoolModuleFilenameTemplate: info => {
+      return `webpack:///${info.resourcePath}?${info.loaders}`;
+    }
+  }
+};
 ```
 
 如果多个模块产生相同的名称，使用 [`output.devtoolFallbackModuleFilenameTemplate`](#output-devtoolfallbackmodulefilenametemplate) 来代替这些模块。
@@ -170,7 +196,7 @@ devtoolModuleFilenameTemplate: info => {
 
 `string`
 
-此选项确定 [`output.devtoolModuleFilenameTemplate`](#output-devtoolmodulefilenametemplate) 使用的模块名称空间。未指定时的默认值为：[`output.library`](#output-library)。在加载多个通过 webpack 构建的 library 时，用于防止 sourcemap 中源文件路径冲突。
+此选项确定 [`output.devtoolModuleFilenameTemplate`](#output-devtoolmodulefilenametemplate) 使用的模块名称空间。未指定时的默认值为：[`output.library`](#output-library)。在加载多个通过 webpack 构建的 library 时，用于防止 source map 中源文件路径冲突。
 
 例如，如果你有两个 library，分别使用命名空间 `library1` 和 `library2`，并且都有一个文件 `./src/index.js`（可能具有不同内容），它们会将这些文件暴露为 `webpack://library1/./src/index.js` 和 `webpack://library2/./src/index.js`。
 
@@ -183,34 +209,59 @@ devtoolModuleFilenameTemplate: info => {
 
 对于单个[`入口`](/configuration/entry-context#entry)起点，filename 会是一个静态名称。
 
-``` js
-filename: "bundle.js"
+```js
+module.exports = {
+  //...
+  output: {
+    filename: 'bundle.js'
+  }
+};
 ```
 
 然而，当通过多个入口起点(entry point)、代码拆分(code splitting)或各种插件(plugin)创建多个 bundle，应该使用以下一种替换方式，来赋予每个 bundle 一个唯一的名称……
 
 使用入口名称：
 
-``` js
-filename: "[name].bundle.js"
+```js
+module.exports = {
+  //...
+  output: {
+    filename: '[name].bundle.js'
+  }
+};
 ```
 
 使用内部 chunk id
 
-``` js
-filename: "[id].bundle.js"
+```js
+module.exports = {
+  //...
+  output: {
+    filename: '[id].bundle.js'
+  }
+};
 ```
 
 使用每次构建过程中，唯一的 hash 生成
 
-``` js
-filename: "[name].[hash].bundle.js"
+```js
+module.exports = {
+  //...
+  output: {
+    filename: '[name].[hash].bundle.js'
+  }
+};
 ```
 
 使用基于每个 chunk 内容的 hash：
 
-``` js
-filename: "[chunkhash].bundle.js"
+```js
+module.exports = {
+  //...
+  output: {
+    filename: '[chunkhash].bundle.js'
+  }
+};
 ```
 
 请确保已阅读过[指南 - 缓存](/guides/caching)的详细信息。这里涉及更多步骤，不仅仅是设置此选项。
@@ -238,7 +289,7 @@ T> 在使用 [`ExtractTextWebpackPlugin`](/plugins/extract-text-webpack-plugin) 
 
 ## `output.hashDigest`
 
-在生成 hash 时使用的编码方式，默认为 `'hex'`。支持 Node.js [`hash.digest`](https://nodejs.org/api/crypto.html#crypto_hash_digest_encoding) 的所有编码。
+在生成 hash 时使用的编码方式，默认为 `'hex'`。支持 Node.js [`hash.digest`](https://nodejs.org/api/crypto.html#crypto_hash_digest_encoding) 的所有编码。对文件名使用 `'base64'`，可能会出现问题，因为 base64 字母表中具有 `/` 这个字符(character)。同样的，`'latin1'` 规定可以含有任何字符(character)。
 
 
 ## `output.hashDigestLength`
@@ -252,8 +303,13 @@ T> 在使用 [`ExtractTextWebpackPlugin`](/plugins/extract-text-webpack-plugin) 
 
 散列算法，默认为 `'md5'`。支持 Node.JS [`crypto.createHash`](https://nodejs.org/api/crypto.html#crypto_crypto_createhash_algorithm_options) 的所有功能。从 `4.0.0-alpha2` 开始，`hashFunction` 现在可以是一个返回自定义 hash 的构造函数。出于性能原因，你可以提供一个不加密的哈希函数(non-crypto hash function)。
 
-``` js
-hashFunction: require('metrohash').MetroHash64
+```js
+module.exports = {
+  //...
+  output: {
+    hashFunction: require('metrohash').MetroHash64
+  }
+};
 ```
 
 确保 hash 函数有可访问的 `update` and `digest` 方法。
@@ -271,8 +327,13 @@ hashFunction: require('metrohash').MetroHash64
 
 占位符只能是 `[id]` 和 `[hash]`，默认值是：
 
-``` js
-hotUpdateChunkFilename: "[id].[hash].hot-update.js"
+```js
+module.exports = {
+  //...
+  output: {
+    hotUpdateChunkFilename: '[id].[hash].hot-update.js'
+  }
+};
 ```
 
 这里没有必要修改它。
@@ -297,8 +358,13 @@ JSONP 函数用于异步加载(async load)热更新(hot-update) chunk。
 
 占位符只能是 `[hash]`，默认值是：
 
-``` js
-hotUpdateMainFilename: "[hash].hot-update.json"
+```js
+module.exports = {
+  //...
+  output: {
+    hotUpdateMainFilename: '[hash].hot-update.json'
+  }
+};
 ```
 
 这里没有必要修改它。
@@ -325,10 +391,13 @@ JSONP 函数用于异步加载(async load) chunk，或者拼接多个初始 chun
 
 `output.library` 的值的作用，取决于[`output.libraryTarget`](#output-librarytarget) 选项的值；完整的详细信息请查阅该章节。注意，`output.libraryTarget` 的默认选项是 `var`，所以如果使用以下配置选项：
 
-``` js
-output: {
-  library: "MyLibrary"
-}
+```js
+module.exports = {
+  //...
+  output: {
+    library: 'MyLibrary'
+  }
+};
 ```
 
 如果生成的输出文件，是在 HTML 页面中作为一个 script 标签引入，则变量 `MyLibrary` 将与入口文件的返回值绑定。
@@ -350,26 +419,26 @@ The following configurations are supported:
 
 `libraryExport: "default"` - The **default export of your entry point** will be assigned to the library target:
 
-``` js
+```js
 // if your entry has a default export of `MyDefaultModule`
 var MyDefaultModule = _entry_return_.default;
 ```
 
 `libraryExport: "MyModule"` - The **specified module** will be assigned to the library target:
 
-``` js
+```js
 var MyModule = _entry_return_.MyModule;
 ```
 
 `libraryExport: ["MyModule", "MySubModule"]` - The array is interpreted as a **path to a module** to be assigned to the library target:
 
-``` js
+```js
 var MySubModule = _entry_return_.MyModule.MySubModule;
 ```
 
 With the `libraryExport` configurations specified above, the resulting libraries could be utilized as such:
 
-``` js
+```js
 MyDefaultModule.doSomething();
 MyModule.doSomething();
 MySubModule.doSomething();
@@ -392,7 +461,7 @@ T> 注意，下面的示例代码中的 `_entry_return_` 是入口起点返回�
 
 `libraryTarget: "var"` - （默认值）当 library 加载完成，**入口起点的返回值**将分配给一个变量：
 
-``` js
+```js
 var MyLibrary = _entry_return_;
 
 // 在一个单独的 script……
@@ -404,7 +473,7 @@ W> 当使用此选项时，将 `output.library` 设置为空，会因为没有�
 
 `libraryTarget: "assign"` - 这将产生一个隐含的全局变量，可能会潜在地重新分配到全局中已存在的值（谨慎使用）。.
 
-``` js
+```js
 MyLibrary = _entry_return_;
 ```
 
@@ -419,16 +488,16 @@ W> 当使用此选项时，将 `output.library` 设置为空，将产生一个�
 
 如果 `output.library` 未赋值为一个非空字符串，则默认行为是，将入口起点返回的所有属性都赋值给一个对象（此对象由 `output.libraryTarget` 特定），通过如下代码片段：
 
-``` js
-(function(e, a) { for(var i in a) e[i] = a[i]; }(${output.libraryTarget}, _entry_return_)
+```js
+(function(e, a) { for(var i in a) { e[i] = a[i]; } }(output.libraryTarget, _entry_return_));
 ```
 
 W> 注意，不设置 `output.library` 将导致由入口起点返回的所有属性，都会被赋值给给定的对象；这里并不会检查现有的属性名是否存在。
 
 `libraryTarget: "this"` - **入口起点的返回值**将分配给 this 的一个属性（此名称由 `output.library` 定义）下，`this` 的含义取决于你：
 
-``` js
-this["MyLibrary"] = _entry_return_;
+```js
+this['MyLibrary'] = _entry_return_;
 
 // 在一个单独的 script……
 this.MyLibrary.doSomething();
@@ -437,8 +506,8 @@ MyLibrary.doSomething(); // 如果 this 是 window
 
 `libraryTarget: "window"` - **入口起点的返回值**将使用 `output.library` 中定义的值，分配给 `window` 对象的这个属性下。
 
-``` js
-window["MyLibrary"] = _entry_return_;
+```js
+window['MyLibrary'] = _entry_return_;
 
 window.MyLibrary.doSomething();
 ```
@@ -446,8 +515,8 @@ window.MyLibrary.doSomething();
 
 `libraryTarget: "global"` - **入口起点的返回值**将使用 `output.library` 中定义的值，分配给 `global` 对象的这个属性下。
 
-``` js
-global["MyLibrary"] = _entry_return_;
+```js
+global['MyLibrary'] = _entry_return_;
 
 global.MyLibrary.doSomething();
 ```
@@ -455,10 +524,10 @@ global.MyLibrary.doSomething();
 
 `libraryTarget: "commonjs"` - **入口起点的返回值**将使用 `output.library` 中定义的值，分配给 exports 对象。这个名称也意味着，模块用于 CommonJS 环境：
 
-``` js
-exports["MyLibrary"] = _entry_return_;
+```js
+exports['MyLibrary'] = _entry_return_;
 
-require("MyLibrary").doSomething();
+require('MyLibrary').doSomething();
 ```
 
 ### 模块定义系统
@@ -468,10 +537,10 @@ require("MyLibrary").doSomething();
 
 `libraryTarget: "commonjs2"` - **入口起点的返回值**将分配给 `module.exports` 对象。这个名称也意味着模块用于 CommonJS 环境：
 
-``` js
+```js
 module.exports = _entry_return_;
 
-require("MyLibrary").doSomething();
+require('MyLibrary').doSomething();
 ```
 
 注意，`output.library` 会被省略，因此对于此特定的 `output.libraryTarget`，无需再设置 `output.library` 。
@@ -485,24 +554,27 @@ AMD 模块要求入口 chunk（例如使用 `<script>` 标签加载的第一个�
 
 所以，使用以下配置……
 
-``` js
-output: {
-  library: "MyLibrary",
-  libraryTarget: "amd"
-}
+```js
+module.exports = {
+  //...
+  output: {
+    library: 'MyLibrary',
+    libraryTarget: 'amd'
+  }
+};
 ```
 
 生成的 output 将会使用 "MyLibrary" 作为模块名定义，即
 
-``` js
-define("MyLibrary", [], function() {
-  return _entry_return_; // 此模块返回值，是入口 chunk 返回的值
+```js
+define('MyLibrary', [], function() {
+  return _entry_return_;
 });
 ```
 
 可以在 script 标签中，将 bundle 作为一个模块整体引入，并且可以像这样调用 bundle：
 
-``` js
+```js
 require(['MyLibrary'], function(MyLibrary) {
   // 使用 library 做一些事……
 });
@@ -510,7 +582,7 @@ require(['MyLibrary'], function(MyLibrary) {
 
 如果 `output.library` 未定义，将会生成以下内容。
 
-``` js
+```js
 define([], function() {
   return _entry_return_; // 此模块返回值，是入口 chunk 返回的值
 });
@@ -523,25 +595,28 @@ define([], function() {
 
 在这个例子中，你需要 `library` 属性来命名你的模块：
 
-``` js
-output: {
-  library: "MyLibrary",
-  libraryTarget: "umd"
-}
+```js
+module.exports = {
+  //...
+  output: {
+    library: 'MyLibrary',
+    libraryTarget: 'umd'
+  }
+};
 ```
 
 最终输出如下：
 
-``` js
+```js
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
   else if(typeof define === 'function' && define.amd)
     define([], factory);
   else if(typeof exports === 'object')
-    exports["MyLibrary"] = factory();
+    exports['MyLibrary'] = factory();
   else
-    root["MyLibrary"] = factory();
+    root['MyLibrary'] = factory();
 })(typeof self !== 'undefined' ? self : this, function() {
   return _entry_return_; // 此模块返回值，是入口 chunk 返回的值
 });
@@ -549,15 +624,18 @@ output: {
 
 注意，省略 `library` 会导致将入口起点返回的所有属性，直接赋值给 root 对象，就像[对象分配章节](#expose-via-object-assignment)。例如：
 
-``` js
-output: {
-  libraryTarget: "umd"
-}
+```js
+module.exports = {
+  //...
+  output: {
+    libraryTarget: 'umd'
+  }
+};
 ```
 
 输出结果如下：
 
-``` js
+```js
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -574,15 +652,18 @@ output: {
 
 从 webpack 3.1.0 开始，你可以将 `library` 指定为一个对象，用于给每个 target 起不同的名称：
 
-``` js
-output: {
-  library: {
-    root: "MyLibrary",
-    amd: "my-library",
-    commonjs: "my-common-library"
-  },
-  libraryTarget: "umd"
-}
+```js
+module.exports = {
+  //...
+  output: {
+    library: {
+      root: 'MyLibrary',
+      amd: 'my-library',
+      commonjs: 'my-common-library'
+    },
+    libraryTarget: 'umd'
+  }
+};
 ```
 
 模块验证 library。
@@ -606,7 +687,12 @@ MyLibrary(_entry_return_);
 output 目录对应一个**绝对路径**。
 
 ```js
-path: path.resolve(__dirname, 'dist/assets')
+module.exports = {
+  //...
+  output: {
+    path: path.resolve(__dirname, 'dist/assets')
+  }
+};
 ```
 
 注意，`[hash]` 在参数中被替换为编译过程(compilation)的 hash。详细信息请查看[指南 - 缓存](/guides/caching)。
@@ -620,8 +706,13 @@ path: path.resolve(__dirname, 'dist/assets')
 
 W> 对于在开发环境(development)下阅读生成代码时，虽然通过这些注释可以提供非常有用的数据信息，但在生产环境(production)下，**不应该**使用。
 
-``` js
-pathinfo: true
+```js
+module.exports = {
+  //...
+  output: {
+    pathinfo: true
+  }
+};
 ```
 
 注意，这些注释也会被添加至经过 tree shaking 后生成的 bundle 中。
@@ -642,15 +733,25 @@ pathinfo: true
 简单规则如下：[`output.path`](#output-path) 中的 URL 以 HTML 页面为基准。
 
 ```js
-path: path.resolve(__dirname, "public/assets"),
-publicPath: "https://cdn.example.com/assets/"
+module.exports = {
+  //...
+  output: {
+    path: path.resolve(__dirname, 'public/assets'),
+    publicPath: 'https://cdn.example.com/assets/'
+  }
+};
 ```
 
 对于这个配置：
 
 ```js
-publicPath: "/assets/",
-chunkFilename: "[id].chunk.js"
+module.exports = {
+  //...
+  output: {
+    publicPath: '/assets/',
+    chunkFilename: '[id].chunk.js'
+  }
+};
 ```
 
 对于一个 chunk 请求，看起来像这样 `/assets/4.chunk.js`。
@@ -673,19 +774,25 @@ webpack-dev-server 也会默认从 `publicPath` 为基准，使用它来决定�
 
 示例：
 
-``` js
-publicPath: "https://cdn.example.com/assets/", // CDN（总是 HTTPS 协议）
-publicPath: "//cdn.example.com/assets/", // CDN (协议相同)
-publicPath: "/assets/", // 相对于服务(server-relative)
-publicPath: "assets/", // 相对于 HTML 页面
-publicPath: "../assets/", // 相对于 HTML 页面
-publicPath: "", // 相对于 HTML 页面（目录相同）
+```js
+module.exports = {
+  //...
+  output: {
+    // One of the below
+    publicPath: 'https://cdn.example.com/assets/', // CDN（总是 HTTPS 协议）
+    publicPath: '//cdn.example.com/assets/', // CDN（协议相同）
+    publicPath: '/assets/', // 相对于服务(server-relative)
+    publicPath: 'assets/', // 相对于 HTML 页面
+    publicPath: '../assets/', // 相对于 HTML 页面
+    publicPath: '', // 相对于 HTML 页面（目录相同）
+  }
+};
 ```
 
 在编译时(compile time)无法知道输出文件的 `publicPath` 的情况下，可以留空，然后在入口文件(entry file)处使用[自由变量(free variable)](https://stackoverflow.com/questions/12934929/what-are-free-variables) `__webpack_public_path__`，以便在运行时(runtime)进行动态设置。
 
-``` js
- __webpack_public_path__ = myRuntimePublicPath
+```js
+__webpack_public_path__ = myRuntimePublicPath;
 
 // 应用程序入口的其他部分
 ```
@@ -715,8 +822,13 @@ publicPath: "", // 相对于 HTML 页面（目录相同）
 
 修改输出 bundle 中每行的前缀。
 
-``` js
-sourcePrefix: "\t"
+```js
+module.exports = {
+  //...
+  output: {
+    sourcePrefix: '\t'
+  }
+};
 ```
 
 注意，默认情况下使用空字符串。使用一些缩进会看起来更美观，但是可能导致多行字符串中的问题。
@@ -736,24 +848,24 @@ sourcePrefix: "\t"
 
 例如，设想一下 `module.js`：
 
-``` js
-throw new Error("error");
+```js
+throw new Error('error');
 ```
 
 将 `strictModuleExceptionHandling` 设置为 `false`，只有第一个 `require` 抛出异常：
 
-``` js
+```js
 // with strictModuleExceptionHandling = false
-require("module") // <- 抛出
-require("module") // <- 不抛出
+require('module'); // <- 抛出
+require('module'); // <- 不抛出
 ```
 
 相反，将 `strictModuleExceptionHandling` 设置为 `true`，这个模块所有的 `require` 都抛出异常：
 
-``` js
+```js
 // with strictModuleExceptionHandling = true
-require("module") // <- 抛出
-require("module") // <- 仍然抛出
+require('module'); // <- 抛出
+require('module'); // <- 仍然抛出
 ```
 
 
@@ -763,8 +875,13 @@ require("module") // <- 仍然抛出
 
 当使用了 `libraryTarget: "umd"`，设置：
 
-``` js
-umdNamedDefine: true
+```js
+module.exports = {
+  //...
+  output: {
+    umdNamedDefine: true
+  }
+};
 ```
 
 会对 UMD 的构建过程中的 AMD 模块进行命名。否则就使用匿名的 `define`。

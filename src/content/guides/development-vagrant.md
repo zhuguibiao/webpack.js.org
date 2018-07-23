@@ -4,6 +4,7 @@ sort: 19
 contributors:
   - SpaceK33z
   - chrisVillanueva
+  - byzyk
 ---
 
 如果你在开发一个更高级的项目，并且使用 [Vagrant](https://www.vagrantup.com/) 来实现在虚拟机(Virtual Machine)上运行你的开发环境(development environment)，那么你或许需要在虚拟机上运行 webpack。
@@ -29,7 +30,7 @@ npm install --save-dev webpack webpack-dev-server
 ```js
 module.exports = {
   context: __dirname,
-  entry: "./app.js"
+  entry: './app.js'
 };
 ```
 

@@ -15,6 +15,7 @@ contributors:
   - xgqfrms
   - kelset
   - xgirma
+  - mehrdaad
 ---
 
 在本指南中，我们将深入一些最佳实践，并且使用工具，将网站或应用程序构建到生产环境中。
@@ -81,6 +82,7 @@ __webpack.dev.js__
 + const common = require('./webpack.common.js');
 +
 + module.exports = merge(common, {
++   mode: 'development',
 +   devtool: 'inline-source-map',
 +   devServer: {
 +     contentBase: './dist'
@@ -92,17 +94,14 @@ __webpack.prod.js__
 
 ``` diff
 + const merge = require('webpack-merge');
-+ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 + const common = require('./webpack.common.js');
 +
 + module.exports = merge(common, {
-+   plugins: [
-+     new UglifyJSPlugin()
-+   ]
++   mode: 'production',
 + });
 ```
 
-现在，在 `webpack.common.js` 中，我们设置了 `entry` 和 `output` 配置，并且在其中引入这两个环境公用的全部插件。在 `webpack.dev.js` 中，我们为此环境添加了推荐的 `devtool`（强大的 source map）和简单的 `devServer` 配置。最后，在 `webpack.prod.js` 中，我们引入了之前在 [tree shaking](/guides/tree-shaking) 指南中介绍过的 `UglifyJSPlugin`。
+现在，在 `webpack.common.js` 中，我们设置了 `entry` 和 `output` 配置，并且在其中引入这两个环境公用的全部插件。在 `webpack.dev.js` 中，我们将 ``mode`` 设置为 ``development``，并且为此环境添加了推荐的 `devtool`（强大的 source map）和简单的 `devServer` 配置。最后，在 `webpack.prod.js` 中，我们将 ``mode`` 设置为 ``production``，其中会引入之前在 [tree shaking](/guides/tree-shaking) 指南中介绍过的 `UglifyJSPlugin`。
 
 注意，在环境特定的配置中使用 `merge()` 很容易地包含我们在 `dev` 和 `prod` 中的常见配置。`webpack-merge` 工具提供了多种合并(merge)的高级功能，但是在我们的用例中，无需用到这些功能。
 
@@ -155,7 +154,7 @@ __package.json__
 - [`BabelMinifyWebpackPlugin`](https://github.com/webpack-contrib/babel-minify-webpack-plugin)
 - [`ClosureCompilerPlugin`](https://github.com/roman01la/webpack-closure-compiler)
 
-如果决定尝试以上这些，只要确保新插件也会按照 [tree shake](/guides/tree-shaking) 指南中所陈述的，具有删除未引用代码(dead code)的能力足矣。
+如果决定尝试一些其他插件，只要确保新插件也会按照 [tree shake](/guides/tree-shaking) 指南中所陈述的，具有删除未引用代码(dead code)的能力足矣。
 
 
 ## source map
@@ -170,6 +169,7 @@ __webpack.prod.js__
   const common = require('./webpack.common.js');
 
   module.exports = merge(common, {
+    mode: 'production',
 +   devtool: 'source-map',
     plugins: [
 -     new UglifyJSPlugin()
@@ -196,6 +196,7 @@ __webpack.prod.js__
   const common = require('./webpack.common.js');
 
   module.exports = merge(common, {
+    mode: 'production',
     devtool: 'source-map',
     plugins: [
       new UglifyJSPlugin({

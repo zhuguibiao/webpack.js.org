@@ -6,6 +6,7 @@ contributors:
   - thelarkinn
   - pksjce
   - e-cloud
+  - byzyk
 ---
 
 插件是 webpack 生态系统的重要组成部分，为社区用户提供了一种强大方式来直接触及 webpack 的编译过程(compilation process)。插件能够 [钩入(hook)](/api/compiler-hooks/#hooks) 到在每个编译(compilation)中触发的所有关键事件。在编译的每一步，插件都具备完全访问 `compiler` 对象的能力，如果情况合适，还可以访问当前 `compilation` 对象。
@@ -30,7 +31,7 @@ tapable 这个小型 library 是 webpack 的一个核心工具，但也可用于
 
 ``` js
 compiler.hooks.compile.tap('MyPlugin', params => {
-  console.log('以同步方式触及 compile 钩子。')
+  console.log('以同步方式触及 compile 钩子。');
 })
 ```
 
@@ -38,15 +39,20 @@ compiler.hooks.compile.tap('MyPlugin', params => {
 
 ``` js
 compiler.hooks.run.tapAsync('MyPlugin', (compiler, callback) => {
-  console.log('以异步方式触及 run 钩子。')
-  callback()
-})
+  console.log('以异步方式触及 run 钩子。');
+  callback();
+});
 
 compiler.hooks.run.tapPromise('MyPlugin', compiler => {
   return new Promise(resolve => setTimeout(resolve, 1000)).then(() => {
-    console.log('以具有延迟的异步方式触及 run 钩子')
-  })
-})
+    console.log('以具有延迟的异步方式触及 run 钩子。');
+  });
+});
+
+compiler.hooks.run.tapPromise('MyPlugin', async compiler => {
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  console.log('以具有延迟的异步方式触及 run 钩子。');
+});
 ```
 
 这些需求(story)的含义在于，可以有多种方式将 `hook` 钩入到 `compiler` 中，可以让各种插件都以合适的方式去运行。
@@ -61,7 +67,7 @@ const SyncHook = require('tapable').SyncHook;
 
 // 具有 `apply` 方法……
 if (compiler.hooks.myCustomHook) throw new Error('Already in use');
-compiler.hooks.myCustomHook = new SyncHook(['a', 'b', 'c'])
+compiler.hooks.myCustomHook = new SyncHook(['a', 'b', 'c']);
 
 // 在你想要触发钩子的位置/时机下调用……
 compiler.hooks.myCustomHook.call(a, b, c);

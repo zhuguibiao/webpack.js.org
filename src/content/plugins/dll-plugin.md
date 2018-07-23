@@ -6,6 +6,7 @@ contributors:
   - opiepj
   - simon04
   - skipjack
+  - byzyk
 related:
   - title: Code Splitting Example
     url: https://github.com/webpack/webpack/blob/master/examples/explicit-vendor-chunk/README.md
@@ -23,7 +24,7 @@ related:
 * `path`: manifest json 文件的**绝对路径** (输出文件)
 
 ```javascript
-new webpack.DllPlugin(options)
+new webpack.DllPlugin(options);
 ```
 
 在给定的 `path` 路径下创建一个名为 `manifest.json` 的文件。 这个文件包含了从 `require` 和 `import` 的request到模块 id 的映射。 `DLLReferencePlugin` 也会用到这个文件。
@@ -43,7 +44,7 @@ new webpack.DllPlugin(options)
 * `sourceType` (optional): dll 是如何暴露的 ([libraryTarget](/configuration/output/#output-librarytarget))
 
 ```javascript
-new webpack.DllReferencePlugin(options)
+new webpack.DllReferencePlugin(options);
 ```
 
 通过引用 dll 的 manifest 文件来把依赖的名称映射到模块的 id 上，之后再在需要的时候通过内置的 `__webpack_require__` 函数来 `require` 他们
@@ -77,9 +78,9 @@ W> `DllReferencePlugin` 和 `DLL插件DllPlugin` 都是在_另外_的 webpack �
 ```javascript
 new webpack.DllPlugin({
   context: __dirname,
-  name: "[name]_[hash]",
-  path: path.join(__dirname, "manifest.json"),
-})
+  name: '[name]_[hash]',
+  path: path.join(__dirname, 'manifest.json'),
+});
 ```
 
 **webpack.app.config.js**
@@ -87,11 +88,11 @@ new webpack.DllPlugin({
 ```javascript
 new webpack.DllReferencePlugin({
   context: __dirname,
-  manifest: require("./manifest.json"),
-  name: "./my-dll.js",
-  scope: "xyz",
-  sourceType: "commonjs2"
-})
+  manifest: require('./manifest.json'),
+  name: './my-dll.js',
+  scope: 'xyz',
+  sourceType: 'commonjs2'
+});
 ```
 
 

@@ -6,6 +6,7 @@ contributors:
   - simon04
   - tbroadley
   - chenxsan
+  - madhavarshney
 related:
   - title: Analyzing Build Statistics
     url: https://survivejs.com/webpack/optimizing-build/analyzing-build-statistics/
@@ -21,9 +22,12 @@ related:
 
 为了更合适且方便地使用配置，可以在 `webpack.config.js` 中对 webpack 进行配置。CLI 中传入的任何参数会在配置文件中映射为对应的参数。
 
-如果你还没有安装 webpack，请查看[安装指南](/guides/installation)。
+用户在可以对两个 CLI package 进行选择：
 
-T> webpack 的新 CLI 正在开发中。正在添加新功能，例如 `--init` 参数。[查看详情！](https://github.com/webpack/webpack-cli)
+* [webpack-cli](https://github.com/webpack/webpack-cli)：原始的  webpack 全特性 CLI。
+* [webpack-command](https://github.com/webpack-contrib/webpack-command)：轻量级和自成体系的新式 CLI。
+
+如果你还没有安装过 webpack 和 CLI，请先阅读 [安装指南](/guides/installation)。
 
 
 ## 使用配置文件的用法
@@ -64,7 +68,7 @@ webpack <entry> [<entry>] -o <output>
 ```
 
 ```bash
-webpack src/index.js dist/bundle.js
+webpack ./src/index.js dist/bundle.js
 ```
 
 打包源码，入口为 `index.js`，并且输出文件的路径为 `dist`，文件名为 `bundle.js`
@@ -94,6 +98,8 @@ webpack index=./src/index.js entry2=./src/index2.js dist/bundle.js
 
 
 ### 常用配置
+
+W> 注意，命令行接口(Command Line Interface)参数的优先级，高于配置文件参数。例如，如果将 [`--mode="production"`](/concepts/mode/#usage) 传入 webpack CLI，而配置文件使用的是 `development`，最终会使用 `production`。
 
 **列出命令行所有可用的配置选项**
 
@@ -167,6 +173,7 @@ T> See the [environment variables](/guides/environment-variables) guide for more
 `--output-pathinfo`       | 加入一些依赖信息的注解 | boolean | false
 `--output-public-path`    | The 输出文件时使用的公共路径              | string     | /
 `--output-source-map-filename` | 生成的 SourceMap 的文件名  | string     | [name].map or [outputFilename].map
+`--build-delimiter` | 在构建输出之后，显示的自定义文本 | string | 默认字符串是 null。你可以提供一个 `=== Build done ===` 这样的字符串
 
 
 
@@ -246,13 +253,13 @@ webpack.js index=./src/index.js index2=./src/index2.js --output-path='./dist' --
 
 ### Resolve 配置
 
-这些配置可以用于设置  webpack [resolver](/configuration/resolve/) 时使用的别名(alias)和扩展名(extension)。
+这些配置可以用于设置 webpack [resolver](/configuration/resolve/) 时使用的别名(alias)和扩展名(extension)。
 
-参数   | 说明                      | 示例
+参数 | 说明 | 示例
 ---------------------- | ------------------------------------------------------- | -------------
---resolve-alias        | 指定模块的别名 | --resolve-alias jquery-plugin=jquery.plugin
---resolve-extensions   | 指定需要被处理的文件的扩展名 | --resolve-extensions .es6 .js .ts
---resolve-loader-alias | Minimize javascript and switches loaders to minimizing  |
+`--resolve-alias`        | 指定模块的别名 | --resolve-alias jquery-plugin=jquery.plugin
+`--resolve-extensions`   | 指定需要被处理的文件的扩展名 | --resolve-extensions .es6 .js .ts
+`--resolve-loader-alias` | 最小化 JavaScript，并且将 loader 切换到最简 |
 
 
 ### 统计数据配置

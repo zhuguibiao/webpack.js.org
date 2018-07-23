@@ -8,6 +8,7 @@ contributors:
   - pksjce
   - sebastiandeutsch
   - tbroadley
+  - byzyk
 ---
 
 这些选项能设置模块如何被解析。webpack 提供合理的默认值，但是还是可能会修改一些解析的细节。关于 resolver 具体如何工作的更多解释说明，请查看[模块解析](/concepts/module-resolution)。
@@ -26,36 +27,46 @@ contributors:
 
 创建 `import` 或 `require` 的别名，来确保模块引入变得更简单。例如，一些位于 `src/` 文件夹下的常用模块：
 
-``` js
-alias: {
-  Utilities: path.resolve(__dirname, 'src/utilities/'),
-  Templates: path.resolve(__dirname, 'src/templates/')
-}
+```js
+module.exports = {
+  //...
+  resolve: {
+    alias: {
+      Utilities: path.resolve(__dirname, 'src/utilities/'),
+      Templates: path.resolve(__dirname, 'src/templates/')
+    }
+  }
+};
 ```
 
 现在，替换「在导入时使用相对路径」这种方式，就像这样：
 
-``` js
+```js
 import Utility from '../../utilities/utility';
 ```
 
 你可以这样使用别名：
 
-``` js
+```js
 import Utility from 'Utilities/utility';
 ```
 
 也可以在给定对象的键后的末尾添加 `$`，以表示精准匹配：
 
-``` js
-alias: {
-  xyz$: path.resolve(__dirname, 'path/to/file.js')
-}
+```js
+module.exports = {
+  //...
+  resolve: {
+    alias: {
+      xyz$: path.resolve(__dirname, 'path/to/file.js')
+    }
+  }
+};
 ```
 
 这将产生以下结果：
 
-``` js
+```js
 import Test1 from 'xyz'; // 精确匹配，所以 path/to/file.js 被解析和导入
 import Test2 from 'xyz/file.js'; // 非精确匹配，触发普通解析
 ```
@@ -90,8 +101,13 @@ import Test2 from 'xyz/file.js'; // 非精确匹配，触发普通解析
 
 指定一个字段，例如 `browser`，根据[此规范](https://github.com/defunctzombie/package-browser-field-spec)进行解析。默认：
 
-``` js
-aliasFields: ["browser"]
+```js
+module.exports = {
+  //...
+  resolve: {
+    aliasFields: ['browser']
+  }
+};
 ```
 
 
@@ -108,8 +124,13 @@ aliasFields: ["browser"]
 
 用于描述的 JSON 文件。默认：
 
-``` js
-descriptionFiles: ["package.json"]
+```js
+module.exports = {
+  //...
+  resolve: {
+    descriptionFiles: ['package.json']
+  }
+};
 ```
 
 
@@ -120,7 +141,12 @@ descriptionFiles: ["package.json"]
 如果是 `true`，将不允许无扩展名(extension-less)文件。默认如果 `./foo` 有 `.js` 扩展，`require('./foo')` 可以正常运行。但如果启用此选项，只有 `require('./foo.js')` 能够正常工作。默认：
 
 ```js
-enforceExtension: false
+module.exports = {
+  //...
+  resolve: {
+    enforceExtension: false
+  }
+};
 ```
 
 
@@ -130,8 +156,13 @@ enforceExtension: false
 
 对模块是否需要使用的扩展（例如 loader）。默认：
 
-``` js
-enforceModuleExtension: false
+```js
+module.exports = {
+  //...
+  resolve: {
+    enforceModuleExtension: false
+  }
+};
 ```
 
 
@@ -141,14 +172,19 @@ enforceModuleExtension: false
 
 自动解析确定的扩展。默认值为：
 
-``` js
-extensions: [".js", ".json"]
+```js
+module.exports = {
+  //...
+  resolve: {
+    extensions: ['.wasm', '.mjs', '.js', '.json']
+  }
+};
 ```
 
 能够使用户在引入模块时不带扩展：
 
-``` js
-import File from '../path/to/file'
+```js
+import File from '../path/to/file';
 ```
 
 W> 使用此选项，会**覆盖默认数组**，这就意味着 webpack 将不再尝试使用默认扩展来解析模块。对于使用其扩展导入的模块，例如，`import SomeFile from "./somefile.ext"`，要想正确的解析，一个包含“\*”的字符串必须包含在数组中。
@@ -163,25 +199,33 @@ W> 使用此选项，会**覆盖默认数组**，这就意味着 webpack 将不�
 当 `target` 属性设置为 `webworker`, `web` 或者没有指定，默认值为：
 
 
-``` js
-mainFields: ["browser", "module", "main"]
+```js
+module.exports = {
+  //...
+  resolve: {
+    mainFields: ['browser', 'module', 'main']
+  }
+};
 ```
 
 对于其他任意的 target（包括 `node`），默认值为：
 
-``` js
-mainFields: ["module", "main"]
+```js
+module.exports = {
+  //...
+  resolve: {
+    mainFields: ['module', 'main']
+  }
+};
 ```
 
 例如，[D3](https://d3js.org/) 的 `package.json` 含有这些字段：
 
-``` js
+```json
 {
-  ...
-  main: 'build/d3.Node.js',
-  browser: 'build/d3.js',
-  module: 'index',
-  ...
+  "main": "build/d3.Node.js",
+  "browser": "build/d3.js",
+  "module": "index"
 }
 ```
 
@@ -194,8 +238,13 @@ mainFields: ["module", "main"]
 
 解析目录时要使用的文件名。默认：
 
-``` js
-mainFiles: ["index"]
+```js
+module.exports = {
+  //...
+  resolve: {
+    mainFiles: ['index']
+  }
+};
 ```
 
 
@@ -213,14 +262,24 @@ mainFiles: ["index"]
 
 `resolve.modules` defaults to:
 
-``` js
-modules: ["node_modules"]
+```js
+module.exports = {
+  //...
+  resolve: {
+    modules: ['node_modules']
+  }
+};
 ```
 
 如果你想要添加一个目录到模块搜索目录，此目录优先于 `node_modules/` 搜索：
 
-``` js
-modules: [path.resolve(__dirname, "src"), "node_modules"]
+```js
+module.exports = {
+  //...
+  resolve: {
+    modules: [path.resolve(__dirname, 'src'), 'node_modules']
+  }
+};
 ```
 
 
@@ -230,14 +289,24 @@ modules: [path.resolve(__dirname, "src"), "node_modules"]
 
 启用，会主动缓存模块，但并**不安全**。传递 `true` 将缓存一切。默认：
 
-``` js
-unsafeCache: true
+```js
+module.exports = {
+  //...
+  resolve: {
+    unsafeCache: true
+  }
+};
 ```
 
 正则表达式，或正则表达式数组，可以用于匹配文件路径或只缓存某些模块。例如，只缓存 utilities 模块：
 
-``` js
-unsafeCache: /src\/utilities/
+```js
+module.exports = {
+  //...
+  resolve: {
+    unsafeCache: /src\/utilities/
+  }
+};
 ```
 
 W> 修改缓存路径可能在极少数情况下导致失败。
@@ -247,10 +316,15 @@ W> 修改缓存路径可能在极少数情况下导致失败。
 
 应该使用的额外的解析插件列表。它允许插件，如 [`DirectoryNamedWebpackPlugin`](https://www.npmjs.com/package/directory-named-webpack-plugin)。
 
-``` js
-plugins: [
-  new DirectoryNamedWebpackPlugin()
-]
+```js
+module.exports = {
+  //...
+  resolve: {
+    plugins: [
+      new DirectoryNamedWebpackPlugin()
+    ]
+  }
+};
 ```
 
 
@@ -265,7 +339,12 @@ plugins: [
 `resolve.symlinks` 默认值为：
 
 ```js
-symlinks: true
+module.exports = {
+  //...
+  resolve: {
+    symlinks: true
+  }
+};
 ```
 
 
@@ -276,7 +355,12 @@ symlinks: true
 决定请求是否应该被缓存的函数。函数传入一个带有 `path` 和 `request` 属性的对象。默认：
 
 ```js
-cachePredicate: function() { return true }
+module.exports = {
+  //...
+  resolve: {
+    cachePredicate: function() { return true; }
+  }
+};
 ```
 
 
@@ -286,12 +370,15 @@ cachePredicate: function() { return true }
 
 这组选项与上面的 `resolve` 对象的属性集合相同，但仅用于解析 webpack 的 [loader](/concepts/loaders) 包。默认：
 
-``` js
-{
-  modules: [ 'node_modules' ],
-  extensions: [ '.js', '.json' ],
-  mainFields: [ 'loader', 'main' ]
-}
+```js
+module.exports = {
+  //...
+  resolveLoader: {
+    modules: [ 'node_modules' ],
+    extensions: [ '.js', '.json' ],
+    mainFields: [ 'loader', 'main' ]
+  }
+};
 ```
 
 T> 注意，这里你可以使用别名，并且其他特性类似于 resolve 对象。例如，`{ txt: 'raw-loader' }` 会使用 `raw-loader` 去 shim(填充) `txt!templates/demo.txt`。
@@ -303,6 +390,11 @@ T> 注意，这里你可以使用别名，并且其他特性类似于 resolve �
 
 解析 loader 时，用到扩展名(extensions)/后缀(suffixes)。从 webpack 2 开始，我们[强烈建议](/guides/migrating#automatic-loader-module-name-extension-removed)使用全名，例如 `example-loader`，以尽可能清晰。然而，如果你确实想省略 `-loader`，也就是说只使用 `example`，则可以使用此选项来实现：
 
-``` js
-moduleExtensions: [ '-loader' ]
+```js
+module.exports = {
+  //...
+  resolveLoader: {
+    moduleExtensions: [ '-loader' ]
+  }
+};
 ```

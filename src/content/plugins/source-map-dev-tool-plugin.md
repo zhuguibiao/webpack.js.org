@@ -4,6 +4,7 @@ contributors:
   - johnnyreilly
   - simon04
   - neilkennedy
+  - byzyk
 related:
   - title: Building Source Maps
     url: https://survivejs.com/webpack/building/source-maps/#-sourcemapdevtoolplugin-and-evalsourcemapdevtoolplugin-
@@ -11,8 +12,8 @@ related:
 
 本插件实现了对 source map 生成，进行更细粒度的控制。它可以替代 [`devtool`](/configuration/devtool/) 选项。
 
-``` js
-new webpack.SourceMapDevToolPlugin(options)
+```js
+new webpack.SourceMapDevToolPlugin(options);
 ```
 
 
@@ -50,27 +51,27 @@ W> 记得在使用 [`UglifyJSPlugin`](/plugins/uglifyjs-webpack-plugin) 时，�
 
 以下代码会排除 `vendor.js` 内模块的 source map。
 
-``` js
+```js
 new webpack.SourceMapDevToolPlugin({
   filename: '[name].js.map',
   exclude: ['vendor.js']
-})
+});
 ```
 
 ### 在宿主环境外部化 source map
 
 设置 source map 的 URL。在宿主环境需要授权的情况下很有用。
 
-``` js
+```js
 new webpack.SourceMapDevToolPlugin({
-  append: "\n//# sourceMappingURL=http://example.com/sourcemap/[url]",
+  append: '\n//# sourceMappingURL=http://example.com/sourcemap/[url]',
   filename: '[name].map'
-})
+});
 ```
 
 还有一种场景，source map 存储在上层目录中时：
 
-``` js
+```code
 project
 |- dist
   |- public
@@ -81,16 +82,16 @@ project
 
 如下设置：
 
-``` js
+```js
 new webpack.SourceMapDevToolPlugin({
-  filename: "sourcemaps/[file].map",
-  publicPath: "https://example.com/project/",
-  fileContext: "public"
-})
+  filename: 'sourcemaps/[file].map',
+  publicPath: 'https://example.com/project/',
+  fileContext: 'public'
+});
 ```
 
 将会生成以下 URL：
 
-``` js
-https://example.com/project/sourcemaps/bundle-[hash].js.map`
+```code
+https://example.com/project/sourcemaps/bundle-[hash].js.map
 ```

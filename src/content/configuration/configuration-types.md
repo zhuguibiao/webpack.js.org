@@ -6,6 +6,7 @@ contributors:
   - skipjack
   - kbariotis
   - simon04
+  - byzyk
 ---
 
 除了导出单个配置对象，还有一些方式满足其他需求。
@@ -47,10 +48,10 @@ module.exports = () => {
       resolve({
         entry: './app.js',
         /* ... */
-      })
-    }, 5000)
-  })
-}
+      });
+    }, 5000);
+  });
+};
 ```
 
 
@@ -73,5 +74,5 @@ module.exports = [{
   },
   entry: './app.js',
   mode: 'production',
-}]
+}];
 ```

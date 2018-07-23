@@ -4,6 +4,8 @@ sort: 17
 contributors:
   - sokra
   - tbroadley
+  - byzyk
+  - madhavarshney
 ---
 
 本指南包含一些改进构建/编译性能的实用技巧。
@@ -28,21 +30,35 @@ contributors:
 
 将 loaders 应用于最少数的必要模块中。而不是:
 
-``` js
-{
-  test: /\.js$/,
-  loader: "babel-loader"
-}
+```js
+module.exports = {
+  //...
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        loader: 'babel-loader'
+      }
+    ]
+  }
+};
 ```
 
 使用 `include` 字段仅将 loader 模块应用在实际需要用其转换的位置中：
 
-``` js
-{
-  test: /\.js$/,
-  include: path.resolve(__dirname, "src"),
-  loader: "babel-loader"
-}
+```js
+module.exports = {
+  //...
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        include: path.resolve(__dirname, 'src'),
+        loader: 'babel-loader'
+      }
+    ]
+  }
+};
 ```
 
 
@@ -70,8 +86,8 @@ contributors:
 减少编译的整体大小，以提高构建性能。尽量保持 chunks 小巧。
 
 - 使用 更少/更小 的库。
-- 在多页面应用程序中使用 `CommonsChunksPlugin`。
-- 在多页面应用程序中以 `async` 模式使用 `CommonsChunksPlugin ` 。
+- 在多页面应用程序中使用 `CommonsChunkPlugin`。
+- 在多页面应用程序中以 `async` 模式使用 `CommonsChunkPlugin ` 。
 - 移除不使用的代码。
 - 只编译你当前正在开发部分的代码。
 
@@ -115,6 +131,9 @@ W> 不要使用太多的 workers ，因为 Node.js 的 runtime 和 loader 有一
 - `webpack-hot-middleware`
 - `webpack-dev-middleware`
 
+### stats.toJson 加速
+
+webpack 4 默认使用 `stats.toJson()` 输出大量数据。除非在增量步骤中做必要的统计，否则请避免获取 `stats` 对象的部分内容。`webpack-dev-server` 在 v3.1.3 以后的版本，包含一个重要的性能修复，即最小化每个增量构建步骤中，从 stats 对象获取的数据量。
 
 ### Devtool
 
@@ -145,12 +164,70 @@ webpack 只会在文件系统中生成已经更新的 chunk 。对于某些配�
 
 应当在生成入口 chunk 时，尽量减少入口 chunk 的体积，以提高性能。下述代码块将只提取包含 runtime 的 chunk ，_其他 chunk 都作为子模块_:
 
-``` js
+```js
 new CommonsChunkPlugin({
-  name: "manifest",
+  name: 'manifest',
   minChunks: Infinity
-})
+});
 ```
+
+### 避免额外的优化步骤
+
+webpack 通过执行额外的算法任务，来优化输出的体积和加载性能。这些优化适用于小心代码库，但是在大型代码库中却非常耗费性能：
+
+```js
+module.exports = {
+  // ...
+  optimization: {
+    removeAvailableModules: false,
+    removeEmptyChunks: false,
+    splitChunks: false,
+  }
+};
+```
+
+### 输出文件不再携带路径信息
+
+webpack 会在输出文件中生成路径信息。然而在打包数千个模块的项目中，会导致造成垃圾回收性能压力。在 `options.output.pathinfo` 设置中关闭：
+
+```js
+module.exports = {
+  // ...
+  output: {
+    pathinfo: false
+  }
+};
+```
+
+### Node.js 版本
+
+最新稳定版本的 Node.js 及其 ES2015 `Map` 和 `Set` 实现，出现一些 [性能回退](https://github.com/nodejs/node/issues/19769)。其修复版本已经合并到 master 分支，但是有些已经发布的正式版本无法应用到这些修复内容。同时，为了充分利用增量构建速度，请尝试使用 8.9.x 版本（8.9.10 - 9.11.1 之间的版本存在性能问题）。webpack 已经开始大量使用这些 ES2015 数据结构，因此选择这些版本也将改善初始构建时间。
+
+### TypeScript loader
+
+现在，`ts-loader` 已经开始使用 TypeScript 内置 watch mode API，可以明显减少每次迭代时重新构建的模块数量。`experimentalWatchApi` 与普通 TypeScript watch mode 共享同样的逻辑，并且在开发环境使用时非常稳定。此外开启 `transpileOnly`，用于真正快速增量构建。
+
+```js
+module.exports = {
+  // ...
+  test: /\.tsx?$/,
+  use: [
+    {
+      loader: 'ts-loader',
+      options: {
+        transpileOnly: true,
+        experimentalWatchApi: true,
+      },
+    },
+  ],
+};
+```
+
+注意：`ts-loader` 文档建议使用 `cache-loader`，但是这实际上会由于使用硬盘写入而减缓增量构建速度。
+
+为了重新获得类型检查，请使用 [`ForkTsCheckerWebpackPlugin`](https://www.npmjs.com/package/fork-ts-checker-webpack-plugin)。
+
+ts-loader 的 github 仓库中有一个 [完整示例](https://github.com/TypeStrong/ts-loader/tree/master/examples/fast-incremental-builds)
 
 ---
 

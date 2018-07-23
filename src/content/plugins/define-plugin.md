@@ -3,6 +3,7 @@ title: DefinePlugin
 contributors:
   - simon04
   - rouzbeh84
+  - byzyk
 ---
 
 `DefinePlugin` 允许创建一个在**编译**时可以配置的全局常量。这可能会对开发模式和发布模式的构建允许不同的行为非常有用。如果在开发构建中，而不在发布构建中执行日志记录，则可以使用全局常量来决定是否记录日志。这就是 `DefinePlugin` 的用处，设置它，就可以忘记开发和发布构建的规则。
@@ -10,7 +11,7 @@ contributors:
 ``` javascript
 new webpack.DefinePlugin({
   // Definitions...
-})
+});
 ```
 
 
@@ -28,16 +29,16 @@ new webpack.DefinePlugin({
 ``` javascript
 new webpack.DefinePlugin({
   PRODUCTION: JSON.stringify(true),
-  VERSION: JSON.stringify("5fa3b9"),
+  VERSION: JSON.stringify('5fa3b9'),
   BROWSER_SUPPORTS_HTML5: true,
-  TWO: "1+1",
-  "typeof window": JSON.stringify("object")
-})
+  TWO: '1+1',
+  'typeof window': JSON.stringify('object')
+});
 ```
 
 ``` javascript
-console.log("Running App version " + VERSION);
-if(!BROWSER_SUPPORTS_HTML5) require("html5shiv");
+console.log('Running App version ' + VERSION);
+if(!BROWSER_SUPPORTS_HTML5) require('html5shiv');
 ```
 
 T> 注意，因为这个插件直接执行文本替换，给定的值必须包含字符串本身内的**实际引号**。通常，有两种方式来达到这个效果，使用 `'"production"'`, 或者使用 `JSON.stringify('production')`。
@@ -46,11 +47,11 @@ __index.js__
 
 ``` javascript
 if (!PRODUCTION) {
-  console.log('Debug info')
+  console.log('Debug info');
 }
 
 if (PRODUCTION) {
-  console.log('Production log')
+  console.log('Production log');
 }
 ```
 
@@ -58,17 +59,17 @@ if (PRODUCTION) {
 
 ``` javascript
 if (!true) {
-  console.log('Debug info')
+  console.log('Debug info');
 }
 if (true) {
-  console.log('Production log')
+  console.log('Production log');
 }
 ```
 
 通过使用压缩的 webpack 的结果:
 
 ``` javascript
-console.log('Production log')
+console.log('Production log');
 ```
 
 
@@ -80,7 +81,7 @@ console.log('Production log')
 new webpack.DefinePlugin({
   'NICE_FEATURE': JSON.stringify(true),
   'EXPERIMENTAL_FEATURE': JSON.stringify(false)
-})
+});
 ```
 
 W> When defining values for `process` prefer `'process.env.NODE_ENV': JSON.stringify('production')` over `process: { env: { NODE_ENV: JSON.stringify('production') } }`. Using the latter will overwrite the `process` object which can break compatibility with some modules that expect other values on the process object to be defined.
@@ -92,6 +93,6 @@ W> When defining values for `process` prefer `'process.env.NODE_ENV': JSON.strin
 
 ```javascript
 new webpack.DefinePlugin({
-  'SERVICE_URL': JSON.stringify("http://dev.example.com")
-})
+  'SERVICE_URL': JSON.stringify('http://dev.example.com')
+});
 ```

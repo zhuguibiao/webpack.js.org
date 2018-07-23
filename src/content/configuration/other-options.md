@@ -5,6 +5,7 @@ contributors:
   - sokra
   - skipjack
   - terinjokes
+  - byzyk
 related:
   - title: Using Records
     url: https://survivejs.com/webpack/optimizing/separating-manifest/#using-records
@@ -23,9 +24,12 @@ W> 寻求帮助：这个页面还在更新中，如果你发现本页面内有�
 设置 `require.amd` 或 `define.amd` 的值：
 
 ```js
-amd: {
-  jQuery: true
-}
+module.exports = {
+  //...
+  amd: {
+    jQuery: true
+  }
+};
 ```
 
 某些流行的模块是按照 AMD 规范编写的，最引人瞩目的 jQuery 版本在 1.7.0 到 1.9.1，如果 loader 提示它对页面包含的多个版本采取了[特殊许可](https://github.com/amdjs/amdjs-api/wiki/jQuery-and-AMD)时，才会注册为 AMD 模块。
@@ -43,7 +47,10 @@ amd: {
 在第一个错误出现时抛出失败结果，而不是容忍它。默认情况下，当使用 HMR 时，webpack 会将在终端以及浏览器控制台中，以红色文字记录这些错误，但仍然继续进行打包。要启用它：
 
 ```js
-bail: true
+module.exports = {
+  //...
+  bail: true
+};
 ```
 
 这将迫使 webpack 退出其打包过程。
@@ -56,7 +63,10 @@ bail: true
 缓存生成的 webpack 模块和 chunk，来改善构建速度。缓存默认在观察模式(watch mode)启用。禁用缓存只需简单传入：
 
 ```js
-cache: false
+module.exports = {
+  //...
+  cache: false
+};
 ```
 
 如果传递一个对象，webpack 将使用这个对象进行缓存。保持对此对象的引用，将可以在 compiler 调用之间共享同一缓存：
@@ -64,10 +74,10 @@ cache: false
 ```js
 let SharedCache = {};
 
-export default {
-  ...,
+module.exports = {
+  //...
   cache: SharedCache
-}
+};
 ```
 
 W> 不要在不同选项的调用之间共享缓存。
@@ -106,8 +116,11 @@ T> Combine with `parallelism: 1` for better results.
 
 开启这个选项可以生成一个 JSON 文件，其中含有 webpack 的 "records" 记录 - 即「用于存储跨多次构建(across multiple builds)的模块标识符」的数据片段。可以使用此文件来跟踪在每次构建之间的模块变化。只要简单的设置一下路径,就可以生成这个 JSON 文件：
 
-``` js
-recordsPath: path.join(__dirname, 'records.json')
+```js
+module.exports = {
+  //...
+  recordsPath: path.join(__dirname, 'records.json')
+};
 ```
 
 如果你使用了[代码分离(code splittnig)](/guides/code-splitting)这样的复杂配置，records 会特别有用。这些数据用于确保拆分 bundle，以便实现你需要的[缓存(caching)](/guides/caching)行为。
@@ -126,7 +139,10 @@ W> 设置 `recordsPath` 本质上会把 `recordsInputPath` 和 `recordsOutputPat
 
 指定记录要写入的位置。以下示例描述了如何用这个选项和 `recordsInptuPaht` 来重命名一个记录文件：
 
-``` js
-recordsInputPath: path.join(__dirname, 'records.json'),
-recordsOutputPath: path.join(__dirname, 'newRecords.json')
+```js
+module.exports = {
+  //...
+  recordsInputPath: path.join(__dirname, 'records.json'),
+  recordsOutputPath: path.join(__dirname, 'newRecords.json')
+};
 ```

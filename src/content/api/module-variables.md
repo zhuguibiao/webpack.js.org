@@ -7,6 +7,7 @@ contributors:
   - sokra
   - ahmehri
   - tbroadley
+  - byzyk
 related:
   - title: CommonJS
     url: https://en.wikipedia.org/wiki/CommonJS
@@ -32,7 +33,7 @@ related:
 当前模块的 ID。
 
 ``` javascript
-module.id === require.resolve("./file.js")
+module.id === require.resolve('./file.js');
 ```
 
 
@@ -56,10 +57,10 @@ W> 无法在异步函数中访问该变量
 ``` javascript
 exports.someValue = 42;
 exports.anObject = {
-    x: 123
+  x: 123
 };
 exports.aFunction = function doSomething() {
-    // Do something
+  // Do something
 };
 ```
 
@@ -101,13 +102,13 @@ exports.aFunction = function doSomething() {
 当前模块的资源查询(resource query) 。如果进行了如下的 `reqiure` 调用，那么查询字符串(query string)在`file.js` 中可访问。
 
 ``` javascript
-require('file.js?test')
+require('file.js?test');
 ```
 
 __file.js__
 
 ``` javascript
-__resourceQuery === '?test'
+__resourceQuery === '?test';
 ```
 
 

@@ -9,6 +9,10 @@ contributors:
   - MijaelWatts
   - dmitriid
   - probablyup
+  - gish
+  - lumo10
+  - byzyk
+  - pnevares
 related:
   - title: "webpack 4 beta — try it today!"
     url: https://medium.com/webpack/webpack-4-beta-try-it-today-6b1d27d7d7e2#9a67
@@ -20,7 +24,7 @@ related:
 
 _tree shaking_ 是一个术语，通常用于描述移除 JavaScript 上下文中的未引用代码(dead-code)。它依赖于 ES2015 模块系统中的[静态结构特性](http://exploringjs.com/es6/ch_modules.html#static-module-structure)，例如 [`import`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import) 和 [`export`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/export)。这个术语和概念实际上是兴起于 ES2015 模块打包工具 [rollup](https://github.com/rollup/rollup)。
 
-新的 webpack 4 正式版本，扩展了这个检测能力，通过 `package.json` 的 `"sideEffects"` 属性作为标记，向 compiler 提供提示，表明项目中的哪些文件是 "pure(纯的 ES2015 模块)"，由此可以安全地删除文件中未使用的部分。
+webpack 2 正式版本内置支持 ES2015 模块（也叫做 _harmony 模块_）和未引用模块检测能力。新的 webpack 4 正式版本，扩展了这个检测能力，通过 `package.json` 的 `"sideEffects"` 属性作为标记，向 compiler 提供提示，表明项目中的哪些文件是 "pure(纯的 ES2015 模块)"，由此可以安全地删除文件中未使用的部分。
 
 T> 本指南的继承自[起步指南](/guides/getting-started)。如果你尚未阅读该指南，请先行阅读。
 
@@ -46,7 +50,7 @@ webpack-demo
 
 __src/math.js__
 
-``` javascript
+```javascript
 export function square(x) {
   return x * x;
 }
@@ -54,6 +58,24 @@ export function square(x) {
 export function cube(x) {
   return x * x * x;
 }
+```
+
+你需要设置开发模式(development mode)，来确保 bundle 是压缩过的(minified)：
+
+__webpack.config.js__
+
+``` diff
+const path = require('path');
+
+module.exports = {
+  entry: './src/index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+- }
++ },
++ mode: "development"
+};
 ```
 
 接着，更新入口脚本，使用其中一个新方法，并且为了简单，将 `lodash` 删除：
@@ -85,20 +107,20 @@ __src/index.js__
 
 __dist/bundle.js (around lines 90 - 100)__
 
-``` js
+```js
 /* 1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
+  'use strict';
+  /* unused harmony export square */
+  /* harmony export (immutable) */ __webpack_exports__['a'] = cube;
+  function square(x) {
+    return x * x;
+  }
 
-"use strict";
-/* unused harmony export square */
-/* harmony export (immutable) */ __webpack_exports__["a"] = cube;
-function square(x) {
-  return x * x;
-}
-
-function cube(x) {
-  return x * x * x;
-}
+  function cube(x) {
+    return x * x * x;
+  }
+});
 ```
 
 注意，上面的 `unused harmony export square` 注释。如果你看下面的代码，你会注意到 `square` 没有被导入，但是，它仍然被包含在 bundle 中。我们将在下一节中解决这个问题。
@@ -146,13 +168,11 @@ T> 注意，任何导入的文件都会受到 tree shaking 的影响。这意味
 }
 ```
 
-最后，还可以在 [`module.rules` 配置选项](https://github.com/webpack/webpack/issues/6065#issuecomment-351060570) 中设置 `"sideEffects"`。
+最后，还可以在 [`module.rules` 配置选项](/configuration/module/#module-rules) 中设置 `"sideEffects"`。
 
 ## 压缩输出
 
-通过如上方式，我们已经可以通过 `import` 和 `export` 语法，找出那些需要删除的“未使用代码(dead code)”，然而，我们不只是要找出，还需要在 bundle 中删除它们。为此，我们将使用 `-p`(production) 这个 webpack 编译标记，来启用 uglifyjs 压缩插件。
-
-T> 注意，`--optimize-minimize` 标记也会在 webpack 内部调用 `UglifyJsPlugin`。
+通过如上方式，我们已经可以通过 `import` 和 `export` 语法，找出那些需要删除的“未使用代码(dead code)”，然而，我们不只是要找出，还需要在 bundle 中删除它们。为此，我们将使用 `-p`(production) 这个 webpack 编译标记，来启用 `UglifyJSPlugin` 插件。
 
 从 webpack 4 开始，也可以通过 `"mode"` 配置选项轻松切换到压缩输出，只需设置为 `"production"`。
 
@@ -166,13 +186,13 @@ module.exports = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist')
-- }
-+ },
+  },
+- mode: "development"
 + mode: "production"
 };
 ```
 
-T> 注意，也可以在命令行接口中使用 `--optimize-minimize` 标记，来使用 `UglifyJSPlugin`。
+T> 注意，也可以在命令行接口中使用 `--optimize-minimize` 标记，来启用 `UglifyJSPlugin`。
 
 准备就绪后，然后运行另一个命令 `npm run build`，看看输出结果有没有发生改变。
 
@@ -184,7 +204,7 @@ T> 注意，也可以在命令行接口中使用 `--optimize-minimize` 标记，
 为了学会使用 _tree shaking_，你必须……
 
 - 使用 ES2015 模块语法（即 `import` 和 `export`）。
-- 在项目 `package.json` 文件中，添加一个 "sideEffects" 入口。
+- 在项目 `package.json` 文件中，添加一个 "sideEffects" 属性。
 - 引入一个能够删除未引用代码(dead code)的压缩工具(minifier)（例如 `UglifyJSPlugin`）。
 
 你可以将应用程序想象成一棵树。绿色表示实际用到的源码和 library，是树上活的树叶。灰色表示无用的代码，是秋天树上枯萎的树叶。为了除去死去的树叶，你必须摇动这棵树，使它们落下。

@@ -15,6 +15,7 @@ contributors:
   - bdwain
   - caryli
   - xgirma
+  - EugeneHlushko
 related:
   - title: 概念 - 模块热替换(Hot Module Replacement)
     url: /concepts/hot-module-replacement
@@ -59,7 +60,6 @@ __webpack.config.js__
       new HtmlWebpackPlugin({
         title: 'Hot Module Replacement'
       }),
-+     new webpack.NamedModulesPlugin(),
 +     new webpack.HotModuleReplacementPlugin()
     ],
     output: {
@@ -70,8 +70,6 @@ __webpack.config.js__
 ```
 
 T> 你可以通过命令来修改 [webpack-dev-server](https://github.com/webpack/webpack-dev-server) 的配置：`webpack-dev-server --hotOnly`。
-
-注意，我们还添加了 `NamedModulesPlugin`，以便更容易查看要修补(patch)的依赖。在起步阶段，我们将通过在命令行中运行 `npm start` 来启动并运行 dev server。
 
 现在，我们来修改 `index.js` 文件，以便当 `print.js` 内部发生变更时可以告诉 webpack 接受更新的模块。
 
@@ -128,7 +126,6 @@ main.js:4395 [WDS] Hot Module Replacement enabled.
 + 0.4b8ee77….hot-update.js:10 Updating print.js...
 + main.js:4330 [HMR] Updated modules:
 + main.js:4330 [HMR]  - 20
-+ main.js:4330 [HMR] Consider using the NamedModulesPlugin for module names.
 ```
 
 

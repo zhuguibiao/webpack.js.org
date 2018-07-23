@@ -8,6 +8,7 @@ contributors:
   - SpaceK33z
   - pastelsky
   - tbroadley
+  - byzyk
 ---
 
 webpack 能够为多种环境或 _target_ 构建编译。想要理解什么是 `target` 的详细信息，请阅读 [target 概念页面](/concepts/targets)。
@@ -53,13 +54,13 @@ const options = {
 或者可以使用你想要指定的插件
 
 ```js
-const webpack = require("webpack");
+const webpack = require('webpack');
 
 const options = {
   target: (compiler) => {
     compiler.apply(
       new webpack.JsonpTemplatePlugin(options.output),
-      new webpack.LoaderTargetPlugin("web")
+      new webpack.LoaderTargetPlugin('web')
     );
   }
 };

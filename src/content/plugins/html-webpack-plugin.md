@@ -25,7 +25,7 @@ npm install --save-dev html-webpack-plugin
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var path = require('path');
 
-var webpackConfig = {
+module.exports = {
   entry: 'index.js',
   output: {
     path: path.resolve(__dirname, './dist'),
@@ -60,7 +60,7 @@ var webpackConfig = {
 
 ## 配置
 
-获取所有的配置选项，请浏览[插件文档](https://github.com/jantimon/html-webpack-plugin#configuration)。
+获取所有的配置选项，请浏览[插件文档](https://github.com/jantimon/html-webpack-plugin#options)。
 
 
 ## 第三方插件

@@ -32,7 +32,7 @@ Name                                                     | Description
 [`LoaderOptionsPlugin`](/plugins/loader-options-plugin)      | 用于从 webpack 1 迁移到 webpack 2
 [`MinChunkSizePlugin`](/plugins/min-chunk-size-plugin)       | 确保 chunk 大小超过指定限制
 [`MiniCssExtractPlugin`](/plugins/mini-css-extract-plugin)       | 为每个引入 CSS 的 JS 文件创建一个 CSS 文件
-[`NoEmitOnErrorsPlugin`](/plugins/no-emit-on-errors-plugin)  | 在输出阶段时，遇到编译错误跳过
+[`NoEmitOnErrorsPlugin`](/configuration/optimization/#optimization-noemitonerrors)  | 在输出阶段时，遇到编译错误跳过
 [`NormalModuleReplacementPlugin`](/plugins/normal-module-replacement-plugin) | 替换与正则表达式匹配的资源
 [`NpmInstallWebpackPlugin`](/plugins/npm-install-webpack-plugin) | 在开发时自动安装缺少的依赖
 [`ProvidePlugin`](/plugins/provide-plugin)                       | 不必通过 import/require 使用模块

@@ -3,6 +3,7 @@ title: ModuleConcatenationPlugin
 contributors:
   - skipjack
   - TheLarkInn
+  - byzyk
 related:
   - webpack 3: Official Release!!
 ---
@@ -11,8 +12,8 @@ related:
 
 这个插件会在 webpack 中实现以上的预编译功能。
 
-``` js
-new webpack.optimize.ModuleConcatenationPlugin()
+```js
+new webpack.optimize.ModuleConcatenationPlugin();
 ```
 
 > 这种连结行为被称为“作用域提升(scope hoisting)”。
@@ -90,11 +91,13 @@ function tryToAdd(group, module) {
 当我们使用 webpack CLI 时，加上参数 `--display-optimization-bailout` 将显示绑定失败的原因。在 webpack 配置里，只需将以下内容添加到 stats 对象中：
 
 ```js
-{
-  ...stats,
-  // Examine all modules
-  maxModules: Infinity,
-  // Display bailout reasons
-  optimizationBailout: true
-}
+module.exports = {
+  //...
+  stats: {
+    // Examine all modules
+    maxModules: Infinity,
+    // Display bailout reasons
+    optimizationBailout: true
+  }
+};
 ```

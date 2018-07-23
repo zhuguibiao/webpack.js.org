@@ -4,6 +4,7 @@ sort: 2
 contributors:
   - TheLarkInn
   - chrisVillanueva
+  - byzyk
 ---
 
 正如我们在[起步](/guides/getting-started/#using-a-configuration)中提到的，在 webpack 配置中有多种方式定义 `entry` 属性。除了解释为什么它可能非常有用，我们还将向你展示**如何去**配置 `entry` 属性。
@@ -16,17 +17,15 @@ contributors:
 **webpack.config.js**
 
 ```javascript
-const config = {
+module.exports = {
   entry: './path/to/my/entry/file.js'
 };
-
-module.exports = config;
 ```
 
 `entry` 属性的单个入口语法，是下面的简写：
 
 ```javascript
-const config = {
+module.exports = {
   entry: {
     main: './path/to/my/entry/file.js'
   }
@@ -45,7 +44,7 @@ T> **当你向 `entry` 传入一个数组时会发生什么？**向 `entry` 属�
 **webpack.config.js**
 
 ```javascript
-const config = {
+module.exports = {
   entry: {
     app: './src/app.js',
     vendors: './src/vendors.js'
@@ -68,7 +67,7 @@ T> **“可扩展的 webpack 配置”**是指，可重用并且可以与其他�
 **webpack.config.js**
 
 ```javascript
-const config = {
+module.exports = {
   entry: {
     app: './src/app.js',
     vendors: './src/vendors.js'
@@ -88,7 +87,7 @@ const config = {
 **webpack.config.js**
 
 ```javascript
-const config = {
+module.exports = {
   entry: {
     pageOne: './src/pageOne/index.js',
     pageTwo: './src/pageTwo/index.js',
