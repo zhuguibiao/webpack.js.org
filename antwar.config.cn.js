@@ -7,24 +7,24 @@ module.exports = () => ({
     file: path.join(__dirname, 'template.ejs')
   },
   output: 'build',
-  title: 'webpack',
+  title: 'webpack 中文文档',
   keywords: ['webpack', 'javascript', 'web development', 'programming'],
   layout: () => require('./src/components/Site/Site.jsx').default,
   paths: {
     '/': {
-      title: 'Home',
+      title: '首页',
       layout: () => require('./src/components/Page/Page.jsx').default,
       content: () => require.context('./loaders/page-loader!./src/content', false, /^\.\/.*\.md$/),
       index: () => require('./src/components/Splash/Splash.jsx').default
     },
     concepts: {
-      title: 'Concepts',
+      title: '概念',
       url: ({ sectionName, fileName }) => `/${sectionName}/${fileName}/`,
       layout: () => require('./src/components/Page/Page.jsx').default,
       content: () => require.context('./loaders/page-loader!./src/content/concepts', false, /^\.\/.*\.md$/)
     },
     configuration: {
-      title: 'Configuration',
+      title: '配置',
       url: ({ sectionName, fileName }) => `/${sectionName}/${fileName}/`,
       layout: () => require('./src/components/Page/Page.jsx').default,
       content: () => require.context('./loaders/page-loader!./src/content/configuration', false, /^\.\/.*\.md$/)
@@ -36,13 +36,13 @@ module.exports = () => ({
       content: () => require.context('./loaders/page-loader!./src/content/api', false, /^\.\/.*\.md$/)
     },
     guides: {
-      title: 'Guides',
+      title: '指南',
       url: ({ sectionName, fileName }) => `/${sectionName}/${fileName}/`,
       layout: () => require('./src/components/Page/Page.jsx').default,
       content: () => require.context('./loaders/page-loader!./src/content/guides', false, /^\.\/.*\.md$/)
     },
     plugins: {
-      title: 'Plugins',
+      title: '插件',
       url: ({ sectionName, fileName }) => `/${sectionName}/${fileName}/`,
       layout: () => require('./src/components/Page/Page.jsx').default,
       content: () => {
@@ -53,7 +53,7 @@ module.exports = () => ({
       }
     },
     loaders: {
-      title: 'Loaders',
+      title: 'loaders',
       url: ({ sectionName, fileName }) => `/${sectionName}/${fileName}/`,
       layout: () => require('./src/components/Page/Page.jsx').default,
       content: () => {
@@ -64,13 +64,13 @@ module.exports = () => ({
       }
     },
     contribute: {
-      title: 'Contribute',
+      title: '贡献',
       url: ({ sectionName, fileName }) => `/${sectionName}/${fileName}/`,
       layout: () => require('./src/components/Page/Page.jsx').default,
       content: () => require.context('./loaders/page-loader!./src/content/contribute', false, /^\.\/.*\.md$/)
     },
     migrate: {
-      title: 'Migrate',
+      title: '迁移',
       url: ({ sectionName, fileName }) => `/${sectionName}/${fileName}/`,
       layout: () => require('./src/components/Page/Page.jsx').default,
       content: () => require.context('./loaders/page-loader!./src/content/migrate', false, /^\.\/.*\.md$/)
