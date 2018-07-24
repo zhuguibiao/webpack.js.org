@@ -46,7 +46,7 @@ webpack 中文文档
 ```javascript
 npm install
 npm start
-打开 localhost:3000
+open -a "/Applications/Safari.app"  http://localhost:3000
 ```
 
 
