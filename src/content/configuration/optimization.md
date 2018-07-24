@@ -1,5 +1,5 @@
 ---
-title: Optimization
+title: 优化(optimization)
 sort: 8
 contributors:
   - EugeneHlushko
@@ -135,7 +135,7 @@ module.exports = {
 
 `boolean: false`
 
-Tells webpack to use readable chunk identifiers for better debugging. This option is enabled by default for [mode](/concepts/mode/) `development` and disabled for [mode](/concepts/mode/) `production` if no option is provided in webpack config. 
+Tells webpack to use readable chunk identifiers for better debugging. This option is enabled by default for [mode](/concepts/mode/) `development` and disabled for [mode](/concepts/mode/) `production` if no option is provided in webpack config.
 
 __webpack.config.js__
 

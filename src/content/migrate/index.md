@@ -1,5 +1,5 @@
 ---
-title: Migrate
+title: 迁移
 sort: 1
 contributors:
   - EugeneHlushko
