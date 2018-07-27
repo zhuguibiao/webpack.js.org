@@ -6,7 +6,7 @@ REPO=`git config remote.origin.url`
 SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 
 # Run tests
-yarn test
+# yarn test
 
 # Run our build
 yarn build
