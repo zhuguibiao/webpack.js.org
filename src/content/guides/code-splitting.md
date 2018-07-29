@@ -120,7 +120,7 @@ Entrypoint another = another.bundle.js
 
 CommonsChunkPlugin 已经从 webpack v4（代号 legato）中移除。想要了解最新版本是如何处理 chunk，请查看 [SplitChunksPlugin](/plugins/split-chunks-plugin/)。
 
-The [`SplitChunks`](/plugins/split-chunks-plugin/) 插件可以将公共的依赖模块提取到已有的入口 chunk 中，或者提取到一个新生成的 chunk。让我们使用这个插件，将之前的示例中重复的 `lodash` 模块去除：
+[`SplitChunks`](/plugins/split-chunks-plugin/) 插件可以将公共的依赖模块提取到已有的入口 chunk 中，或者提取到一个新生成的 chunk。让我们使用这个插件，将之前的示例中重复的 `lodash` 模块去除：
 
 __webpack.config.js__
 
