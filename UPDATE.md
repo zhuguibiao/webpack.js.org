@@ -13,5 +13,4 @@
 * 合并记录：https://github.com/webpack-china/webpack.js.org/pull/494
 
 ## 待翻译记录
-- configuration/optimization.md
 - guides/code-splitting.md

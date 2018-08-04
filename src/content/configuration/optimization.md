@@ -12,16 +12,16 @@ related:
     url: https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
 ---
 
-Since version 4 webpack runs optimizations for you depending on the chosen `mode`, still all optimizations are available for manual configuration and overrides.
+从 webpack 4 开始，会根据你选择的 `mode` 来执行不同的优化，不过所有的优化还是可以手动配置和重写。
 
 
 ## `optimization.minimize`
 
 `boolean`
 
-Tell webpack to minimize the bundle using the [UglifyjsWebpackPlugin](/plugins/uglifyjs-webpack-plugin/).
+告知 webpack 使用 [UglifyjsWebpackPlugin](/plugins/uglifyjs-webpack-plugin/) 压缩 bundle。
 
-This is `true` by default in `production` mode.
+`production` 模式下，这里默认是 `true`。
 
 __webpack.config.js__
 
@@ -35,13 +35,13 @@ module.exports = {
 };
 ```
 
-T> Learn how [mode](/concepts/mode/) works.
+T> 了解 [mode](/concepts/mode/) 工作机制。
 
 ## `optimization.minimizer`
 
 `UglifyjsWebpackPlugin | [UglifyjsWebpackPlugin]`
 
-Allows you to override the default minimizer by providing a different one or more customized [UglifyjsWebpackPlugin](/plugins/uglifyjs-webpack-plugin/) instances.
+允许你通过提供一个或多个定制过的 [UglifyjsWebpackPlugin](/plugins/uglifyjs-webpack-plugin/) 实例，覆盖默认压缩工具(minimizer)。
 
 __webpack.config.js__
 
@@ -63,23 +63,23 @@ module.exports = {
 
 `object`
 
-By default webpack v4+ provides new common chunks strategies out of the box for dynamically imported modules. See available options for configuring this behavior in the [SplitChunksPlugin](/plugins/split-chunks-plugin/) page.
+对于动态导入模块，默认使用 webpack v4+ 提供的全新的通用分块策略(common chunk strategy)。请在 [SplitChunksPlugin](/plugins/split-chunks-plugin/) 页面中查看配置其行为的可用选项。
 
 ## `optimization.runtimeChunk`
 
 `object` `string` `boolean`
 
-Setting `optimization.runtimeChunk` to `true` adds an additional chunk to each entry point containing only the runtime.
-It is possible to use preset mode of the plugin by providing a string value:
+将 `optimization.runtimeChunk` 设置为 `true`，会为每个仅含有 runtime 的入口起点，添加一个额外 chunk。
+也可以设置为一个字符串值，来使用插件预设模式(preset mode)：
 
-- `single`: creates a runtime file to be shared for all generated chunks.
-- `multiple`: creates multiple runtime files for common chunks.
+- `single`：创建一个 runtime 文件，来共享所有生成的 chunk。
+- `multiple`：将 common chunks 创建为多个 runtime 文件。
 
-By setting `optimization.runtimeChunk` to `object` it is only possible to provide the `name` property which stands for the name or name factory for the runtime chunks.
+通过将 `optimization.runtimeChunk` 设置为 `object`，对象中可以设置只有 `name` 属性，其中属性值可以是名称或者返回名称的函数，用于为 runtime chunks 命名。
 
-Default is `false`: each entry chunk embeds runtime.
+默认值是 `false`：每个入口 chunk 中直接嵌入 runtime。
 
-W> Imported modules are initialized for each runtime chunk separately, so if you include multiple entry points on a page, beware of this behavior. You will probably want to set it to `single` or use another configuration that allows you to only have one runtime instance.
+W> 对于每个 runtime chunk，导入的模块会被分别初始化，因此如果你在同一个页面中引用多个入口起点，请注意此行为。你或许应该将其设置为 `single`，或者使用其他只有一个 runtime 实例的配置。
 
 __webpack.config.js__
 
@@ -99,7 +99,7 @@ module.exports = {
 
 `boolean`
 
-Use the `optimization.noEmitOnErrors` to skip the emitting phase whenever there are errors while compiling. This ensures that no erroring assets are emitted. The `emitted` flag in the stats is `false` for all assets.
+在编译出错时，使用 `optimization.noEmitOnErrors` 来跳过生成阶段(emitting phase)。这可以确保没有生成出错误资源。而 stats 中所有 assets 中的 `emitted` 标记都是 `false`。
 
 __webpack.config.js__
 
@@ -112,13 +112,13 @@ module.exports = {
 };
 ```
 
-W> If you are using webpack [CLI](/api/cli/), the webpack process will not exit with an error code while this plugin is enabled. If you want webpack to "fail" when using the CLI, please check out the [`bail` option](/api/cli/#advanced-options).
+W> 如果你正在使用 webpack [CLI](/api/cli/)，在此插件开启时，webpack 处理过程不会因为错误代码而退出。如果你希望在使用 CLI 时 webpack "失败(fail)"，请查看 [`bail` 选项](/api/cli/#advanced-options)。
 
 ## `optimization.namedModules`
 
 `boolean: false`
 
-Tells webpack to use readable module identifiers for better debugging. When `optimization.namedModules` is not set in webpack config, webpack will enable it by default for [mode](/concepts/mode/) `development` and disable for [mode](/concepts/mode/) `production`.
+告知 webpack 使用可读取模块标识符(readable module identifiers)，来帮助更好地调试。webpack 配置中如果没有设置此选项，默认会在 [mode](/concepts/mode/) `development` 启用，在 [mode](/concepts/mode/) `production` 禁用。
 
 __webpack.config.js__
 
@@ -135,7 +135,7 @@ module.exports = {
 
 `boolean: false`
 
-Tells webpack to use readable chunk identifiers for better debugging. This option is enabled by default for [mode](/concepts/mode/) `development` and disabled for [mode](/concepts/mode/) `production` if no option is provided in webpack config.
+告知 webpack 使用可读取 chunk 标识符(readable chunk identifiers)，来帮助更好地调试。webpack 配置中如果没有设置此选项，默认会在 [mode](/concepts/mode/) `development` 启用，在 [mode](/concepts/mode/) `production` 禁用。
 
 __webpack.config.js__
 
@@ -152,12 +152,12 @@ module.exports = {
 
 `string` `bool: false`
 
-Tells webpack to set `process.env.NODE_ENV` to a given string value. `optimization.nodeEnv` uses [DefinePlugin](/plugins/define-plugin/) unless set to `false`. `optimization.nodeEnv` __defaults__ to [mode](/concepts/mode/) if set, else falls back to `"production"`.
+告知 webpack 将 `process.env.NODE_ENV` 设置为一个给定字符串。如果 `optimization.nodeEnv` 不是 `false`，则会使用 [DefinePlugin](/plugins/define-plugin/)，`optimization.nodeEnv` __默认值__取决于 [mode](/concepts/mode/)，如果为 falsy 值，则会回退到 `"production"`。
 
-Possible values:
+可能的值有：
 
-- any string: the value to set `process.env.NODE_ENV` to.
-- false: do not modify/set the value of `process.env.NODE_ENV`.
+- 任何字符串：用于设置 `process.env.NODE_ENV` 的值。
+- false：不修改/设置 `process.env.NODE_ENV`的值。
 
 __webpack.config.js__
 
@@ -174,7 +174,7 @@ module.exports = {
 
 `bool: false`
 
-When set to `true` tells webpack to reduce the size of WASM by changing imports to shorter strings. It mangles module and export names.
+在设置为 `true` 时，告知 webpack 通过将导入修改为更短的字符串，来减少 WASM 大小。这会破坏模块和导出名称。
 
 __webpack.config.js__
 
@@ -191,7 +191,7 @@ module.exports = {
 
 `bool: true`
 
-Tells webpack to detect and remove modules from chunks when these modules are already included in all parents. Setting `optimization.removeAvailableModules` to `false` will disable this optimization.
+如果模块已经包含在所有父级模块中，告知 webpack 从 chunk 中检测出这些模块，或移除这些模块。将 `optimization.removeAvailableModules` 设置为 `false` 以禁用这项优化。
 
 __webpack.config.js__
 
@@ -208,7 +208,7 @@ module.exports = {
 
 `bool: true`
 
-Tells webpack to detect and remove chunks which are empty. Setting `optimization.removeEmptyChunks` to `false` will disable this optimization.
+如果 chunk 为空，告知 webpack 检测或移除这些 chunk。将 `optimization.removeEmptyChunks` 设置为 `false` 以禁用这项优化。
 
 __webpack.config.js__
 
@@ -225,7 +225,7 @@ module.exports = {
 
 `bool: true`
 
-Tells webpack to merge chunks which contain the same modules. Setting `optimization.mergeDuplicateChunks` to `false` will disable this optimization.
+告知 webpack 合并含有相同模块的 chunk。将 `optimization.mergeDuplicateChunks` 设置为 `false` 以禁用这项优化。
 
 __webpack.config.js__
 
@@ -242,7 +242,7 @@ module.exports = {
 
 `bool`
 
-Tells webpack to determine and flag chunks which are subsets of other chunks in a way that subsets don’t have to be loaded when the bigger chunk has been already loaded. By default `optimization.flagIncludedChunks` is enabled in `production` [mode](/concepts/mode/) and disabled elsewise.
+告知 webpack 确定和标记出作为其他 chunk 子集的那些 chunk，其方式是在已经加载过较大的 chunk 之后，就不再去加载这些 chunk 子集。`optimization.flagIncludedChunks` 默认会在 `production` [mode](/concepts/mode/) 中启用，其他情况禁用。
 
 __webpack.config.js__
 
