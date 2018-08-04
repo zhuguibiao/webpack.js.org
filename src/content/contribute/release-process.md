@@ -9,7 +9,7 @@ contributors:
 部署 webpack 的发布流程实际上非常简单。请阅读以下步骤，以便清楚了解这些是如何完成的。
 
 
-## Pull Request
+## pull request
 
 当你向 `master` 分支上提交 pull request 时，选择 _Create Merge-Commit_ 选项。
 

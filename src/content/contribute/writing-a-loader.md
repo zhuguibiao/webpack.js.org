@@ -95,7 +95,7 @@ module.exports = {
 ```
 
 
-## 用法准则(Guidelines)
+## 用法准则(guidelines)
 
 编写 loader 时应该遵循以下准则。它们按重要程度排序，有些仅适用于某些场景，请阅读下面详细的章节以获得更多信息。
 
@@ -110,11 +110,11 @@ module.exports = {
 - 避免__绝对路径__。
 - 使用 __peer dependencies__。
 
-### 简单(Simple)
+### 简单(simple)
 
 loaders 应该只做单一任务。这不仅使每个 loader 易维护，也可以在更多场景链式调用。
 
-### 链式(Chaining)
+### 链式(chaining)
 
 利用 loader 可以链式调用的优势。写五个简单的 loader 实现五项任务，而不是一个 loader 实现五项任务。功能隔离不仅使 loader 更简单，可能还可以将它们用于你原先没有想到的功能。
 
@@ -126,11 +126,11 @@ loaders 应该只做单一任务。这不仅使每个 loader 易维护，也可�
 
 T> loader 可以被链式调用意味着不一定要输出 JavaScript。只要下一个 loader 可以处理这个输出，这个 loader 就可以返回任意类型的模块。
 
-### 模块化(Modular)
+### 模块化(modular)
 
 保证输出模块化。loader 生成的模块与普通模块遵循相同的设计原则。
 
-### 无状态(Stateless)
+### 无状态(stateless)
 
 确保 loader 在不同模块转换之间不保存状态。每次运行都应该独立于其他编译模块以及相同模块之前的编译结果。
 
@@ -164,7 +164,7 @@ export default function(source) {
 }
 ```
 
-### loader 依赖(Loader Dependencies)
+### loader 依赖(loader dependencies)
 
 如果一个 loader 使用外部资源（例如，从文件系统读取），__必须__声明它。这些信息用于使缓存 loaders 无效，以及在观察模式(watch mode)下重编译。下面是一个简单示例，说明如何使用 `addDependency` 方法实现上述声明：
 
@@ -186,7 +186,7 @@ export default function(source) {
 }
 ```
 
-### 模块依赖(Module Dependencies)
+### 模块依赖(module dependencies)
 
 根据模块类型，可能会有不同的模式指定依赖关系。例如在 CSS 中，使用 `@import` 和 `url(...)` 语句来声明依赖。这些依赖关系应该由模块系统解析。
 
@@ -201,15 +201,15 @@ export default function(source) {
 
 T> 如果语言只支持相对 url（例如 `url(file)` 总是指向 `./file`），通过使用 `~` 来指定已安装模块（例如，引用 `node_modules` 中的那些模块）。所以对于 `url`，相当于 `url('~some-library/image.jpg')`。
 
-### 通用代码(Common Code)
+### 通用代码(common code)
 
 避免在 loader 处理的每个模块中生成通用代码。相反，你应该在 loader 中创建一个运行时文件，并生成 `require` 语句以引用该共享模块。
 
-### 绝对路径(Absolute Paths)
+### 绝对路径(absolute paths)
 
 不要在模块代码中插入绝对路径，因为当项目根路径变化时，文件绝对路径也会变化。`loader-utils` 中的 [`stringifyRequest`](https://github.com/webpack/loader-utils#stringifyrequest) 方法，可以将绝对路径转化为相对路径。
 
-### 同等依赖(Peer Dependencies)
+### 同等依赖(peer dependencies)
 
 如果你的 loader 简单包裹另外一个包，你应该把这个包作为一个 `peerDependency` 引入。这种方式允许应用程序开发者在必要情况下，在 `package.json` 中指定所需的确定版本。
 
