@@ -206,7 +206,7 @@ __webpack.config.js__
   };
 ```
 
-注意，这里使用了 `chunkFilename`，它决定非入口 chunk 的名称。想了解 `chunkFilename` 更多信息，请查看 [output 相关文档](/configuration/output/#output-chunkfilename)。接着，更新我们的项目，移除掉那些现在不会用到的文件:
+注意，这里使用了 `chunkFilename`，它决定非入口 chunk 的名称。想了解 `chunkFilename` 更多信息，请查看 [output 相关文档](/configuration/output/#output-chunkfilename)。接着，更新我们的项目，移除掉那些现在不会用到的文件：
 
 __project__
 
@@ -251,7 +251,7 @@ __src/index.js__
 + })
 ```
 
-注意，在注释中使用了 `webpackChunkName`。这样做会导致我们的 bundle 被命名为 `lodash.bundle.js` ，而不是 `[id].bundle.js` 。想了解更多关于 `webpackChunkName` 和其他可用选项，请查看 [`import()` 相关文档](/api/module-methods#import-)。让我们执行 webpack，查看 `lodash` 是否会分离到一个单独的 bundle：
+注意，在注释中使用了 `webpackChunkName`。这样做会导致我们的 bundle 被命名为 `lodash.bundle.js` ，而不是 `[id].bundle.js` 。想了解更多关于 `webpackChunkName` 和其他可用选项，请查看 [`import()` 相关文档](/api/module-methods/#import-)。让我们执行 webpack，查看 `lodash` 是否会分离到一个单独的 bundle：
 
 ``` bash
 Hash: a3f7446ffbeb7fb897ff
@@ -267,7 +267,7 @@ Entrypoint index = index.bundle.js
     + 1 hidden module
 ```
 
-由于 `import()` 会返回一个 promise，因此它可以和 [`async` 函数](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function)一起使用。但是，需要使用像 Babel 这样的预处理器和[Syntax Dynamic Import Babel Plugin](https://babeljs.io/docs/plugins/syntax-dynamic-import/#installation)。下面是如何通过 `async` 函数简化代码：
+由于 `import()` 会返回一个 promise，因此它可以和 [`async` 函数](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function)一起使用。但是，需要使用像 Babel 这样的预处理器和 [Syntax Dynamic Import Babel Plugin](https://babeljs.io/docs/plugins/syntax-dynamic-import/#installation)。下面是如何通过 `async` 函数简化代码：
 
 __src/index.js__
 
@@ -296,16 +296,16 @@ __src/index.js__
 ```
 
 
-## Prefetching/Preloading modules
+## 预取/预加载模块
 
-webpack 4.6.0+ adds support for prefetching and preloading.
+webpack 4.6.0+ 添加了预取/预加载功能的支持
 
-Using these inline directives while declaring your imports allows webpack to output “Resource Hint” which tells the browser that for:
+在声明 import 时使用这些内置指令，可以让 webpack 输出“资源提示(Resource Hint)”，来告知浏览器：
 
-- prefetch: resource is probably needed for some navigation in the future
-- preload: resource might be needed during the current navigation
+- 预取(prefetch)：将来导航下可能需要的资源
+- 预加载(preload): 当前导航下可能需要资源
 
-Simple prefetch example can be having a `HomePage` component, which renders a `LoginButton` component which then on demand loads a `LoginModal` component after being clicked.
+下面这个预取(prefetch)的简单示例中，有一个 `HomePage` 组件，其内部渲染一个 `LoginButton` 组件，然后在点击后按需加载 `LoginModal` 组件。
 
 __LoginButton.js__
 
@@ -314,20 +314,20 @@ __LoginButton.js__
 import(/* webpackPrefetch: true */ 'LoginModal');
 ```
 
-This will result in `<link rel="prefetch" href="login-modal-chunk.js">` being appended in the head of the page, which will instruct the browser to prefetch in idle time the `login-modal-chunk.js` file.
+这会生成 `<link rel="prefetch" href="login-modal-chunk.js">` 并追加到页面头部，指示着浏览器在闲置时间预取 `login-modal-chunk.js` 文件。
 
-T> webpack will add the prefetch hint once the parent chunk has been loaded.
+T> 只要父 chunk 完成加载，webpack 就会添加预取提示。
 
-Preload directive has a bunch of differences compared to prefetch:
+和预取指令相比，预加载指令有许多不同之处：
 
-- A preloaded chunk starts loading in parallel to the parent chunk. A prefetched chunk starts after the parent chunk finish.
-- A preloaded chunk has medium priority and instantly downloaded. A prefetched chunk is downloaded in browser idle time.
-- A preloaded chunk should be instantly requested by the parent chunk. A prefetched chunk can be used anytime in the future.
-- Browser support is different.
+- 预加载 chunk 会在父 chunk 加载时，以并行方式开始加载。预取 chunk 会在父 chunk 加载结束后开始加载。
+- 预加载 chunk 具有中等优先级，并立即下载。预取 chunk 在浏览器闲置时下载。
+- 预加载 chunk 会在父 chunk 中立即请求。预取 chunk 在未来使用时才会请求。
+- 浏览器支持程度不同。
 
-Simple preload example can be having a `Component` which always depends on a big library that should be in a separate chunk.
+下面这个预加载(preload)的简单示例中，有一个 `Component`，依赖于一个较大的 library，所以应该将其分离到一个独立的 chunk 中。
 
-Lets image component `ChartComponent` which needs huge `ChartingLibrary`. It displays a `LoadingIndicator` when rendered and instantly does an on demand import of `ChartingLibrary`:
+这里的图表组件 `ChartComponent` 需要依赖体积巨大的 `ChartingLibrary`。它会在渲染时显示一个 `LoadingIndicator(加载进度条)` 组件，然后立即按需导入 `ChartingLibrary`：
 
 __ChartComponent.js__
 
@@ -336,9 +336,9 @@ __ChartComponent.js__
 import(/* webpackPreload: true */ 'ChartingLibrary');
 ```
 
-When a page which uses the `ChartComponent` is requested, the charting-library-chunk is also requested via `<link rel="preload">`. Assuming the page-chunk is smaller and finishes faster, the page will be displayed with a `LoadingIndicator`, until the already requested `charting-library-chunk` finishes. This will give a little load time boost since it only needs one round-trip instead of two. Especially in high-latency environments.
+在页面使用 `ChartComponent` 时，在请求 ChartComponent.js 的同时，charting-library-chunk 也会通过 `<link rel="preload">` 去预先请求。假定 page-chunk 体积很小，很快就被加载好，页面此时就会显示 `LoadingIndicator(加载进度条)` ，等到 `charting-library-chunk` 加载完成，LoadingIndicator 组件才消失。在启动时仅需要很少的加载时间，因为只进行单次请求，而不是两次请求。尤其是高延迟环境下的加载时间。
 
-T> Using webpackPreload incorrectly can actually hurt performance, so be careful when using it.
+T> 不正确地使用 webpackPreload 会有损性能，请谨慎使用。
 
 
 ## bundle 分析(bundle analysis)
