@@ -29,22 +29,57 @@ module.exports = {
 
 |Name|Type|Default|Description|
 |:--:|:--:|:-----:|:----------|
-|**`test`**|`{RegExp}`|`.`|处理所有匹配此 `{RegExp}` 的资源|
-|**`asset`**|`{String}`|`[path].gz[query]`|目标资源名称。`[file]` 会被替换成原资源。`[path]` 会被替换成原资源路径，`[query]` 替换成原查询字符串|
-|**`filename`**|`{Function}`|`false`|一个 `{Function}` `(asset) => asset` 函数，接收原资源名（通过 `asset` 选项）返回新资源名|
-|**`algorithm`**|`{String\|Function}`|`gzip`|可以是 `(buffer, cb) => cb(buffer)` 或者是使用 `zlib` 里面的算法的 `{String}`|
-|**`threshold`**|`{Number}`|`0`|只处理比这个值大的资源。按字节计算|
-|**`minRatio`**|`{Number}`|`0.8`|只有压缩率比这个值小的资源才会被处理|
-|**`deleteOriginalAssets`**|`{Boolean}`|`false`|是否删除原资源|
+|**[`test`](#test)**|`{RegExp\|Array<RegExp>}`|`.`|处理所有匹配此 `{RegExp\|Array<RegExp>}` 的资源|
+|**[`include`](#include)**|`{RegExp\|Array<RegExp>}`|`undefined`|Files to `include`|
+|**[`exclude`](#exclude)**|`{RegExp\|Array<RegExp>}`|`undefined`|Files to `exclude`|
+|**[`cache`](#cache)**|`{Boolean\|String}`|`false`|Enable file caching|
+|**[`asset`](#asset)**|`{String}`|`[path].gz[query]`|目标资源名称。`[file]` 会被替换成原始资源名称。`[path]` 会被替换成原始资源路径，`[query]` 会被替换成原始查询字符串|
+|**[`filename`](#filename)**|`{Function}`|`false`|一个 `{Function}` `(asset) => asset` 函数，接收原始资源名称（通过 `asset` 选项）返回新的资源名称|
+|**[`algorithm`](#algorithm)**|`{String\|Function}`|`gzip`|可以是 `(buffer, cb) => cb(buffer)` 或者是使用 `zlib` 里面的算法的 `{String}`|
+|**[`threshold`](#threshold)**|`{Number}`|`0`|只处理比这个值大的资源。按字节计算|
+|**[`minRatio`](#minratio)**|`{Number}`|`0.8`|只有压缩率比这个值小的资源才会被处理|
+|**[`deleteOriginalAssets`](#deleteoriginalassets)**|`{Boolean}`|`false`|是否删除原始资源|
 
-
-### `test`
+##
 
 **webpack.config.js**
 ```js
 [
   new CompressionPlugin({
     test: /\.js/
+  })
+]
+```
+
+### `include`
+
+**webpack.config.js**
+```js
+[
+  new CompressionPlugin({
+    include: /\/includes/
+  })
+]
+```
+
+### `exclude`
+
+**webpack.config.js**
+```js
+[
+  new CompressionPlugin({
+    exclude: /\/excludes/
+  })
+]
+```
+
+### `cache`
+
+**webpack.config.js**
+```js
+[
+  new CompressionPlugin({
+    cache: true
   })
 ]
 ```

@@ -39,7 +39,7 @@ module.exports = {
         include: path.resolve("src"),
         use: [
           "thread-loader",
-          "expensive-loader"
+          // your expensive loader (e.g babel-loader)
         ]
       }
     ]
@@ -63,7 +63,7 @@ use: [
       workerParallelJobs: 50,
 
       // 额外的 node.js 参数
-      workerNodeArgs: ['--max-old-space-size', '1024'],
+      workerNodeArgs: ['--max-old-space-size=1024'],
 
       // 闲置时定时删除 worker 进程
       // 默认为 500ms
@@ -80,7 +80,7 @@ use: [
       name: "my-pool"
     }
   },
-  "expensive-loader"
+  // your expensive loader (e.g babel-loader)
 ]
 ```
 

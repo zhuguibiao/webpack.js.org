@@ -134,6 +134,7 @@ style.unuse(); // = style.unref();
 |**`transform`** |`{Function}`|`false`|转换/条件加载 CSS，通过传递转换/条件函数|
 |**`insertAt`**|`{String\|Object}`|`bottom`|在给定位置处插入 `<style></style>`|
 |**`insertInto`**|`{String}`|`<head>`|给定位置中插入 `<style></style>`|
+|**`singleton`**|`{Boolean}`|`undefined`|Reuses a single `<style></style>` element, instead of adding/removing individual elements for each required module.|
 |**`sourceMap`**|`{Boolean}`|`false`|启用/禁用 Sourcemap|
 |**`convertToAbsoluteUrls`**|`{Boolean}`|`false`|启用 source map 后，将相对 URL 转换为绝对 URL|
 
@@ -311,21 +312,34 @@ A new `<style>` element can be inserted before a specific element by passing an 
 
 ### `insertInto`
 默认情况下，样式加载器将 `<style>` 元素插入到页面的 `<head>` 标签中。如果要将标签插入到其他位置，可以在这里为该元素指定 CSS 选择器。如果你想要插入到 [IFrame](https://developer.mozilla.org/en-US/docs/Web/API/HTMLIFrameElement) 中，请确保你具有足够的访问权限，样式将被注入到内容文档的 head 中。
-你还可以将样式插入到 [ShadowRoot](https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot) 中，如下
+
+You can also pass function to override default behavior and insert styles in your container, e.g
 
 **webpack.config.js**
 ```js
 {
   loader: 'style-loader',
   options: {
-    insertInto: '#host::shadow>#root'
+    insertInto: () => document.querySelector("#root"),
+  }
+}
+```
+
+通过使用函数，可以将样式插入到 [ShadowRoot](https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot) 中，例如
+
+**webpack.config.js**
+```js
+{
+  loader: 'style-loader',
+  options: {
+    insertInto: () => document.querySelector("#root").shadowRoot,
   }
 }
 ```
 
 ### `singleton`
 
-如果已定义，则 style-loader 将重用单个 `<style>` 元素，而不是为每个所需的模块添加/删除单个元素。
+如果已定义，则 style-loader 将重用单个 `<style></style>` 元素，而不是为每个所需的模块添加/删除单个元素。
 
 > ℹ️  默认情况下启用此选项，IE9 对页面上允许的 style 标签数量有严格的限制。你可以使用 singleton 选项来启用或禁用它。
 

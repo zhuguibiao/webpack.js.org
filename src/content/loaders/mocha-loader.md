@@ -4,21 +4,34 @@ source: https://raw.githubusercontent.com/webpack-contrib/mocha-loader/master/RE
 edit: https://github.com/webpack-contrib/mocha-loader/edit/master/README.md
 repo: https://github.com/webpack-contrib/mocha-loader
 ---
-Allows <a href="http://mochajs.org/">Mocha</a> tests to be loaded and run via webpack
 
-## 安装
 
-```bash
-npm install --save-dev mocha-loader
+[![npm][npm]][npm-url]
+[![node][node]][node-url]
+[![deps][deps]][deps-url]
+[![tests][tests]][tests-url]
+[![chat][chat]][chat-url]
+
+
+
+mocha 模块的 webpack loader
+
+## 要求
+
+此模块需要 Node v6.9.0+ 和 webpack v4.0.0+。
+
+## 起步
+
+你需要预先安装 `mocha-loader`：
+
+```console
+$ npm install mocha-loader --save-dev
 ```
 
-## 用法
+然后，在 `webpack` 配置中添加 loader。例如：
 
-##
-
-**webpack.config.js**
 ```js
-
+// webpack.config.js
 module.exports = {
   entry: './entry.js',
   output: {
@@ -35,67 +48,55 @@ module.exports = {
 }
 ```
 
+然后在应用程序中 `import` 目标文件：
+
 ```js
+// src/entry.js
 import test from './test'
 ```
 
-### 命令行接口(CLI)
+然后，通过你偏爱的方式去运行 `webpack`。
 
-```bash
+## 示例
+
+你可以通过如下方式使用 loader：
+
+### CLI
+
+```console
 webpack --module-bind 'mocha-loader!./test'
 ```
 
-```js
-import test from './test'
-```
-
-### Require
+### require 引用
 
 ```js
 import test from 'mocha-loader!./test'
 ```
 
-## 选项
+## 贡献
 
-## 维护人员
+如果你从未阅读过我们的贡献指南，请在上面花点时间。
 
-<table>
-  <tbody>
-    <tr>
-      <td align="center">
-        <img width="150" height="150"
-        src="https://avatars3.githubusercontent.com/u/166921?v=3&s=150">
-        </br>
-        <a href="https://github.com/bebraw">Juho Vepsäläinen</a>
-      </td>
-      <td align="center">
-        <img width="150" height="150"
-        src="https://avatars2.githubusercontent.com/u/8420490?v=3&s=150">
-        </br>
-        <a href="https://github.com/d3viant0ne">Joshua Wiens</a>
-      </td>
-      <td align="center">
-        <img width="150" height="150"
-        src="https://avatars3.githubusercontent.com/u/533616?v=3&s=150">
-        </br>
-        <a href="https://github.com/SpaceK33z">Kees Kluskens</a>
-      </td>
-      <td align="center">
-        <img width="150" height="150"
-        src="https://avatars3.githubusercontent.com/u/3408176?v=3&s=150">
-        </br>
-        <a href="https://github.com/TheLarkInn">Sean Larkin</a>
-      </td>
-    </tr>
-  <tbody>
-</table>
+#### [贡献指南](https://raw.githubusercontent.com/webpack-contrib/mocha-loader/master/.github/CONTRIBUTING)
 
+## License
+
+#### [MIT](https://raw.githubusercontent.com/webpack-contrib/mocha-loader/master/LICENSE)
 
 [npm]: https://img.shields.io/npm/v/mocha-loader.svg
 [npm-url]: https://npmjs.com/package/mocha-loader
 
-[deps]: https://david-dm.org/webpack/mocha-loader.svg
-[deps-url]: https://david-dm.org/webpack/mocha-loader
+[node]: https://img.shields.io/node/v/mocha-loader.svg
+[node-url]: https://nodejs.org
 
-[chat]: https://badges.gitter.im/webpack/webpack.svg
+[deps]: https://david-dm.org/webpack-contrib/mocha-loader.svg
+[deps-url]: https://david-dm.org/webpack-contrib/mocha-loader
+
+[tests]: 	https://img.shields.io/circleci/project/github/webpack-contrib/mocha-loader.svg
+[tests-url]: https://circleci.com/gh/webpack-contrib/mocha-loader
+
+[cover]: https://codecov.io/gh/webpack-contrib/mocha-loader/branch/master/graph/badge.svg
+[cover-url]: https://codecov.io/gh/webpack-contrib/mocha-loader
+
+[chat]: https://img.shields.io/badge/gitter-webpack%2Fwebpack-brightgreen.svg
 [chat-url]: https://gitter.im/webpack/webpack

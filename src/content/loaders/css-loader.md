@@ -81,36 +81,13 @@ console.log(css); // {String}
 
 |名称|类型|默认值|描述|
 |:--:|:--:|:-----:|:----------|
-|**[`root`](#root)**|`{String}`|`/`|解析 URL 的路径，以 `/` 开头的 URL 不会被转译|
 |**[`url`](#url)**|`{Boolean}`|`true`| 启用/禁用 `url()` 处理|
-|**[`alias`](#alias)**|`{Object}`|`{}`|创建别名更容易导入一些模块|
 |**[`import`](#import)** |`{Boolean}`|`true`| 启用/禁用 @import 处理|
 |**[`modules`](#modules)**|`{Boolean}`|`false`|启用/禁用 CSS 模块|
-|**[`minimize`](#minimize)**|`{Boolean\|Object}`|`false`|启用/禁用 压缩|
-|**[`sourceMap`](#sourcemap)**|`{Boolean}`|`false`|启用/禁用 Sourcemap|
-|**[`camelCase`](#camelcase)**|`{Boolean\|String}`|`false`|以驼峰化式命名导出类名|
+|**[`localIdentName`](#localidentname)**|`{String}`|`[hash:base64]`|配置生成资源的标识符名称|
+|**[`sourceMap`](#sourcemap)**|`{Boolean}`|`false`|启用/禁用 sourcemap|
+|**[`camelCase`](#camelcase)**|`{Boolean\|String}`|`false`|以驼峰式命名导出类名|
 |**[`importLoaders`](#importloaders)**|`{Number}`|`0`|在 css-loader 前应用的 loader 的数量|
-|**`localIdentName`**|`{String}`|`[hash:base64]`|配置生成的标识符(ident)|
-
-### `root`
-
-对于以 `/` 开头的 URL，默认行为是不转译它们。
-
-`url(/image.png) => url(/image.png)`
-
-如果设置了 `root` 查询参数，那么此查询参数将被添加到 URL 前面，然后再进行转译。
-
-**webpack.config.js**
-```js
-{
-  loader: 'css-loader',
-  options: { root: '.' }
-}
-```
-
-`url(/image.png)` => `require('./image.png')`
-
-不建议使用'相对根路径'的 url。你应该只将其用于旧版 CSS 文件。
 
 ### `url`
 
@@ -122,48 +99,6 @@ console.log(css); // {String}
 url(image.png) => require('./image.png')
 url(~module/image.png) => require('module/image.png')
 ```
-
-### `alias`
-
-用别名重写你的 URL，在难以改变输入文件的url 路径时，这会很有帮助，例如，当你使用另一个包(package)（如 bootstrap, ratchet, font-awesome 等）中一些 css/sass 文件。
-
-`css-loader` 的别名，遵循与webpack 的 `resolve.alias` 相同的语法，你可以在[resolve 文档](https://webpack.js.org/configuration/resolve/#resolve-alias) 查看细节
-
-**file.scss**
-```css
-@charset "UTF-8";
-@import "bootstrap";
-```
-
-**webpack.config.js**
-```js
-{
-  test: /\.scss$/,
-  use: [
-    {
-      loader: "style-loader"
-    },
-    {
-      loader: "css-loader",
-      options: {
-        alias: {
-          "../fonts/bootstrap": "bootstrap-sass/assets/fonts/bootstrap"
-        }
-      }
-    },
-    {
-      loader: "sass-loader",
-      options: {
-        includePaths: [
-          path.resolve("./node_modules/bootstrap-sass/assets/stylesheets")
-        ]
-      }
-    }
-  ]
-}
-```
-
-查看此示例 [working bootstrap example](https://github.com/bbtfr/webpack2-bootstrap-sass-sample)。
 
 ### `import`
 
@@ -205,7 +140,7 @@ loader 会用唯一的标识符(identifier)来替换局部选择器。所选择�
 ._23_aKvs-b8bW2Vg3fwHozO ._13LGdX8RMStbBE9w-t0gZ1 .global-class-name { color: blue; }
 ```
 
-> :主要信息: 标识符被导出
+> ℹ️ 主要信息: 标识符被导出
 
 ```js
 exports.locals = {
@@ -224,41 +159,6 @@ file.png => ./file.png
 ```
 
 你可以使用 `:local(#someId)`，但不推荐这种用法。推荐使用 class 代替 id。
-你可以使用 `localIdentName` 查询参数（默认 `[hash:base64]`）来配置生成的 ident。
-
- **webpack.config.js**
- ```js
-{
-  test: /\.css$/,
-  use: [
-    {
-      loader: 'css-loader',
-      options: {
-        modules: true,
-        localIdentName: '[path][name]__[local]--[hash:base64:5]'
-      }
-    }
-  ]
-}
-```
-
-你还可以通过自定义 `getLocalIdent` 函数来指定绝对路径，以根据不同的模式(schema)生成类名。这需要 `webpack >= 2.2.1`（`options` 对象支持传入函数）。
-
-**webpack.config.js**
-```js
-{
-  loader: 'css-loader',
-  options: {
-    modules: true,
-    localIdentName: '[path][name]__[local]--[hash:base64:5]',
-    getLocalIdent: (context, localIdentName, localName, options) => {
-      return 'whatever_random_class_name'
-    }
-  }
-}
-```
-
-> :重要信息: 对于使用 extract-text-webpack-plugin 预渲染，你应该**在预渲染 bundle 中** 使用 `css-loader/locals` 而不是 `style-loader!css-loader` 。它不会嵌入 CSS，但只导出标识符映射(identifier map)。
 
 #### `Composing`
 
@@ -325,23 +225,43 @@ exports.locals = {
 }
 ```
 
-### `minimize`
+### `localIdentName`
 
-默认情况下，如果模块系统指定，css-loader 将压缩 css。
+You can configure the generated ident with the `localIdentName` query parameter. See [loader-utils's documentation](https://github.com/webpack/loader-utils#interpolatename) for more information on options.
 
-在某些情况下，压缩对于 css 来说是破坏性的，所以如果需要设置，可以向基于 cssnano 的 minifier(cssnano-based minifier) 提供自己的选项。更多可用信息请查看 [cssnano 文档](http://cssnano.co/guides/)。
+ **webpack.config.js**
+```js
+{
+  test: /\.css$/,
+  use: [
+    {
+      loader: 'css-loader',
+      options: {
+        modules: true,
+        localIdentName: '[path][name]__[local]--[hash:base64:5]'
+      }
+    }
+  ]
+}
+```
 
-还可以使用 `minimize` 查询参数，来禁用或强制压缩。
+You can also specify the absolute path to your custom `getLocalIdent` function to generate classname based on a different schema. This requires `webpack >= 2.2.1` (it supports functions in the `options` object).
 
 **webpack.config.js**
 ```js
 {
   loader: 'css-loader',
   options: {
-    minimize: true || {/* CSSNano Options */}
+    modules: true,
+    localIdentName: '[path][name]__[local]--[hash:base64:5]',
+    getLocalIdent: (context, localIdentName, localName, options) => {
+      return 'whatever_random_class_name'
+    }
   }
 }
 ```
+
+> ℹ️ For prerendering with extract-text-webpack-plugin you should use `css-loader/locals` instead of `style-loader!css-loader` **in the prerendering bundle**. It doesn't embed CSS but only exports the identifier mappings.
 
 ### `sourceMap`
 
@@ -405,7 +325,7 @@ import { className } from 'file.css';
     {
       loader: 'css-loader',
       options: {
-        importLoaders: 1 // 0 => 无 loader(默认); 1 => postcss-loader; 2 => postcss-loader, sass-loader
+        importLoaders: 2 // 0 => no loaders (default); 1 => postcss-loader; 2 => postcss-loader, sass-loader
       }
     },
     'postcss-loader',
@@ -445,37 +365,8 @@ module.exports = {
 
 ### 提取
 
-对于生产环境构建，建议从 bundle 中提取 CSS，以便之后可以并行加载 CSS/JS 资源。可以通过使用 [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin) 来实现，在生产环境模式运行中提取 CSS。
-
-**webpack.config.js**
-```js
-const env = process.env.NODE_ENV
-
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
-
-module.exports = {
-  module: {
-    rules: [
-      {
-        test: /\.css$/,
-        use: env === 'production'
-          ? ExtractTextPlugin.extract({
-              fallback: 'style-loader',
-              use: [ 'css-loader' ]
-          })
-          : [ 'style-loader', 'css-loader' ]
-      },
-    ]
-  },
-  plugins: env === 'production'
-    ? [
-        new ExtractTextPlugin({
-          filename: '[name].css'
-        })
-      ]
-    : []
-}
-```
+对于生产环境构建，建议从 bundle 中提取 CSS，以便之后可以并行加载 CSS/JS 资源。
+可以通过使用 [mini-css-extract-plugin](/plugins/mini-css-extract-plugin/) 来实现，在生产环境模式运行中提取 CSS。
 
 ## 维护人员
 
