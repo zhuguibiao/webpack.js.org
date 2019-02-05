@@ -8,6 +8,8 @@ contributors:
   - jeremenichelli
   - svyandun
   - byzyk
+  - EugeneHlushko
+  - dhurlburtusa
 related:
   - title: Reward modern browser users script
     url: https://hackernoon.com/10-things-i-learned-making-the-fastest-site-in-the-world-18a0e1cdf4a7#c665
@@ -19,7 +21,7 @@ The `webpack` compiler can understand modules written as ES2015 modules, CommonJ
 
 W> __We don't recommend using globals!__ The whole concept behind webpack is to allow more modular front-end development. This means writing isolated modules that are well contained and do not rely on hidden dependencies (e.g. globals). Please use these features only when necessary.
 
-Another instance where _shimming_ can be useful is when you want to [polyfill](https://en.wikipedia.org/wiki/Polyfill) browser functionality to support more users. In this case, you may only want to deliver those polyfills to the browsers that need patching (i.e. load them on demand).
+Another instance where _shimming_ can be useful is when you want to [polyfill](https://en.wikipedia.org/wiki/Polyfill_(programming)) browser functionality to support more users. In this case, you may only want to deliver those polyfills to the browsers that need patching (i.e. load them on demand).
 
 The following article will walk through both of these use cases.
 
@@ -91,15 +93,10 @@ What we've essentially done here is tell webpack...
 If we run a build, we should still see the same output:
 
 ``` bash
-Hash: f450fa59fa951c68c416
-Version: webpack 2.2.0
-Time: 343ms
+...
     Asset    Size  Chunks                    Chunk Names
 bundle.js  544 kB       0  [emitted]  [big]  main
-   [0] ./~/lodash/lodash.js 540 kB {0} [built]
-   [1] (webpack)/buildin/global.js 509 bytes {0} [built]
-   [2] (webpack)/buildin/module.js 517 bytes {0} [built]
-   [3] ./src/index.js 189 bytes {0} [built]
+...
 ```
 
 We can also use the `ProvidePlugin` to expose a single export of a module by configuring it with an "array path" (e.g. `[module, child, ...children?]`). So let's imagine we only wanted to provide the `join` method from `lodash` wherever it's invoked:
@@ -288,8 +285,11 @@ __src/index.js__
 
 T> Note that we aren't binding the `import` to a variable. This is because polyfills simply run on their own, prior to the rest of the code base, allowing us to then assume certain native functionality exists.
 
-Now while this is one approach, __including polyfills in the main bundle is not recommended__ because this penalizes modern browsers users by making them download a bigger file with unneeded scripts.
+Note that this approach prioritizes correctness over bundle size. To be safe and robust, polyfills/shims must run __before all other code__, and thus either need to load synchronously, or, all app code needs to load after all polyfills/shims load.
+There are many misconceptions in the community, as well, that modern browsers "don't need" polyfills, or that polyfills/shims merely serve to add missing features - in fact, they often _repair broken implementations_, even in the most modern of browsers.
+The best practice thus remains to unconditionally and synchronously load all polyfills/shims, despite the bundle size cost this incurs.
 
+If you feel that you have mitigated these concerns and wish to incur the risk of brokenness, here's one way you might do it:
 Let's move our `import` to a new file and add the [`whatwg-fetch`](https://github.com/github/fetch) polyfill:
 
 ``` bash
@@ -429,7 +429,7 @@ If we run our build, another `polyfills.bundle.js` file will be emitted and ever
 
 ## Further Optimizations
 
-The `babel-preset-env` package uses [browserslist](https://github.com/browserslist/browserslist) to transpile only what is not supported in your browsers matrix. This preset comes with the `useBuiltIns` option, `false` by default, which converts your global `babel-polyfill` import to a more granular feature by feature `import` pattern:
+The `babel-preset-env` package uses [browserslist](https://github.com/browserslist/browserslist) to transpile only what is not supported in your browsers matrix. This preset comes with the [`useBuiltIns`](https://babeljs.io/docs/en/babel-preset-env#usebuiltins) option, `false` by default, which converts your global `babel-polyfill` import to a more granular feature by feature `import` pattern:
 
 ``` js
 import 'core-js/modules/es7.string.pad-start';

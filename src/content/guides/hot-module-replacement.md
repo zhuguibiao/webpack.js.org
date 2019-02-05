@@ -16,6 +16,8 @@ contributors:
   - caryli
   - xgirma
   - EugeneHlushko
+  - aviyacohen
+  
 related:
   - title: Concepts - Hot Module Replacement
     url: /concepts/hot-module-replacement
@@ -103,7 +105,7 @@ __index.js__
 + }
 ```
 
-Start changing the `console.log` statement in `print.js`, and you should see the following output in the browser console.
+Start changing the `console.log` statement in `print.js`, and you should see the following output in the browser console (don't worry about that `button.onclick = printMe()` output for now, we will also update that part later).
 
 __print.js__
 
@@ -225,6 +227,7 @@ __webpack.config.js__
 ```diff
   const path = require('path');
   const HtmlWebpackPlugin = require('html-webpack-plugin');
+  const CleanWebpackPlugin = require('clean-webpack-plugin');
   const webpack = require('webpack');
 
   module.exports = {
@@ -245,7 +248,7 @@ __webpack.config.js__
 +     ]
 +   },
     plugins: [
-      new CleanWebpackPlugin(['dist'])
+      new CleanWebpackPlugin(['dist']),
       new HtmlWebpackPlugin({
         title: 'Hot Module Replacement'
       }),
@@ -336,7 +339,6 @@ There are many other loaders and examples out in the community to make HMR inter
 - [React Hot Loader](https://github.com/gaearon/react-hot-loader): Tweak react components in real time.
 - [Vue Loader](https://github.com/vuejs/vue-loader): This loader supports HMR for vue components out of the box.
 - [Elm Hot Loader](https://github.com/fluxxu/elm-hot-loader): Supports HMR for the Elm programming language.
-- [Redux HMR](https://survivejs.com/webpack/appendices/hmr-with-react/#configuring-hmr-with-redux): No loader or plugin necessary! A simple change to your main store file is all that's required.
 - [Angular HMR](https://github.com/gdi2290/angular-hmr): No loader necessary! A simple change to your main NgModule file is all that's required to have full control over the HMR APIs.
 
 T> If you know of any other loaders or plugins that help with or enhance Hot Module Replacement please submit a pull request to add to this list!

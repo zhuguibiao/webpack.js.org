@@ -134,7 +134,7 @@ What good would these statistics be without some description of the compiled app
   ],
   "errors": 0, // Number of errors when resolving or processing the module
   "failed": false, // Whether or not compilation failed on this module
-  "id": 0, // The ID of the module (analagous to [`module.id`](/api/module-variables#module-id-commonjs-))
+  "id": 0, // The ID of the module (analogous to [`module.id`](/api/module-variables#module-id-commonjs-))
   "identifier": "(webpack)\\test\\browsertest\\lib\\index.web.js", // A unique ID used internally
   "name": "./lib/index.web.js", // Path to the actual file
   "optional": false, // All requests to this module are with `try... catch` blocks (irrelevant with ESM)
@@ -176,7 +176,7 @@ The `errors` and `warnings` properties each contain a list of strings. Each stri
 ``` bash
 ../cases/parsing/browserify/index.js
 Critical dependencies:
-2:114-121 This seem to be a pre-built javascript file. Even while this is possible, it's not recommended. Try to require to orginal source to get better results.
+2:114-121 This seem to be a pre-built javascript file. Even while this is possible, it's not recommended. Try to require to original source to get better results.
  @ ../cases/parsing/browserify/index.js 2:114-121
 ```
 

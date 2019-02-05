@@ -81,7 +81,7 @@ Runs a plugin before the environment is prepared.
 
 `SyncHook`
 
-Executes a plugin a environment setup is complete.
+Executes a plugin after the environment setup is complete.
 
 
 ### `beforeRun`
@@ -189,13 +189,6 @@ Parameters: `compilation`
 Can return true/false at this point
 
 Parameters: `compilation`
-
-
-### `needAdditionalPass`
-
-`SyncBailHook`
-
-...
 
 
 ### `emit`
