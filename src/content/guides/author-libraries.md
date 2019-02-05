@@ -283,10 +283,10 @@ __webpack.config.js__
 
 可以通过以下方式暴露 library：
 
-* 变量：作为一个全局变量，通过 `script` 标签来访问（`libraryTarget:'var'`）。
-* this：通过 `this` 对象访问（`libraryTarget:'this'`）。
-* window：通过 `window` 对象访问，在浏览器中（`libraryTarget:'window'`）。
-* UMD：在 AMD 或 CommonJS 的 `require` 之后可访问（`libraryTarget:'umd'`）。
+- 变量：作为一个全局变量，通过 `script` 标签来访问（`libraryTarget:'var'`）。
+- this：通过 `this` 对象访问（`libraryTarget:'this'`）。
+- window：通过 `window` 对象访问，在浏览器中（`libraryTarget:'window'`）。
+- UMD：在 AMD 或 CommonJS 的 `require` 之后可访问（`libraryTarget:'umd'`）。
 
 如果设置了 `library` 但没设置 `libraryTarget`，则 `libraryTarget` 默认为 `var`，详细说明请查看 [output 配置文档](/configuration/output)。查看 [`output.libraryTarget`](/configuration/output#output-librarytarget)，以获取所有可用选项的详细列表。
 
