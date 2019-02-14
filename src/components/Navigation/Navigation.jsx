@@ -29,7 +29,7 @@ export default class Navigation extends React.Component {
               return (
                 <Link
                   key={ `navigation__link-${link.title}` }
-                  className={ `navigation__link ${activeMod}` }
+                  className={ `navigation__link ${activeMod} ${link.className}` }
                   to={ `/${link.url}/` }>
                   { link.title }
                 </Link>
