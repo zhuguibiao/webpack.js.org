@@ -16,10 +16,12 @@ webpack 接受以多种编程和数据语言编写的配置文件。支持的文
 
 ## TypeScript
 
-为了用 [TypeScript](http://www.typescriptlang.org/) 书写 webpack 的配置文件，必须先安装相关依赖：
+为了用 [TypeScript](http://www.typescriptlang.org/) 书写 webpack 的配置文件，必须先安装相关依赖，i.e., TypeScript and the relevant type definitions from the [DefinitelyTyped](https://definitelytyped.org/) project:：
 
 ``` bash
 npm install --save-dev typescript ts-node @types/node @types/webpack
+# and, if using webpack-dev-server
+npm install --save-dev @types/webpack-dev-server
 ```
 
 之后就可以使用 TypeScript 书写 webpack 的配置文件了：
@@ -82,10 +84,12 @@ __package.json__
 ```json
 {
   "scripts": {
-    "build": "TS_NODE_PROJECT=\"tsconfig-for-webpack-config.json\" webpack"
+    "build": "cross-env TS_NODE_PROJECT=\"tsconfig-for-webpack-config.json\" webpack"
   }
 }
 ```
+
+W> We had been getting reports that `TS_NODE_PROJECT` might not work with `"TS_NODE_PROJECT" unrecognized command` error. Therefore running it with `cross-env` seems to fix the issue, for more info [see this issue](https://github.com/webpack/webpack.js.org/issues/2733).
 
 
 ## CoffeeScript
@@ -118,7 +122,6 @@ config =
     use: 'babel-loader'
   } ]
   plugins: [
-    new (webpack.optimize.UglifyJsPlugin)
     new HtmlWebpackPlugin(template: './src/index.html')
   ]
 
@@ -167,10 +170,6 @@ export default (
       }} />
     </resolve>
     <plugins>
-      <uglify-js opts={{
-        compression: true,
-        mangle: false
-      }} />
       <CustomPlugin foo="bar" />
     </plugins>
   </webpack>

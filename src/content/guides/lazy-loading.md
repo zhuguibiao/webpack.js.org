@@ -6,6 +6,7 @@ contributors:
   - chrisVillanueva
   - skipjack
   - byzyk
+  - EugeneHlushko
 related:
   - title: Lazy Loading ES2015 Modules in the Browser
     url: https://dzone.com/articles/lazy-loading-es2015-modules-in-the-browser
@@ -84,22 +85,12 @@ W> 注意当调用 ES6 模块的 `import()` 方法（引入模块）时，必须
 现在运行 webpack 来验证一下我们的懒加载功能：
 
 ``` bash
-Hash: e0f95cc0bda81c2a1340
-Version: webpack 3.0.0
-Time: 1378ms
+...
           Asset       Size  Chunks                    Chunk Names
 print.bundle.js  417 bytes       0  [emitted]         print
 index.bundle.js     548 kB       1  [emitted]  [big]  index
      index.html  189 bytes          [emitted]
-   [0] ./src/index.js 742 bytes {1} [built]
-   [2] (webpack)/buildin/global.js 509 bytes {1} [built]
-   [3] (webpack)/buildin/module.js 517 bytes {1} [built]
-   [4] ./src/print.js 165 bytes {0} [built]
-    + 1 hidden module
-Child html-webpack-plugin for "index.html":
-       [2] (webpack)/buildin/global.js 509 bytes {0} [built]
-       [3] (webpack)/buildin/module.js 517 bytes {0} [built]
-        + 2 hidden modules
+...
 ```
 
 

@@ -12,6 +12,9 @@ contributors:
   - kbariotis
   - sterlingvix
   - jeremenichelli
+  - dasarianudeep
+  - byzyk
+  - kennetvu
 ---
 
 webpack 开箱即用，可以无需使用任何配置文件。然而，webpack 会假定项目的入口起点为 `src/index`，然后会在 `dist/main.js` 输出结果，并且在生产环境开启压缩和优化。
@@ -20,21 +23,7 @@ webpack 开箱即用，可以无需使用任何配置文件。然而，webpack �
 
 下面指定了所有可用的配置选项。
 
-T> 刚接触 webpack？请查看我们提供的指南，从 webpack 一些[核心概念](/concepts)开始学习吧！
-
-
-## Use different config file
-
-If for some reason you want to use different config file depending on certain situations you can change this via command line by using the `--config` flag.
-
-**package.json**
-
-```json
-"scripts": {
-  "build": "webpack --config prod.config.js"
-}
-```
-
+T> 刚开始学习 webpack？请查看我们提供的指南，从 webpack 一些 [核心概念](/concepts/) 开始学习吧！
 
 ## 选项
 
@@ -61,7 +50,7 @@ module.exports = {
     b: ["./app/entry-b1", "./app/entry-b2"]
   },
   </details>
-  // 默认为 ./src
+  // 默认为 './src'
   // 这里应用程序开始执行
   // webpack 开始打包
   [output](/configuration/output): {
@@ -156,7 +145,7 @@ module.exports = {
         [loader](/configuration/module#rule-loader): "babel-loader",
         // 应该应用的 loader，它相对上下文解析
         // 为了更清晰，`-loader` 后缀在 webpack 2 中不再是可选的
-        // 查看 [webpack 1 升级指南](/guides/migrating)。
+        // 查看 [webpack 1 升级指南](/migrate/3/#automatic-loader-module-name-extension-removed)。
         [options](/configuration/module#rule-options-rule-query): {
           presets: ["es2015"]
         },
@@ -323,7 +312,7 @@ module.exports = {
   // 不要遵循/打包这些模块，而是在运行时从环境中请求他们
   [serve](https://github.com/webpack-contrib/webpack-serve#options): { //object
     port: 1337,
-    content './dist',
+    content: './dist',
     // ...
   },
   // 为 webpack-serve 提供选项
@@ -394,3 +383,23 @@ module.exports = {
   </details>
 }
 ```
+
+## Use custom configuration file
+
+If for some reason you want to use custom configuration file depending on certain situations you can change this via command line by using the `--config` flag.
+
+__package.json__
+
+```json
+"scripts": {
+  "build": "webpack --config prod.config.js"
+}
+```
+
+## Configuration file generators
+
+Want to rapidly generate webpack configuration file for your project requirements with just a few clicks away?
+
+[Generate Custom Webpack Configuration](https://generatewebpackconfig.netlify.com/) is an interactive portal you can play around by selecting custom webpack configuration options tailored for your frontend project. It automatically generates a minimal webpack configuration based on your selection of loaders/plugins, etc.
+
+[Visual tool for creating webpack configs](https://webpack.jakoblind.no/) is an online configuration tool for creating webpack configuration file where you can select any combination of features you need. It also generates a full example project based on your webpack configs.

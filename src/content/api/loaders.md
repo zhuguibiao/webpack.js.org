@@ -6,13 +6,16 @@ contributors:
   - jhnns
   - tbroadley
   - byzyk
+  - sokra
+  - EugeneHlushko
+  - jantimon
 ---
 
 所谓 loader 只是一个导出为函数的 JavaScript 模块。[loader runner](https://github.com/webpack/loader-runner) 会调用这个函数，然后把上一个 loader 产生的结果或者资源文件(resource file)传入进去。函数的 `this` 上下文将由 webpack 填充，并且 [loader runner](https://github.com/webpack/loader-runner) 具有一些有用方法，可以使 loader 改变为异步调用方式，或者获取 query 参数。
 
 第一个 loader 的传入参数只有一个：资源文件(resource file)的内容。compiler 需要得到最后一个 loader 产生的处理结果。这个处理结果应该是 `String` 或者 `Buffer`（被转换为一个 string），代表了模块的 JavaScript 源码。另外还可以传递一个可选的 SourceMap 结果（格式为 JSON 对象）。
 
-如果是单个处理结果，可以在**同步模式**中直接返回。如果有多个处理结果，则必须调用 `this.callback()`。在**异步模式**中，必须调用 `this.async()`，来指示 [loader runner](https://github.com/webpack/loader-runner) 等待异步结果，它会返回 `this.callback()` 回调函数，随后 loader 必须返回 `undefined` 并且调用该回调函数。
+如果是单个处理结果，可以在__同步模式__中直接返回。如果有多个处理结果，则必须调用 `this.callback()`。在__异步模式__中，必须调用 `this.async()`，来指示 [loader runner](https://github.com/webpack/loader-runner) 等待异步结果，它会返回 `this.callback()` 回调函数，随后 loader 必须返回 `undefined` 并且调用该回调函数。
 
 
 ## 示例
@@ -25,7 +28,7 @@ contributors:
 
 __sync-loader.js__
 
-``` js
+``` javascript
 module.exports = function(content, map, meta) {
   return someSyncOperation(content);
 };
@@ -35,7 +38,7 @@ module.exports = function(content, map, meta) {
 
 __sync-loader-with-multiple-results.js__
 
-``` js
+``` javascript
 module.exports = function(content, map, meta) {
   this.callback(null, someSyncOperation(content), map, meta);
   return; // 当调用 callback() 时总是返回 undefined
@@ -48,7 +51,7 @@ module.exports = function(content, map, meta) {
 
 __async-loader.js__
 
-``` js
+``` javascript
 module.exports = function(content, map, meta) {
   var callback = this.async();
   someAsyncOperation(content, function(err, result) {
@@ -60,7 +63,7 @@ module.exports = function(content, map, meta) {
 
 __async-loader-with-multiple-results.js__
 
-``` js
+``` javascript
 module.exports = function(content, map, meta) {
   var callback = this.async();
   someAsyncOperation(content, function(err, result, sourceMaps, meta) {
@@ -70,7 +73,7 @@ module.exports = function(content, map, meta) {
 };
 ```
 
-T> loader 最初被设计为可以在同步 loader pipeline（如 Node.js ，使用 [enhanced-require](https://github.com/webpack/enhanced-require)），与异步 pipeline（如 webpack ）中运行。然而在 Node.js 这样的单线程环境下进行耗时长的同步计算不是个好主意，我们建议尽可能地使你的 loader 异步化。但如果计算量很小，同步 loader 也是可以的。
+T> loader 最初被设计为可以在同步 loader pipeline（如 Node.js ，使用 [enhanced-require](https://github.com/webpack/enhanced-require)），_以及_在异步 pipeline（如 webpack ）中运行。然而在 Node.js 这样的单线程环境下进行耗时长的同步计算不是个好主意，我们建议尽可能地使你的 loader 异步化。但如果计算量很小，同步 loader 也是可以的。
 
 
 ### "Raw" loader
@@ -79,7 +82,7 @@ T> loader 最初被设计为可以在同步 loader pipeline（如 Node.js ，使
 
 __raw-loader.js__
 
-``` js
+``` javascript
 module.exports = function(content) {
   assert(content instanceof Buffer);
   return someSyncOperation(content);
@@ -94,7 +97,7 @@ module.exports.raw = true;
 
 loader __总是__从右到左地被调用。有些情况下，loader 只关心 request 后面的__元数据(metadata)__，并且忽略前一个 loader 的结果。在实际（从右到左）执行 loader 之前，会先__从左到右__调用 loader 上的 `pitch` 方法。对于以下 [`use`](/configuration/module#rule-use) 配置：
 
-``` js
+``` javascript
 module.exports = {
   //...
   module: {
@@ -128,7 +131,7 @@ module.exports = {
 
 首先，传递给 `pitch` 方法的 `data`，在执行阶段也会暴露在 `this.data` 之下，并且可以用于在循环时，捕获和共享前面的信息。
 
-``` js
+``` javascript
 module.exports = function(content) {
   return someSyncOperation(content, this.data.value);
 };
@@ -140,7 +143,7 @@ module.exports.pitch = function(remainingRequest, precedingRequest, data) {
 
 其次，如果某个 loader 在 `pitch` 方法中给出一个结果，那么这个过程会回过身来，并跳过剩下的 loader。在我们上面的例子中，如果 `b-loader` 的 `pitch` 方法返回了一些东西：
 
-``` js
+``` javascript
 module.exports = function(content) {
   return someSyncOperation(content);
 };
@@ -170,19 +173,19 @@ loader context 表示在 loader 内使用 `this` 可以访问的一些方法或�
 假设我们这样请求加载别的模块：
 在 `/abc/file.js` 中：
 
-``` js
+``` javascript
 require('./loader1?xyz!loader2!./resource?rrr');
 ```
 
 
 ### `this.version`
 
-**loader API 的版本号。**目前是 `2`。这对于向后兼容性有一些用处。通过这个版本号，你可以为不同版本间的破坏性变更编写不同的逻辑，或做降级处理。
+__loader API 的版本号。__目前是 `2`。这对于向后兼容性有一些用处。通过这个版本号，你可以为不同版本间的破坏性变更编写不同的逻辑，或做降级处理。
 
 
 ### `this.context`
 
-**模块所在的目录。**可以用作解析其他模块路径的上下文。
+__模块所在的目录。__可以用作解析其他模块路径的上下文。
 
 在我们的例子中：这个属性为 `/abc`，因为 `resource.js` 在这个目录中
 
@@ -213,7 +216,7 @@ T> 使用 `loader-utils` 中提供的 [`getOptions` 方法](https://github.com/w
 
 <!-- eslint-skip -->
 
-```js
+``` javascript
 this.callback(
   err: Error | null,
   content: string | Buffer,
@@ -261,13 +264,13 @@ cacheable(flag = true: boolean)
 
 <!-- eslint-skip -->
 
-```js
+``` javascript
 loaders = [{request: string, path: string, query: string, module: function}]
 ```
 
 在我们的示例中：
 
-``` js
+``` javascript
 [
   {
     request: '/abc/loader1.js?xyz',
@@ -338,8 +341,16 @@ T> loader 最初被设计为可以同时当 Babel transform 用。如果你编�
 emitWarning(warning: Error)
 ```
 
-发出一个警告。
+发出一个警告，在输出中显示如下：
 
+``` bash
+WARNING in ./src/lib.js (./src/loader.js!./src/lib.js)
+Module Warning (from ./src/loader.js):
+Here is a Warning!
+ @ ./src/index.js 1:0-25
+ ```
+
+T> Note that the warnings will not be displayed if `stats.warnings` is set to `false`, or some other omit setting is used to `stats` such as `none` or `errors-only`. See the [stats configuration](/configuration/stats/#stats).
 
 ### `this.emitError`
 
@@ -347,7 +358,16 @@ emitWarning(warning: Error)
 emitError(error: Error)
 ```
 
-发出一个错误。
+发出一个错误，在输出中显示如下：
+
+``` bash
+ERROR in ./src/lib.js (./src/loader.js!./src/lib.js)
+Module Error (from ./src/loader.js):
+Here is an Error!
+ @ ./src/index.js 1:0-25
+```
+
+T> Unlike throwing an Error directly, it will NOT interrupt the compilation process of the current module.
 
 
 ### `this.loadModule`
@@ -471,3 +491,141 @@ W> `options` 属性，在 webpack 3 中已经废弃(deprecated)，在 webpack 4 
 ### `this._module`
 
 一种 hack 写法。用于访问当前加载的 Module 对象。
+
+
+## Error Reporting
+
+You can report errors from inside a loader by:
+
+- Using [this.emitError](/api/loaders/#this-emiterror). Will report the errors without interrupting module's compilation.
+- Using `throw` (or other uncaught exception). Throwing an error while a loader is running will cause current module compilation failure.
+- Using `callback` (in async mode). Pass an error to the callback will also cause module compilation failure.
+
+For example:
+
+__./src/index.js__
+
+``` javascript
+require('./loader!./lib');
+```
+
+Throwing an error from loader:
+
+__./src/loader.js__
+
+``` javascript
+module.exports = function(source) {
+  throw new Error('This is a Fatal Error!');
+};
+```
+
+Or pass an error to the callback in async mode:
+
+__./src/loader.js__
+
+``` javascript
+module.exports = function(source) {
+  const callback = this.async();
+  //...
+  callback(new Error('This is a Fatal Error!'), source);
+};
+```
+
+The module will get bundled like this:
+
+<!-- eslint-skip -->
+
+``` javascript
+/***/ "./src/loader.js!./src/lib.js":
+/*!************************************!*\
+  !*** ./src/loader.js!./src/lib.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+throw new Error("Module build failed (from ./src/loader.js):\nError: This is a Fatal Error!\n    at Object.module.exports (/workspace/src/loader.js:3:9)");
+
+/***/ })
+```
+
+Then the build output will also display the error (Similar to `this.emitError`):
+
+``` bash
+ERROR in ./src/lib.js (./src/loader.js!./src/lib.js)
+Module build failed (from ./src/loader.js):
+Error: This is a Fatal Error!
+    at Object.module.exports (/workspace/src/loader.js:2:9)
+ @ ./src/index.js 1:0-25
+```
+
+As you can see below, not only error message, but also details about which loader and module are involved:
+
+- the module path: `ERROR in ./src/lib.js`
+- the request string: `(./src/loader.js!./src/lib.js)`
+- the loader path: `(from ./src/loader.js)`
+- the caller path: `@ ./src/index.js 1:0-25`
+
+W> The loader path in the error is displayed since webpack 4.12
+
+T> All the errors and warnings will be recorded into `stats`. Please see [Stats Data](/api/stats/#errors-and-warnings).
+
+
+### Inline matchResource
+
+A new inline request syntax was introduced in webpack v4. Prefixing `<match-resource>!=!` to a request will set the `matchResource` for this request.
+
+W> It is not recommended to use this syntax in application code.
+Inline request syntax is intended to only be used by loader generated code.
+Not following this recommendation will make your code webpack-specific and non-standard.
+
+T> A relative `matchResource` will resolve relative to the current context of the containing module.
+
+When a `matchResource` is set, it will be used to match with the [`module.rules`](/configuration/module/#module-rules) instead of the original resource. This can be useful if further loaders should be applied to the resource, or if the module type need to be changed. It's also displayed in the stats and used for matching [`Rule.issuer`](/configuration/module/#rule-issuer) and [`test` in `splitChunks`](/plugins/split-chunks-plugin/#splitchunks-cachegroups-cachegroup-test).
+
+Example:
+
+__file.js__
+
+```javascript
+/* STYLE: body { background: red; } */
+console.log('yep');
+```
+
+A loader could transform the file into the following file and use the `matchResource` to apply the user-specified CSS processing rules:
+
+__file.js__ (transformed by loader)
+
+```javascript
+import './file.js.css!=!extract-style-loader/getStyles!./file.js';
+console.log('yep');
+```
+
+This will add a dependency to `extract-style-loader/getStyles!./file.js` and treat the result as `file.js.css`. Because [`module.rules`](/configuration/module/#module-rules) has a rule matching `/\.css$/` and it will apply to this dependency.
+
+The loader could look like this:
+
+__extract-style-loader/index.js__
+
+```javascript
+const stringifyRequest = require('loader-utils').stringifyRequest;
+const getRemainingRequest = require('loader-utils').getRemainingRequest;
+const getStylesLoader = require.resolve('./getStyle');
+
+module.exports = function (source) {
+  if (STYLES_REGEXP.test(source)) {
+    source = source.replace(STYLES_REGEXP, '');
+    const remReq = getRemainingRequest(this);
+    return `import ${stringifyRequest(`${this.resource}.css!=!${getStylesLoader}!${remReq}`)};${source}`;
+  }
+  return source;
+};
+```
+
+__extract-style-loader/getStyles.js__
+
+```javascript
+module.exports = function(source) {
+  const match = STYLES_REGEXP.match(source);
+  return match[0];
+};
+```

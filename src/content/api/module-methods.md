@@ -5,7 +5,9 @@ sort: 3
 contributors:
   - skipjack
   - sokra
+  - fadysamirsadek
   - byzyk
+  - debs-obrien
 related:
   - title: CommonJS Wikipedia
     url: https://en.wikipedia.org/wiki/CommonJS
@@ -71,7 +73,9 @@ if ( module.hot ) {
 
 W> import() 特性依赖于内置的 [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)。如果想在低版本浏览器使用 import()，记得使用像 [es6-promise](https://github.com/stefanpenner/es6-promise) 或者 [promise-polyfill](https://github.com/taylorhakes/promise-polyfill) 这样 polyfill 库，来预先填充(shim) `Promise` 环境。
 
-`import` 规范不允许控制模块的名称或其他属性，因为 "chunks" 只是 webpack 中的一个概念。幸运的是，webpack 中可以通过注释接收一些特殊的参数，而无须破坏规定：
+## Magic Comments
+
+Inline comments to make features work. By adding comments to the import we can do things such as name our chunk or select different modes. For a full list of these magic comments see the code below followed by an explanation of what these comments do.
 
 ``` js
 // 单个目标
@@ -87,11 +91,21 @@ import(
   /* webpackExclude: /\.noimport\.json$/ */
   /* webpackChunkName: "my-chunk-name" */
   /* webpackMode: "lazy" */
+  /* webpackPrefetch: true */
+  /* webpackPreload: true */
   `./locale/${language}`
 );
 ```
 
-`webpackChunkName`：新 chunk 的名称。从 webpack 2.6.0 开始，`[index]` and `[request]` 占位符，分别支持赋予一个递增的数字和实际解析的文件名。
+```js
+import(/* webpackIgnore: true */ 'ignored-module.js');
+```
+
+`webpackIgnore`: Disables dynamic import parsing when set to `true`.
+
+W> Note that setting `webpackIgnore` to `true` opts out of code splitting.
+
+`webpackChunkName`：新 chunk 的名称。从 webpack 2.6.0 开始，`[index]` and `[request]` 占位符，分别支持赋予一个递增的数字和实际解析的文件名。Adding this comment will cause our separate chunk to be named [my-chunk-name].js instead of [id].js.
 
 `webpackMode`：从 webpack 2.6.0 开始，可以指定以不同的模式解析动态导入。支持以下选项：
 
@@ -99,6 +113,10 @@ import(
 - `"lazy-once"`：生成一个可以满足所有 `import()` 调用的单个可延迟加载(lazy-loadable) chunk。此 chunk 将在第一次 `import()` 调用时获取，随后的 `import()` 调用将使用相同的网络响应。注意，这种模式仅在部分动态语句中有意义，例如 ``import(`./locales/${language}.json`)``，其中可能含有多个被请求的模块路径。
 - `"eager"`：不会生成额外的 chunk，所有模块都被当前 chunk 引入，并且没有额外的网络请求。仍然会返回 `Promise`，但是是 resolved 状态。和静态导入相对比，在调用 import（）完成之前，该模块不会被执行。
 - `"weak"`：尝试加载模块，如果该模块函数已经以其他方式加载（即，另一个 chunk 导入过此模块，或包含模块的脚本被加载）。仍然会返回 `Promise`，但是只有在客户端上已经有该 chunk 时才成功解析。如果该模块不可用，`Promise` 将会是 rejected 状态，并且网络请求永远不会执行。当需要的 chunks 始终在（嵌入在页面中的）初始请求中手动提供，而不是在应用程序导航在最初没有提供的模块导入的情况触发，这对于通用渲染（SSR）是非常有用的。
+
+`webpackPrefetch`: Tells the browser that the resource is probably needed for some navigation in the future. Check out the guide for more information on [how webpackPrefetch works](/guides/code-splitting/#prefetching-preloading-modules).
+
+`webpackPreload`: Tells the browser that the resource might be needed during the current navigation. Check out the guide for more information on [how webpackPreload works](/guides/code-splitting/#prefetching-preloading-modules).
 
 T> 注意，所有这些选项都可以组合起来使用，如 `/* webpackMode: "lazy-once", webpackChunkName: "all-i18n-data" */`，这会按没有花括号的 JSON5 对象去解析。它会被包裹在 JavaScript 对象中，并使用 [node VM](https://nodejs.org/dist/latest-v8.x/docs/api/vm.html) 执行。所有你不需要添加花括号。
 
@@ -344,17 +362,28 @@ webpack 除了支持上述的语法之外，还可以使用一些 webpack 特定
 require.context(
   directory: String,
   includeSubdirs: Boolean /* 可选的，默认值是 true */,
-  filter: RegExp /* 可选的 */
+  filter: RegExp /* 可选的，默认值是 /^\.\/.*$/，所有文件 */,
+  mode: String  /* 可选的，'sync' | 'eager' | 'weak' | 'lazy' | 'lazy-once'，默认值是 'sync' */
 )
 ```
 
-使用 `directory` 路径、`includeSubdirs` 选项和 `filter` 来指定一系列完整的依赖关系，便于更细粒度的控制模块引入。后面可以很容易地进行解析：
+指定一系列完整的依赖关系，通过一个 `directory` 路径、一个 `includeSubdirs` 选项、一个 `filter` 更细粒度的控制模块引入和一个 `mode` 定义加载方式。然后可以很容易地解析模块：
 
 ```javascript
 var context = require.context('components', true, /\.html$/);
 var componentA = context.resolve('componentA');
 ```
 
+If `mode` is specified as "lazy", the underlying modules will be loaded asynchronously:
+
+```javascript
+var context = require.context('locales', true, /\.json$/, 'lazy');
+context('localeA').then(locale => {
+  // do something with locale
+});
+```
+
+The full list of available modes and its behavior is described in [`import()`](#import-) documentation.
 
 ### `require.include`
 
@@ -399,4 +428,4 @@ const page = 'Foo';
 __webpack_modules__[require.resolveWeak(`./page/${page}`)];
 ```
 
-T> `require.resolveWeak` 是*通用渲染*（SSR + 代码分离）的基础，例如在 [react-universal-component](https://github.com/faceyspacey/react-universal-component) 等包中的用法。它允许代码在服务器端和客户端初始页面的加载上同步渲染。它要求手动或以某种方式提供 chunk。它可以在不需要指示应该被打包的情况下引入模块。它与 `import()` 一起使用，当用户导航触发额外的导入时，它会被接管。
+T> `require.resolveWeak` 是_通用渲染_（SSR + 代码分离）的基础，例如在 [react-universal-component](https://github.com/faceyspacey/react-universal-component) 等包中的用法。它允许代码在服务器端和客户端初始页面的加载上同步渲染。它要求手动或以某种方式提供 chunk。它可以在不需要指示应该被打包的情况下引入模块。它与 `import()` 一起使用，当用户导航触发额外的导入时，它会被接管。

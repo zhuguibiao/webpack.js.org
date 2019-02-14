@@ -5,7 +5,9 @@ contributors:
   - sokra
   - skipjack
   - pksjce
+  - fadysamirsadek
   - byzyk
+  - zefman
 ---
 
 `externals` 配置选项提供了「从输出的 bundle 中排除依赖」的方法。相反，所创建的 bundle 依赖于那些存在于用户环境(consumer's environment)中的依赖。此功能通常对 __library 开发人员__来说是最有用的，然而也会有各种各样的应用程序用到它。
@@ -15,9 +17,9 @@ T> __用户(consumer)__，在这里是指，引用了「使用 webpack 打包的
 
 ## `externals`
 
-`string` `array` `object` `function`  `regex`
+`string` `object` `function`  `regex`
 
-__防止__将某些 `import` 的包(package)__打包__到 bundle 中，而是在运行时(runtime)再去从外部获取这些*扩展依赖(external dependencies)*。
+__防止__将某些 `import` 的包(package)__打包__到 bundle 中，而是在运行时(runtime)再去从外部获取这些_扩展依赖(external dependencies)_。
 
 例如，从 CDN 引入 [jQuery](https://jquery.com/)，而不是把它打包：
 
@@ -33,7 +35,7 @@ __index.html__
 
 __webpack.config.js__
 
-```js
+```javascript
 module.exports = {
   //...
   externals: {
@@ -44,7 +46,7 @@ module.exports = {
 
 这样就剥离了那些不需要改动的依赖模块，换句话，下面展示的代码还可以正常运行：
 
-```js
+```javascript
 import $ from 'jquery';
 
 $('.my-element').animate(/* ... */);
@@ -67,7 +69,7 @@ $('.my-element').animate(/* ... */);
 
 ### array
 
-```js
+```javascript
 module.exports = {
   //...
   externals: {
@@ -81,7 +83,9 @@ module.exports = {
 
 ### object
 
-```js
+W> An object with `{ root, amd, commonjs, ... }` is only allowed for [`libraryTarget: 'umd'`](/configuration/output/#output-librarytarget). It's not allowed for other library targets.
+
+```javascript
 module.exports = {
   //...
   externals : {
@@ -117,7 +121,7 @@ module.exports = {
 
 基本配置如下：
 
-```js
+```javascript
 module.exports = {
   //...
   externals: [
@@ -138,7 +142,7 @@ module.exports = {
 
 匹配给定正则表达式的每个依赖，都将从输出 bundle 中排除。
 
-```js
+```javascript
 module.exports = {
   //...
   externals: /^(jquery|\$)$/i
@@ -147,5 +151,37 @@ module.exports = {
 
 这个示例中，所有名为 `jQuery` 的依赖（忽略大小写），或者 `$`，都会被外部化。
 
+### Combining syntaxes
+
+Sometimes you may want to use a combination of the above syntaxes. This can be done in the following manner:
+
+```javascript
+module.exports = {
+  //...
+  externals: [
+    {
+      // String
+      react: 'react',
+      // Object
+      lodash : {
+        commonjs: 'lodash',
+        amd: 'lodash',
+        root: '_' // indicates global variable
+      },
+      // Array
+      subtract: ['./math', 'subtract']
+    },
+    // Function
+    function(context, request, callback) {
+      if (/^yourregex$/.test(request)){
+        return callback(null, 'commonjs ' + request);
+      }
+      callback();
+    },
+    // Regex
+    /^(jquery|\$)$/i
+  ]
+};
+```
 
 关于如何使用此 externals 配置的更多信息，请参考[如何编写 library](/guides/author-libraries)。

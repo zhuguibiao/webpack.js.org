@@ -13,6 +13,7 @@ import bar from './bar';
 
 bar();
 ```
+
 </div>
 <div class="splash__right">
 __src/bar.js__
@@ -22,6 +23,7 @@ export default function bar() {
   //
 }
 ```
+
 </div>
 </div>
 
@@ -43,6 +45,7 @@ module.exports = {
   }
 };
 ```
+
 </div>
 <div class="splash__right">
 __page.html__
@@ -59,6 +62,7 @@ __page.html__
   </body>
 </html>
 ```
+
 </div>
 
 然后在命令行运行 `webpack` 就会创建 `bundle.js`。
@@ -68,4 +72,3 @@ __page.html__
 __[立即开始](/guides/getting-started)__更多关于 webpack 核心概念的高级信息，请通过快速查阅__指南__部分，或深入__[概念](/concepts)__部分来了解。
 
 </div>
-

@@ -6,6 +6,8 @@ contributors:
   - skipjack
   - terinjokes
   - byzyk
+  - liorgreenb
+  - vansosnin
 related:
   - title: Using Records
     url: https://survivejs.com/webpack/optimizing/separating-manifest/#using-records
@@ -23,7 +25,9 @@ W> 寻求帮助：这个页面还在更新中，如果你发现本页面内有�
 
 设置 `require.amd` 或 `define.amd` 的值：
 
-```js
+__webpack.config.js__
+
+```javascript
 module.exports = {
   //...
   amd: {
@@ -46,7 +50,9 @@ module.exports = {
 
 在第一个错误出现时抛出失败结果，而不是容忍它。默认情况下，当使用 HMR 时，webpack 会将在终端以及浏览器控制台中，以红色文字记录这些错误，但仍然继续进行打包。要启用它：
 
-```js
+__webpack.config.js__
+
+```javascript
 module.exports = {
   //...
   bail: true
@@ -62,7 +68,9 @@ module.exports = {
 
 缓存生成的 webpack 模块和 chunk，来改善构建速度。缓存默认在观察模式(watch mode)启用。禁用缓存只需简单传入：
 
-```js
+__webpack.config.js__
+
+```javascript
 module.exports = {
   //...
   cache: false
@@ -71,7 +79,9 @@ module.exports = {
 
 如果传递一个对象，webpack 将使用这个对象进行缓存。保持对此对象的引用，将可以在 compiler 调用之间共享同一缓存：
 
-```js
+__webpack.config.js__
+
+```javascript
 let SharedCache = {};
 
 module.exports = {
@@ -96,9 +106,10 @@ W> 不要在不同选项的调用之间共享缓存。
 
 ## `parallelism`
 
-`number`
+`number: 100`
 
 Limit the number of parallel processed modules. Can be used to fine tune performance or to get more reliable profiling results.
+
 
 
 ## `profile`
@@ -114,9 +125,13 @@ T> Combine with `parallelism: 1` for better results.
 
 ## `recordsPath`
 
+`string`
+
 开启这个选项可以生成一个 JSON 文件，其中含有 webpack 的 "records" 记录 - 即「用于存储跨多次构建(across multiple builds)的模块标识符」的数据片段。可以使用此文件来跟踪在每次构建之间的模块变化。只要简单的设置一下路径,就可以生成这个 JSON 文件：
 
-```js
+__webpack.config.js__
+
+```javascript
 module.exports = {
   //...
   recordsPath: path.join(__dirname, 'records.json')
@@ -132,17 +147,39 @@ W> 设置 `recordsPath` 本质上会把 `recordsInputPath` 和 `recordsOutputPat
 
 ## `recordsInputPath`
 
+`string`
+
 指定读取最后一条记录的文件的名称。这可以用来重命名一个记录文件，可以查看下面的实例：
 
 
 ## `recordsOutputPath`
 
+`string`
+
 指定记录要写入的位置。以下示例描述了如何用这个选项和 `recordsInptuPaht` 来重命名一个记录文件：
 
-```js
+__webpack.config.js__
+
+```javascript
 module.exports = {
   //...
   recordsInputPath: path.join(__dirname, 'records.json'),
   recordsOutputPath: path.join(__dirname, 'newRecords.json')
+};
+```
+
+
+## `name`
+
+`string`
+
+Name of the configuration. Used when loading multiple configurations.
+
+__webpack.config.js__
+
+```javascript
+module.exports = {
+  //...
+  name: 'admin-app'
 };
 ```

@@ -15,18 +15,20 @@ webpack 可以监听文件变化，当它们修改后会重新编译。这个页
 
 ## `watch`
 
-`boolean`
+`boolean: false`
 
-启用 Watch 模式。这意味着在初始构建之后，webpack 将继续监听任何已解析文件的更改。Watch 模式默认关闭。
+启用 Watch 模式。这意味着在初始构建之后，webpack 将继续监听任何已解析文件的更改。
 
-```js
+__webpack.config.js__
+
+```javascript
 module.exports = {
   //...
-  watch: false
+  watch: true
 };
 ```
 
-T> webpack-dev-server 和 webpack-dev-middleware 里 Watch 模式默认开启。
+T> [webpack-dev-server](https://github.com/webpack/webpack-dev-server) 和 [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware) 里 Watch 模式默认开启。
 
 
 ## `watchOptions`
@@ -35,7 +37,9 @@ T> webpack-dev-server 和 webpack-dev-middleware 里 Watch 模式默认开启。
 
 一组用来定制 Watch 模式的选项：
 
-```js
+__webpack.config.js__
+
+```javascript
 module.exports = {
   //...
   watchOptions: {
@@ -48,15 +52,15 @@ module.exports = {
 
 ## `watchOptions.aggregateTimeout`
 
-`number`
+`number: 300`
 
 当第一个文件更改，会在重新构建前增加延迟。这个选项允许 webpack 将这段时间内进行的任何其他更改都聚合到一次重新构建里。以毫秒为单位：
 
-```js
+```javascript
 module.exports = {
   //...
   watchOptions: {
-    aggregateTimeout: 300 // 默认值
+    aggregateTimeout: 600
   }
 };
 ```
@@ -64,9 +68,13 @@ module.exports = {
 
 ## `watchOptions.ignored`
 
+`RegExp` [`anymatch`](https://github.com/micromatch/anymatch)
+
 对于某些系统，监听大量文件系统会导致大量的 CPU 或内存占用。这个选项可以排除一些巨大的文件夹，例如 `node_modules`：
 
-```js
+__webpack.config.js__
+
+```javascript
 module.exports = {
   //...
   watchOptions: {
@@ -77,7 +85,9 @@ module.exports = {
 
 也可以使用多种 [anymatch](https://github.com/micromatch/anymatch) 模式：
 
-```js
+__webpack.config.js__
+
+```javascript
 module.exports = {
   //...
   watchOptions: {
@@ -91,11 +101,13 @@ T> 如果你使用 `require.context`，webpack 会观察你的整个目录。你
 
 ## `watchOptions.poll`
 
-`boolean` `number`
+`boolean: false` `number`
 
 通过传递 `true` 开启 [polling](https://whatis.techtarget.com/definition/polling)，或者指定毫秒为单位进行轮询。
 
-```js
+__webpack.config.js__
+
+```javascript
 module.exports = {
   //...
   watchOptions: {
@@ -109,7 +121,7 @@ T> 如果监听没生效，试试这个选项吧。Watch 在 NFS 和 VirtualBox 
 
 ## `info-verbosity`
 
-`string`: `none` `info` `verbose`
+`string: 'none', 'info', 'verbose'`
 
 控制生命周期消息的详细程度，例如 `Started watching files(开始监听文件)...` 日志。将 `info-verbosity` 设置为 `verbose`，还会额外在增量构建的开始和结束时，向控制台发送消息。`info-verbosity` 默认设置为 `info`。
 
@@ -146,9 +158,9 @@ Arch 用户，请将 `fs.inotify.max_user_watches=524288` 添加到 `/etc/sysctl
 
 ### Windows Paths
 
-因为 webpack 期望获得多个配置选项的绝对路径（如 `__dirname + "/app/folder"`），所以 Windows 的路径分隔符 `\` 可能会破坏某些功能。
+因为 webpack 期望获得多个配置选项的绝对路径（如 `__dirname + '/app/folder'`），所以 Windows 的路径分隔符 `\` 可能会破坏某些功能。
 
-使用正确的分隔符。即 `path.resolve(__dirname, "app/folder")` 或 `path.join(__dirname, "app", "folder")`。
+使用正确的分隔符。即 `path.resolve(__dirname, 'app/folder')` 或 `path.join(__dirname, 'app', 'folder')`。
 
 ### Vim
 
@@ -158,4 +170,4 @@ Arch 用户，请将 `fs.inotify.max_user_watches=524288` 添加到 `/etc/sysctl
 
 ### 在 WebStorm 中保存
 
-使用 JetBrains WebStorm IDE 时，你可能会发现保存修改过的文件，并不会按照预期触发观察者。尝试在设置中禁用`安全写入(safe write)`选项，该选项确定在原文件被覆盖之前，文件是否先保存到临时位置：取消选中 `File > Settings... > System Settings > Use "safe write" (save changes to a temporary file first)`。
+使用 JetBrains WebStorm IDE 时，你可能会发现保存修改过的文件，并不会按照预期触发观察者。尝试在设置中禁用`安全写入(safe write)`选项，该选项确定在原文件被覆盖之前，文件是否先保存到临时位置：取消选中 `File > {Settings|Preferences} > Appearance & Behavior > System Settings > Use "safe write" (save changes to a temporary file first)`。

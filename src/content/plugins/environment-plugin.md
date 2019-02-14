@@ -11,7 +11,6 @@ contributors:
 
 ## 用法
 
-The `EnvironmentPlugin` accepts either an array of keys.
 `EnvironmentPlugin` 可以接收键数组或将键映射到其默认值的对象。（译者注：键是指要设定的环境变量名）
 
 ```javascript
@@ -46,12 +45,11 @@ T> 不同于 [`DefinePlugin`](/plugins/define-plugin)，默认值将被 `Environ
 
 T> 如果要指定一个未设定的默认值，使用 `null` 来代替 `undefined`。
 
-** 示例:**
-
+__示例：__
 
 让我们看一下对下面这个用来试验的文件 `entry.js` 执行前面配置的 `EnvironmentPlugin` 的结果：
 
-```js
+```javascript
 if (process.env.NODE_ENV === 'production') {
   console.log('Welcome to production');
 }

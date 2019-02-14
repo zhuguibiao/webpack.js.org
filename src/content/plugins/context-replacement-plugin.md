@@ -3,12 +3,15 @@ title: ContextReplacementPlugin
 contributors:
   - simon04
   - byzyk
+  - masives
 related:
   - title: Issue 2783 - ContextReplacementPlugin Description
     url: https://github.com/webpack/webpack/issues/2783#issuecomment-234137265
+  - title: Using context replacement module for date-fns
+    url: https://github.com/date-fns/date-fns/blob/master/docs/webpack.md
 ---
 
-*上下文(Context)* 与一个[带表达式的 require 语句](/guides/dependency-management/#require-with-expression) 相关，例如 `require('./locale/' + name + '.json')`。遇见此类表达式时，webpack 查找目录 (`'./locale/'`) 下符合正则表达式 (`/^.*\.json$/`)的文件。由于 `name` 在编译时(compile time)还是未知的，webpack 会将每个文件都作为模块引入到 bundle 中。
+_上下文(context)_ 与一个 [含有表达式的 require 语句](/guides/dependency-management/#require-with-expression) 相关，例如 `require('./locale/' + name + '.json')`。遇见此类表达式时，webpack 查找目录 (`'./locale/'`) 下符合正则表达式 (`/^.*\.json$/`)的文件。由于 `name` 在编译时(compile time)还是未知的，webpack 会将每个文件都作为模块引入到 bundle 中。
 
 `上下文替换插件(ContextReplacementPlugin)` 允许你覆盖查找规则，该插件有许多配置方式：
 
@@ -32,12 +35,13 @@ new webpack.ContextReplacementPlugin(
 
 ```javascript
 new webpack.ContextReplacementPlugin(
-  /moment[\/\\]locale$/,
+  /moment[/\\]locale$/,
   /de|fr|hu/
 );
 ```
 
 限定查找 `moment/locale` 上下文里符合 `/de|fr|hu/` 表达式的文件，因此也只会打包这几种本地化内容（更多详细信息，请查看[这个 issue](https://github.com/moment/moment/issues/2373)）。
+
 
 ## 内容回调函数
 

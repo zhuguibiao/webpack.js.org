@@ -622,3 +622,11 @@ compilation.hooks.afterOptimizeChunkAssets.tap('MyPlugin', chunks => {
 普通模块 loader，真正（一个接一个地）加载模块图(graph)中所有模块的函数。
 
 参数：`loaderContext` `module`
+
+### `dependencyReference`
+
+`SyncWaterfallHook`
+
+`Compilation.hooks.dependencyReference(depRef, dependency, module)` allows to change the references reported by dependencies.
+
+Parameters: `depRef` `dependency` `module`

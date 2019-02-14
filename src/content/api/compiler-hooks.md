@@ -178,13 +178,6 @@ environment 安装完成之后，执行插件。
 参数：`compilation`
 
 
-### `needAdditionalPass`
-
-`SyncBailHook`
-
-...
-
-
 ### `emit`
 
 `AsyncSeriesHook`

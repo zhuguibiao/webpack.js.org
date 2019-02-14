@@ -5,6 +5,7 @@ contributors:
   - simon04
   - re-fort
   - byzyk
+  - seckin92
 ---
 
 自动加载模块，而不必到处 `import` 或 `require` 。
@@ -25,7 +26,7 @@ new webpack.ProvidePlugin({
 });
 ```
 
-任何时候，当 `identifier` 被当作未赋值的变量时，`module` 就会自动被加载，并且 `identifier` 会被这个 `module` 输出的内容所赋值。（模块的 `property` 用于支持命名导出(named export)）。
+任何时候，当 `identifier` 被当作未赋值的变量时，`module` 就会自动被加载，并且 `identifier` 会被这个 `module` 导出的内容所赋值。（或者被模块的 `property` 导出的内容所赋值，以支持命名导出(named export)）。
 
 W> 对于 ES2015 模块的 default export，你必须指定模块的 default 属性。
 

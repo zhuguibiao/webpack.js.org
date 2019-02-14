@@ -16,7 +16,7 @@ entry 对象是用于 webpack 查找启动并构建 bundle。其上下文是入�
 
 `string`
 
-基础目录，**绝对路径**，用于从配置中解析入口起点(entry point)和 loader
+基础目录，__绝对路径__，用于从配置中解析入口起点(entry point)和 loader
 
 ``` js
 module.exports = {
@@ -36,7 +36,7 @@ module.exports = {
 
 起点或是应用程序的起点入口。从这个起点开始，应用程序启动执行。如果传递一个数组，那么数组的每一项都会执行。
 
-动态加载的模块**不是**入口起点。
+动态加载的模块__不是__入口起点。
 
 简单规则：每个 HTML 页面都有一个入口起点。单页应用(SPA)：一个入口起点，多页应用(MPA)：多个入口起点。
 
@@ -59,6 +59,10 @@ module.exports = {
 
 ### 动态入口
 
+If a function is passed then it will be invoked on every [make](/api/compiler-hooks/#make) event.
+
+> Note that the make event triggers when webpack starts and for every invalidation when [watching for file changes](/configuration/watch/).
+
 ```js
 module.exports = {
   //...
@@ -72,6 +76,18 @@ module.exports = {
 module.exports = {
   //...
   entry: () => new Promise((resolve) => resolve(['./demo', './demo2']))
+};
+```
+
+For example: you can use dynamic entries to get the actual entries from an external source (remote server, file system content or database):
+
+__webpack.config.js__
+
+``` js
+module.exports = {
+  entry() {
+    return fetchPathsFromSomeExternalSource(); // returns a promise that will be resolved with something like ['src/main-layout.js', 'src/admin-layout.js']
+  }
 };
 ```
 

@@ -6,31 +6,28 @@ contributors:
   - jouni-kantola
   - skipjack
   - dannycjones
+  - fadysamirsadek
+  - afontcu
+  - rosavage
+  - saiprasad2595
+  - EugeneHlushko
 related:
-  - title: 可预测的长效缓存
-    url: https://medium.com/webpack/predictable-long-term-caching-with-webpack-d3eee1d3fa31
-  - title: Webpack & Caching
-    url: https://gist.github.com/sokra/ff1b0290282bfa2c037bdb6dcca1a7aa
-  - title: Advanced Webpack Presentation
-    url: https://presentations.survivejs.com/advanced-webpack/
-  - title: Issue 1315
-    url: https://github.com/webpack/webpack/issues/1315
   - title: Issue 652
     url: https://github.com/webpack/webpack.js.org/issues/652
 ---
 
-T> 本指南继续沿用[起步](/guides/getting-started)、[管理输出](/guides/output-management)和[代码分离](/guides/code-splitting)中的代码示例。
+T> 本指南继续沿用 [起步](/guides/getting-started)、[管理输出](/guides/output-management) 和 [代码分离](/guides/code-splitting) 中的代码示例。
 
-以上，我们使用 webpack 来打包我们的模块化后的应用程序，webpack 会生成一个可部署的 `/dist` 目录，然后把打包后的内容放置在此目录中。只要 `/dist` 目录中的内容部署到服务器上，客户端（通常是浏览器）就能够访问网站此服务器的网站及其资源。而最后一步获取资源是比较耗费时间的，这就是为什么浏览器使用一种名为 [缓存](https://searchstorage.techtarget.com/definition/cache) 的技术。可以通过命中缓存，以降低网络流量，使网站加载速度更快，然而，如果我们在部署新版本时不更改资源的文件名，浏览器可能会认为它没有被更新，就会使用它的缓存版本。由于缓存的存在，当你需要获取新的代码时，就会显得很棘手。
+以上，我们使用 webpack 来打包模块化的应用程序，webpack 会生成一个可部署的 `/dist` 目录，然后把打包后的内容放置在此目录中。只要 `/dist` 目录中的内容部署到 server 上，client（通常是浏览器）就能够访问网站此 server 的网站及其资源。而最后一步获取资源是比较耗费时间的，这就是为什么浏览器使用一种名为 [缓存](https://searchstorage.techtarget.com/definition/cache) 的技术。可以通过命中缓存，以降低网络流量，使网站加载速度更快，然而，如果我们在部署新版本时不更改资源的文件名，浏览器可能会认为它没有被更新，就会使用它的缓存版本。由于缓存的存在，当你需要获取新的代码时，就会显得很棘手。
 
 此指南的重点在于通过必要的配置，以确保 webpack 编译生成的文件能够被客户端缓存，而在文件内容变化后，能够请求到新的文件。
 
 
-## 输出文件的文件名(Output Filenames)
+## 输出文件的文件名(output filename)
 
-通过使用 `output.filename` 进行[文件名替换](/configuration/output#output-filename)，可以确保浏览器获取到修改后的文件。`[hash]` 替换可以用于在文件名中包含一个构建相关(build-specific)的 hash，但是更好的方式是使用 `[chunkhash]` 替换，在文件名中包含一个 chunk 相关(chunk-specific)的哈希。
+我们可以通过替换 `output.filename` 中的 [substitutions](/configuration/output#output-filename) 设置，来定义输出文件的名称。webpack 提供了一种使用称为 __substitution(可替换模板字符串)__ 的方式，通过带括号字符串来模板化文件名。其中，`[contenthash]` substitution 将根据资源内容创建出唯一 hash。当资源内容发生变化时，`[contenthash]` 也会发生变化。
 
-让我们使用[起步](/guides/getting-started) 中的示例，以及[管理输出](/guides/output-management) 中的 `plugins` 来作为项目的基础，所以我们不必手动处理维护 `index.html` 文件：
+这里使用 [起步](/guides/getting-started) 中的示例和 [管理输出](/guides/output-management) 中的 `plugins` 插件来作为项目基础，所以我们依然不必手动地维护 `index.html` 文件：
 
 __project__
 
@@ -62,59 +59,39 @@ __webpack.config.js__
     ],
     output: {
 -     filename: 'bundle.js',
-+     filename: '[name].[chunkhash].js',
++     filename: '[name].[contenthash].js',
       path: path.resolve(__dirname, 'dist')
     }
   };
 ```
 
-使用此配置，然后运行我们的构建脚本 `npm run build`，应该产生以下输出：
+使用此配置，然后运行我们的 build script `npm run build`，产生以下输出：
 
 ``` bash
-Hash: f7a289a94c5e4cd1e566
-Version: webpack 3.5.1
-Time: 835ms
+...
                        Asset       Size  Chunks                    Chunk Names
 main.7e2c49a622975ebd9b7e.js     544 kB       0  [emitted]  [big]  main
                   index.html  197 bytes          [emitted]
-   [0] ./src/index.js 216 bytes {0} [built]
-   [2] (webpack)/buildin/global.js 509 bytes {0} [built]
-   [3] (webpack)/buildin/module.js 517 bytes {0} [built]
-    + 1 hidden module
-Child html-webpack-plugin for "index.html":
-     1 asset
-       [2] (webpack)/buildin/global.js 509 bytes {0} [built]
-       [3] (webpack)/buildin/module.js 517 bytes {0} [built]
-        + 2 hidden modules
+...
 ```
 
-可以看到，bundle 的名称是它内容（通过 hash）的映射。如果我们不做修改，然后再次运行构建，我们以为文件名会保持不变。然而，如果我们真的运行，可能会发现情况并非如此：（译注：这里的意思是，如果不做修改，文件名可能会变，也可能不会。）
+可以看到，bundle 的名称是它内容（通过 hash）的映射。如果我们不做修改，然后再次运行构建，我们以为文件名会保持不变。然而，如果我们真的运行，可能会发现情况并非如此 - 文件名发生变化：
 
 ``` bash
-Hash: f7a289a94c5e4cd1e566
-Version: webpack 3.5.1
-Time: 835ms
+...
                        Asset       Size  Chunks                    Chunk Names
 main.205199ab45963f6a62ec.js     544 kB       0  [emitted]  [big]  main
                   index.html  197 bytes          [emitted]
-   [0] ./src/index.js 216 bytes {0} [built]
-   [2] (webpack)/buildin/global.js 509 bytes {0} [built]
-   [3] (webpack)/buildin/module.js 517 bytes {0} [built]
-    + 1 hidden module
-Child html-webpack-plugin for "index.html":
-     1 asset
-       [2] (webpack)/buildin/global.js 509 bytes {0} [built]
-       [3] (webpack)/buildin/module.js 517 bytes {0} [built]
-        + 2 hidden modules
+...
 ```
 
-这也是因为 webpack 在入口 chunk 中，包含了某些样板(boilerplate)，特别是 runtime 和 manifest。（译注：样板(boilerplate)指 webpack 运行时的引导代码）
+这也是因为 webpack 在入口 chunk 中，包含了某些 boilerplate(引导模板)，特别是 runtime 和 manifest。（译注：boilerplate 指 webpack 运行时的引导代码）
 
-W> 输出可能会因当前的 webpack 版本而稍有差异。新版本不一定有和旧版本相同的 hash 问题，但我们以下推荐的步骤，仍然是可靠的。
+W> 输出可能会因当前的 webpack 版本而稍有差异。与旧版本相比，新版本不一定有完全相同的问题，但我们仍然推荐的以下步骤，确保结果可靠。
 
-## 提取模板(Extracting Boilerplate)
+## 提取引导模板(extracting boilerplate)
 
-正如我们在 [代码分离][code splitting](/guides/code-splitting) 中所学到的，[`SplitChunksPlugin`](/plugins/split-chunks-plugin/) 可以用于将模块分离到单独的文件中。 webpack 提供了一个优化功能，可以根据提供的选项将运行时代码拆分成单独的块，直接将 [`optimization.runtimeChunk`](/configuration/optimization/#optimization-runtimechunk) 设置为 `single`，就能创建单个运行时 bundle(one runtime bundle)：
+正如我们在 [代码分离](/guides/code-splitting) 中所学到的，[`SplitChunksPlugin`](/plugins/split-chunks-plugin/) 可以用于将模块分离到单独的 bundle 中。webpack 还提供了一个优化功能，可使用 [`optimization.runtimeChunk`](/configuration/optimization/#optimization-runtimechunk) 选项将 runtime 代码拆分为一个单独的 chunk。将其设置为 `single` 来为所有 chunk 创建一个 runtime bundle：
 
 __webpack.config.js__
 
@@ -131,7 +108,7 @@ __webpack.config.js__
         title: 'Caching'
     ],
     output: {
-      filename: '[name].[chunkhash].js',
+      filename: '[name].[contenthash].js',
       path: path.resolve(__dirname, 'dist')
     },
 +   optimization: {
@@ -140,7 +117,7 @@ __webpack.config.js__
   };
 ```
 
-让我们再次构建，然后查看提取出来的 `runtime` bundle：
+再次构建，然后查看提取出来的 `runtime` bundle：
 
 ``` bash
 Hash: 82c9c385607b2150fab2
@@ -156,7 +133,7 @@ runtime.cc17ae2a94ec771e9221.js   1.42 KiB       0  [emitted]  runtime
     + 1 hidden module
 ```
 
-将第三方库(library)（例如 `lodash` 或 `react`）提取到单独的 `vendor` chunk 文件中，是比较推荐的做法，这是因为，它们很少像本地的源代码那样频繁修改。因此通过实现以上步骤，利用客户端的长效缓存机制，可以通过命中缓存来消除请求，并减少向服务器获取资源，同时还能保证客户端代码和服务器端代码版本一致。
+将第三方库(library)（例如 `lodash` 或 `react`）提取到单独的 `vendor` chunk 文件中，是比较推荐的做法，这是因为，它们很少像本地的源代码那样频繁修改。因此通过实现以上步骤，利用 client 的长效缓存机制，命中缓存来消除请求，并减少向 server 获取资源，同时还能保证 client 代码和 server 代码版本一致。
 这可以通过使用 [SplitChunksPlugin 示例 2](/plugins/split-chunks-plugin/#split-chunks-example-2) 中演示的 [`SplitChunksPlugin`](/plugins/split-chunks-plugin/) 插件的 [`cacheGroups`](/plugins/split-chunks-plugin/#splitchunks-cachegroups) 选项来实现。我们在 `optimization.splitChunks` 添加如下 `cacheGroups` 参数并构建：
 
 __webpack.config.js__
@@ -175,7 +152,7 @@ __webpack.config.js__
       }),
     ],
     output: {
-      filename: '[name].[chunkhash].js',
+      filename: '[name].[contenthash].js',
       path: path.resolve(__dirname, 'dist')
     },
     optimization: {
@@ -194,28 +171,23 @@ __webpack.config.js__
   };
 ```
 
-让我们再次构建，然后查看新的 `vendor` bundle：
+再次构建，然后查看新的 `vendor` bundle：
 
 ``` bash
-Hash: 213f57fc3bb5cb47c719
-Version: webpack 4.12.0
-Time: 475ms
+...
                           Asset       Size  Chunks             Chunk Names
 runtime.cc17ae2a94ec771e9221.js   1.42 KiB       0  [emitted]  runtime
 vendors.a42c3ca0d742766d7a28.js   69.4 KiB       1  [emitted]  vendors
    main.abf44fedb7d11d4312d7.js  240 bytes       2  [emitted]  main
                      index.html  353 bytes          [emitted]
-[1] (webpack)/buildin/module.js 497 bytes {1} [built]
-[2] (webpack)/buildin/global.js 489 bytes {1} [built]
-[3] ./src/index.js 309 bytes {2} [built]
-    + 1 hidden module
+...
 ```
 
 现在，我们可以看到 `main` 不再含有来自 `node_modules` 目录的 `vendor` 代码，并且体积减少到 `240 bytes`！
 
-## 模块标识符(Module Identifiers)
+## 模块标识符(module identifier)
 
-让我们向项目中再添加一个模块 `print.js`：
+在项目中再添加一个模块 `print.js`：
 
 __project__
 
@@ -247,7 +219,7 @@ __src/index.js__
   function component() {
     var element = document.createElement('div');
 
-    // lodash 是由当前 script 脚本 import 导入进来的
+    // lodash 是由当前 script 脚本 import 进来的
     element.innerHTML = _.join(['Hello', 'webpack'], ' ');
 +   element.onclick = Print.bind(null, 'Hello webpack!');
 
@@ -260,85 +232,73 @@ __src/index.js__
 再次运行构建，然后我们期望的是，只有 `main` bundle 的 hash 发生变化，然而……
 
 ``` bash
-Hash: d38a06644fdbb898d795
-Version: webpack 3.3.0
-Time: 1445ms
+...
                            Asset       Size  Chunks                    Chunk Names
-  vendor.a7561fb0e9a071baadb9.js     541 kB       0  [emitted]  [big]  vendor
-    main.b746e3eb72875af2caa9.js    1.22 kB       1  [emitted]         main
-manifest.1400d5af64fc1b7b3a45.js    5.85 kB       2  [emitted]         manifest
+  runtime.1400d5af64fc1b7b3a45.js    5.85 kB      0  [emitted]         runtime
+  vendor.a7561fb0e9a071baadb9.js     541 kB       1  [emitted]  [big]  vendor
+    main.b746e3eb72875af2caa9.js    1.22 kB       2  [emitted]         main
                       index.html  352 bytes          [emitted]
-   [1] ./src/index.js 421 bytes {1} [built]
-   [2] (webpack)/buildin/global.js 509 bytes {0} [built]
-   [3] (webpack)/buildin/module.js 517 bytes {0} [built]
-   [4] ./src/print.js 62 bytes {1} [built]
-   [5] multi lodash 28 bytes {0} [built]
-    + 1 hidden module
+...
 ```
 
-……我们可以看到这三个文件的 hash 都变化了。这是因为每个 [`module.id`](/api/module-variables#module-id-commonjs-) 会基于默认的解析顺序(resolve order)进行增量。也就是说，当解析顺序发生变化，ID 也会随之改变。因此，简要概括：
+……我们可以看到这三个文件的 hash 都变化了。这是因为每个 [`module.id`](/api/module-variables#module-id-commonjs-) 会默认地基于解析顺序(resolve order)进行增量。也就是说，当解析顺序发生变化，ID 也会随之改变。因此，简要概括：
 
 - `main` bundle 会随着自身的新增内容的修改，而发生变化。
-- `vendor` bundle 会随着自身的 `module.id` 的修改，而发生变化。
-- `manifest` bundle 会因为当前包含一个新模块的引用，而发生变化。
+- `vendor` bundle 会随着自身的 `module.id` 的变化，而发生变化。
+- `manifest` bundle 会因为现在包含一个新模块的引用，而发生变化。
 
-第一个和最后一个都是符合预期的行为 -- 而 `vendor` 的 hash 发生变化是我们要修复的。幸运的是，可以使用两个插件来解决这个问题。第一个插件是 [`NamedModulesPlugin`](/plugins/named-modules-plugin)，将使用模块的路径，而不是数字标识符。虽然此插件有助于在开发过程中输出结果的可读性，然而执行时间会长一些。第二个选择是使用 [`HashedModuleIdsPlugin`](/plugins/hashed-module-ids-plugin)，推荐用于生产环境构建：
+第一个和最后一个都是符合预期的行为 - 而 `vendor` hash 发生变化是我们要修复的。幸运的是，可以使用两个插件来解决这个问题。第一个插件是 `NamedModulesPlugin`，将使用模块的路径，而不是一个数字 identifier。虽然此插件有助于在开发环境下产生更加可读的输出结果，然而其执行时间会有些长。第二个选择是使用 [`HashedModuleIdsPlugin`](/plugins/hashed-module-ids-plugin)，推荐用于生产环境构建：
 
 __webpack.config.js__
 
 ``` diff
   const path = require('path');
-  const webpack = require('webpack');
++ const webpack = require('webpack');
   const CleanWebpackPlugin = require('clean-webpack-plugin');
   const HtmlWebpackPlugin = require('html-webpack-plugin');
 
   module.exports = {
-    entry: {
-      main: './src/index.js',
-      vendor: [
-        'lodash'
-      ]
-    },
+    entry: './src/index.js',
     plugins: [
       new CleanWebpackPlugin(['dist']),
       new HtmlWebpackPlugin({
-        title: 'Caching'
+        title: 'Caching'
       }),
-+     new webpack.HashedModuleIdsPlugin(),
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'vendor'
-      }),
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'manifest'
-      })
++      new webpack.HashedModuleIdsPlugin()
     ],
     output: {
-      filename: '[name].[chunkhash].js',
+      filename: '[name].[contenthash].js',
       path: path.resolve(__dirname, 'dist')
+    },
+    optimization: {
+      runtimeChunk: 'single',
+      splitChunks: {
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all'
+          }
+        }
+      }
     }
   };
 ```
 
-现在，不管再添加任何新的本地依赖，对于每次构建，`vendor` hash 都应该保持一致：
+现在，不论是否添加任何新的本地依赖，对于前后两次构建，`vendor` hash 都应该保持一致：
 
 ``` bash
-Hash: 1f49b42afb9a5acfbaff
-Version: webpack 3.3.0
-Time: 1372ms
-                           Asset       Size  Chunks                    Chunk Names
-  vendor.eed6dcc3b30cfa138aaa.js     541 kB       0  [emitted]  [big]  vendor
-    main.d103ac311788fcb7e329.js    1.22 kB       1  [emitted]         main
-manifest.d2a6dc1ccece13f5a164.js    5.85 kB       2  [emitted]         manifest
-                      index.html  352 bytes          [emitted]
-[3Di9] ./src/print.js 62 bytes {1} [built]
-[3IRH] (webpack)/buildin/module.js 517 bytes {0} [built]
-[DuR2] (webpack)/buildin/global.js 509 bytes {0} [built]
-   [0] multi lodash 28 bytes {0} [built]
-[lVK7] ./src/index.js 421 bytes {1} [built]
-    + 1 hidden module
+...
+                          Asset       Size  Chunks             Chunk Names
+   main.216e852f60c8829c2289.js  340 bytes       0  [emitted]  main
+vendors.55e79e5927a639d21a1b.js   69.5 KiB       1  [emitted]  vendors
+runtime.725a1a51ede5ae0cfde0.js   1.42 KiB       2  [emitted]  runtime
+                     index.html  353 bytes          [emitted]
+Entrypoint main = runtime.725a1a51ede5ae0cfde0.js vendors.55e79e5927a639d21a1b.js main.216e852f60c8829c2289.js
+...
 ```
 
-然后，修改我们的 `src/index.js`，临时移除额外的依赖：
+然后，修改 `src/index.js`，临时移除额外的依赖：
 
 __src/index.js__
 
@@ -350,7 +310,7 @@ __src/index.js__
   function component() {
     var element = document.createElement('div');
 
-    // lodash 是由当前 script 脚本 import 导入进来的
+    // lodash 是由当前 script 脚本 import 进来的
     element.innerHTML = _.join(['Hello', 'webpack'], ' ');
 -   element.onclick = Print.bind(null, 'Hello webpack!');
 +   // element.onclick = Print.bind(null, 'Hello webpack!');
@@ -364,32 +324,22 @@ __src/index.js__
 最后，再次运行我们的构建：
 
 ``` bash
-Hash: 37e1358f135c0b992f72
-Version: webpack 3.3.0
-Time: 1557ms
-                           Asset       Size  Chunks                    Chunk Names
-  vendor.eed6dcc3b30cfa138aaa.js     541 kB       0  [emitted]  [big]  vendor
-    main.fc7f38e648da79db2aba.js  891 bytes       1  [emitted]         main
-manifest.bb5820632fb66c3fb357.js    5.85 kB       2  [emitted]         manifest
-                      index.html  352 bytes          [emitted]
-[3IRH] (webpack)/buildin/module.js 517 bytes {0} [built]
-[DuR2] (webpack)/buildin/global.js 509 bytes {0} [built]
-   [0] multi lodash 28 bytes {0} [built]
-[lVK7] ./src/index.js 427 bytes {1} [built]
-    + 1 hidden module
+...
+                          Asset       Size  Chunks             Chunk Names
+   main.ad717f2466ce655fff5c.js  274 bytes       0  [emitted]  main
+vendors.55e79e5927a639d21a1b.js   69.5 KiB       1  [emitted]  vendors
+runtime.725a1a51ede5ae0cfde0.js   1.42 KiB       2  [emitted]  runtime
+                     index.html  353 bytes          [emitted]
+Entrypoint main = runtime.725a1a51ede5ae0cfde0.js vendors.55e79e5927a639d21a1b.js main.ad717f2466ce655fff5c.js
+...
 ```
 
-我们可以看到，这两次构建中，`vendor` bundle 的文件名称，都是 `eed6dcc3b30cfa138aaa`。
+我们可以看到，这两次构建中，`vendor` bundle 文件名称，都是 `55e79e5927a639d21a1b`。
+
+
+
 
 
 ## 结论
 
-缓存从凌乱变得清晰直接。然而以上预先演示，只能帮助你在部署一致性(deploying consistent)和资源可缓存(cachable assets)方面，有个好的开始。想要了解更多信息，请查看以下的_进一步阅读_部分。
-
-***
-
-## 译注
-
-章节示例：[dear-lizhihua/webpack.js.org-demos](https://github.com/dear-lizhihua/webpack.js.org-demos/tree/webpack.js.org/guides/caching)
-
-***
+缓存可能很复杂，但是从应用程序或站点用户可以获得的收益来看，这值得付出努力。想要了解更多信息，请查看下面_进一步阅读_部分。

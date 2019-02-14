@@ -4,6 +4,7 @@ group: Plugins
 sort: 4
 contributors:
   - byzyk
+  - DeTeam
 ---
 
 `parser` 实例，是用来解析由 webpack 处理过的每个模块。`parser` 也是扩展自 `tapable` 的 webpack 类，并且提供多种 `tapable` 钩子，插件作者可以使用它来自定义解析过程。
@@ -12,7 +13,7 @@ contributors:
 
 ``` js
 compiler.hooks.normalModuleFactory.tap('MyPlugin', factory => {
-  factory.hooks.parser.tap('MyPlugin', (parser, options) => {
+  factory.hooks.parser.for('javascript/auto').tap('MyPlugin', (parser, options) => {
     parser.hooks.someHook.tap(/* ... */);
   });
 });

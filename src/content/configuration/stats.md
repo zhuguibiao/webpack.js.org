@@ -9,6 +9,9 @@ contributors:
   - jasonblanchard
   - byzyk
   - renjithvk
+  - Raiondesu
+  - EugeneHlushko
+  - grgur
 ---
 
 如果你不希望使用 `quiet` 或 `noInfo` 这样的不显示信息，而是又不想得到全部的信息，只是想要获取某部分 bundle 的信息，使用 stats 选项是比较好的折衷方式。
@@ -32,11 +35,11 @@ module.exports = {
 
 | Preset | Alternative | Description |
 |--------|-------------|-------------|
-| `"errors-only"` | *none*  | 只在发生错误时输出 |
-| `"minimal"`     | *none*  | 只在发生错误或有新的编译时输出 |
+| `"errors-only"` | _none_ | 只在发生错误时输出 |
+| `"minimal"`     | _none_ | 只在发生错误或有新的编译时输出 |
 | `"none"`        | `false` | 没有输出 |
 | `"normal"`      | `true`  | 标准输出 |
-| `"verbose"`     | *none*  | 全部输出 |
+| `"verbose"`     | _none_ | 全部输出 |
 
 对于更加精细的控制，下列这些选项可以准确地控制并展示你想要的信息。请注意，此对象中的所有选项都是可选的。
 
@@ -54,6 +57,8 @@ module.exports = {
 
     // 对资源按指定的字段进行排序
     // 你可以使用 `!field` 来反转排序。
+    // Some possible values: 'id' (default), 'name', 'size', 'chunks', 'failed', 'issuer'
+    // For a complete list of fields see the bottom of the page
     assetsSort: "field",
 
     // 添加构建日期和构建时间信息
@@ -82,6 +87,8 @@ module.exports = {
 
     // 按指定的字段，对 chunk 进行排序
     // 你可以使用 `!field` 来反转排序。默认是按照 `id` 排序。
+    // Some other possible values: 'name', 'size', 'chunks', 'failed', 'issuer'
+    // For a complete list of fields see the bottom of the page
     chunksSort: "field",
 
     // 用于缩短 request 的上下文目录
@@ -132,6 +139,8 @@ module.exports = {
 
     // 按指定的字段，对模块进行排序
     // 你可以使用 `!field` 来反转排序。默认是按照 `id` 排序。
+    // Some other possible values: 'name', 'size', 'chunks', 'failed', 'issuer'
+    // For a complete list of fields see the bottom of the page
     modulesSort: "field",
 
     // 显示警告/错误的依赖和来源（从 webpack 2.5.0 开始）
@@ -150,7 +159,7 @@ module.exports = {
     reasons: true,
 
     // 添加模块的源码
-    source: true,
+    source: false,
 
     // 添加时间信息
     timings: true,
@@ -170,4 +179,62 @@ module.exports = {
     warningsFilter: "filter" | /filter/ | ["filter", /filter/] | (warning) => true|false
   }
 }
+```
+
+If you want to use one of the pre-defined behaviours e.g. `'minimal'` but still override one or more of the rules, see [the source code](https://github.com/webpack/webpack/blob/master/lib/Stats.js#L1394-L1401). You would want to copy the configuration options from `case 'minimal': ...` and add your additional rules while providing an object to `stats`.
+
+__webpack.config.js__
+
+```javascript
+module.exports = {
+  //..
+  stats: {
+    // copied from `'minimal'`
+    all: false,
+    modules: true,
+    maxModules: 0,
+    errors: true,
+    warnings: true,
+    // our additional options
+    moduleTrace: true,
+    errorDetails: true
+  }
+};
+```
+
+### Sorting fields
+
+For `assetsSort`, `chunksSort` and `moduleSort` there are several possible fields that you can sort items by:
+
+- `id` is the item's id;
+- `name` - a item's name that was assigned to it upon importing;
+- `size` - a size of item in bytes;
+- `chunks` - what chunks the item originates from (for example, if there are multiple subchunks for one chunk - the subchunks will be grouped together according to their main chunk);
+- `errors` - amount of errors in items;
+- `warnings` - amount of warnings in items;
+- `failed` - whether the item has failed compilation;
+- `cacheable` - whether the item is cacheable;
+- `built` - whether the asset has been built;
+- `prefetched` - whether the asset will be prefetched;
+- `optional` - whether the asset is optional;
+- `identifier` - identifier of the item;
+- `index` - item's processing index;
+- `index2`
+- `profile`
+- `issuer` - an identifier of the issuer;
+- `issuerId` - an id of the issuer;
+- `issuerName` - a name of the issuer;
+- `issuerPath` - a full issuer object. There's no real need to sort by this field;
+
+### Colors
+
+You can specify your own terminal output colors using [ANSI escape sequences](https://en.wikipedia.org/wiki/ANSI_escape_code)
+
+```js
+module.exports = {
+  //...
+  colors: {
+    green: '\u001b[32m',
+  },
+};
 ```

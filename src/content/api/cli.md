@@ -6,7 +6,10 @@ contributors:
   - simon04
   - tbroadley
   - chenxsan
+  - rencire
   - madhavarshney
+  - EugeneHlushko
+  - byzyk
 related:
   - title: Analyzing Build Statistics
     url: https://survivejs.com/webpack/optimizing-build/analyzing-build-statistics/
@@ -21,11 +24,6 @@ related:
 ---
 
 为了更合适且方便地使用配置，可以在 `webpack.config.js` 中对 webpack 进行配置。CLI 中传入的任何参数会在配置文件中映射为对应的参数。
-
-用户在可以对两个 CLI package 进行选择：
-
-* [webpack-cli](https://github.com/webpack/webpack-cli)：原始的  webpack 全特性 CLI。
-* [webpack-command](https://github.com/webpack-contrib/webpack-command)：轻量级和自成体系的新式 CLI。
 
 如果你还没有安装过 webpack 和 CLI，请先阅读 [安装指南](/guides/installation)。
 
@@ -45,15 +43,15 @@ webpack [--config webpack.config.js]
 webpack <entry> [<entry>] -o <output>
 ```
 
-**`<entry>`**
+__`<entry>`__
 
 一个文件名或一组被命名的文件名，作为构建项目的入口起点。你可以传递多个入口（每个入口在启动时加载）。如果传递一个形式为 `<name> = <request>` 的键值对，则可以创建一个额外的入口起点。它将被映射到配置选项(configuration option)的 `entry` 属性。
 
-**`<output>`**
+__`<output>`__
 
 要保存的 bundled 文件的路径和文件名。它将映射到配置选项 `output.path` 和 `output.filename`。
 
-**示例**
+__示例__
 
 假设你的项目结构像下面这样：
 
@@ -68,7 +66,7 @@ webpack <entry> [<entry>] -o <output>
 ```
 
 ```bash
-webpack ./src/index.js dist/bundle.js
+webpack src/index.js -o dist/bundle.js
 ```
 
 打包源码，入口为 `index.js`，并且输出文件的路径为 `dist`，文件名为 `bundle.js`
@@ -101,14 +99,14 @@ webpack index=./src/index.js entry2=./src/index2.js dist/bundle.js
 
 W> 注意，命令行接口(Command Line Interface)参数的优先级，高于配置文件参数。例如，如果将 [`--mode="production"`](/concepts/mode/#usage) 传入 webpack CLI，而配置文件使用的是 `development`，最终会使用 `production`。
 
-**列出命令行所有可用的配置选项**
+__列出命令行所有可用的配置选项__
 
 ```bash
 webpack --help
 webpack -h
 ```
 
-**使用配置文件进行构建**
+__使用配置文件进行构建__
 
 指定其它的[配置](/configuration)文件。配置文件默认为 `webpack.config.js`，如果你想使用其它配置文件，可以加入这个参数。
 
@@ -116,7 +114,7 @@ webpack -h
 webpack --config example.config.js
 ```
 
-**以 JSON 格式输出 webpack 的运行结果**
+__以 JSON 格式输出 webpack 的运行结果__
 
 ```bash
 webpack --json
@@ -223,12 +221,12 @@ webpack.js index=./src/index.js index2=./src/index2.js --output-path='./dist' --
 
 参数 | 说明 | 用法
 -------------------- | ---------------------------------- | ----------------
-`--module-bind`      | 为 loader 绑定一个扩展 | `--module-bind js=babel-loader`
-`--module-bind-post` | 为 post loader 绑定一个扩展 |
-`--module-bind-pre`  | 为 pre loader 绑定一个扩展 |
+`--module-bind`      | 为 loader 绑定一个文件扩展 | `--module-bind js=babel-loader`
+`--module-bind-post` | 为 post loader 绑定一个文件扩展 |
+`--module-bind-pre`  | 为 pre loader 绑定一个文件扩展 |
 
 
-### Watch 配置
+### Watch 选项
 
 这些配置可以用于[观察](/configuration/watch/)依赖文件的变化，一旦有变化，则可以重新执行构建流程。
 
@@ -248,7 +246,7 @@ webpack.js index=./src/index.js index2=./src/index2.js --output-path='./dist' --
 --------------------------- | -------------------------------------------------------|----------------------
 `--optimize-max-chunks`     | 限制 chunk 的数量 | [LimitChunkCountPlugin](/plugins/limit-chunk-count-plugin)
 `--optimize-min-chunk-size` | 限制 chunk 的最小体积               | [MinChunkSizePlugin](/plugins/min-chunk-size-plugin)
-`--optimize-minimize`       | 压缩混淆 javascript，并且把 loader 设置为 minimizing | [UglifyJsPlugin](/plugins/uglifyjs-webpack-plugin/) & [LoaderOptionsPlugin](/plugins/loader-options-plugin/)
+`--optimize-minimize`       | 压缩混淆 javascript，并且把 loader 设置为 minimizing | [TerserPlugin](/plugins/terser-webpack-plugin/) & [LoaderOptionsPlugin](/plugins/loader-options-plugin/)
 
 
 ### Resolve 配置
@@ -268,7 +266,8 @@ webpack.js index=./src/index.js index2=./src/index2.js --output-path='./dist' --
 
 参数 | 说明 | Type
 -------------------------------- | ------------------------------------------------------------------ | -------
-`--color`, `--colors` | E开启/关闭控制台的颜色 [默认值：(supports-color)] | boolean
+`--color`, `--colors`            | 强制在控制台开启颜色 [默认：仅对 TTY 输出启用] | boolean
+`--no-color`, `--no-colors`      | 强制在控制台关闭颜色 | boolean
 `--display`                      | 选择[显示预设](/configuration/stats)(verbose - 繁琐, detailed - 细节, normal - 正常, minimal - 最小, errors-only - 仅错误, none - 无; 从 webpack 3.0.0 开始) | string
 `--display-cached` | 在输出中显示缓存的模块 | boolean
 `--display-cached-assets` | 在输出中显示缓存的 assets | boolean
@@ -297,7 +296,7 @@ webpack.js index=./src/index.js index2=./src/index2.js --output-path='./dist' --
 ----------------- | ---------------------------------------- | -----
 `--bail` | 一旦发生错误，立即终止 |
 `--cache` | 开启缓存 [watch 时会默认打开] | `--cache=false`
-`--define` | 定义 bundle 中的任意自由变量，查看 [shimming](/guides/shimming) | `--define process.env.NODE_ENV='development'`
+`--define` | 定义 bundle 中的任意自由变量，查看 [shimming](/guides/shimming) | `--define process.env.NODE_ENV="'development'"`
 `--hot`           | 开启[模块热替换](/concepts/hot-module-replacement) | `--hot=true`
 `--labeled-modules` | 开启模块标签 [使用 LabeledModulesPlugin] |
 `--plugin`        | 加载某个[插件](/configuration/plugins/) |
@@ -315,7 +314,6 @@ webpack.js index=./src/index.js index2=./src/index2.js --output-path='./dist' --
 -d       | `--debug --devtool cheap-module-eval-source-map --output-pathinfo`
 -p       | `--optimize-minimize --define process.env.NODE_ENV="production"`, see [building for production](/guides/production)
 
-
 ### Profiling
 
 `--profile` 选项捕获编译时每个步骤的时间信息，并且将这些信息包含在输出中。
@@ -330,9 +328,9 @@ webpack --profile
 
 For each module, the following details are included in the output as applicable:
 
-* `factory`: time to collect module metadata (e.g. resolving the filename)
-* `building`: time to build the module (e.g. loaders and parsing)
-* `dependencies`: time to identify and connect the module’s dependencies
+- `factory`: time to collect module metadata (e.g. resolving the filename)
+- `building`: time to build the module (e.g. loaders and parsing)
+- `dependencies`: time to identify and connect the module’s dependencies
 
 Paired with `--progress`, `--profile` gives you an in depth idea of which step in the compilation is taking how long. This can help you optimise your build in a more informed manner.
 

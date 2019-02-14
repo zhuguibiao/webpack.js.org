@@ -20,6 +20,7 @@ sort: 2
 ``` yaml
 ---
 title: 我的文章
+group: 我的小节
 sort: 3
 contributors:
   - [github 用户名]
@@ -32,7 +33,8 @@ related:
 让我们来逐个分析：
 
 - `title`：文章的名称。
-- `sort`：这篇文章在这类文章的顺序。
+- `group`: 小节的名称。
+- `sort`：这篇文章在此类（或子类）中的顺序（如果存在同类）。
 - `contributors`：贡献文章的 GitHub 用户列表。
 - `related`：所有相关阅读或有用示例。
 
@@ -86,7 +88,7 @@ foo();
 --devtool   | Define source map type for the bundled resources | string     | -
 --progress  | Print compilation progress in percentage         | boolean    | false
 
-表格也一样.
+列表应该按照字母顺序排序。
 
 ### 配置属性
 
@@ -100,20 +102,20 @@ foo();
 
 #### 引用块
 
-**语法：\>**
+__语法：\>__
 
 > 这是一个引用块.
 
 #### 提示
 
-**语法：T\>**
+__语法：T\>__
 
 T> 这是一个提示.
 
-**语法：W\>**
+__语法：W\>__
 
 W> 这是一个警告.
 
-**语法：?\>**
+__语法：?\>__
 
 ?> 这个一个 todo 待办项.

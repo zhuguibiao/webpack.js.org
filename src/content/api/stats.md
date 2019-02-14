@@ -176,7 +176,7 @@ webpack --profile --json > compilation-stats.json
 ``` bash
 ../cases/parsing/browserify/index.js
 Critical dependencies:
-2:114-121 This seem to be a pre-built javascript file. Even while this is possible, it's not recommended. Try to require to orginal source to get better results.
+2:114-121 This seem to be a pre-built javascript file. Even while this is possible, it's not recommended. Try to require to original source to get better results.
  @ ../cases/parsing/browserify/index.js 2:114-121
 ```
 

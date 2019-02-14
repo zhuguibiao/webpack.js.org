@@ -8,6 +8,7 @@ contributors:
   - ahmehri
   - tbroadley
   - byzyk
+  - EugeneHlushko
 related:
   - title: CommonJS
     url: https://en.wikipedia.org/wiki/CommonJS
@@ -79,9 +80,9 @@ exports.aFunction = function doSomething() {
 
 取决于 `node.__dirname` 配置选项：
 
-* `false`: Not defined
-* `mock`: equal "/"
-* `true`: [Node.js __dirname](https://nodejs.org/api/globals.html#globals_dirname)
+- `false`: Not defined
+- `mock`: equal "/"
+- `true`: [Node.js __dirname](https://nodejs.org/api/globals.html#globals_dirname)
 
 如果在一个被 Parser 解析的表达式内部使用，则配置选项会被当作 `true` 处理。
 
@@ -90,9 +91,9 @@ exports.aFunction = function doSomething() {
 
 取决于 `node.__filename` 配置选项：
 
-* `false`: Not defined
-* `mock`: equal "/index.js"
-* `true`: [Node.js __filename](https://nodejs.org/api/globals.html#globals_filename)
+- `false`: Not defined
+- `mock`: equal "/index.js"
+- `true`: [Node.js __filename](https://nodejs.org/api/globals.html#globals_filename)
 
 如果在一个被 Parser 解析的表达式内部使用，则配置选项会被当作 `true` 处理。
 
@@ -126,8 +127,8 @@ __resourceQuery === '?test';
 
 内部 chunk 载入函数，有两个输入参数：
 
-* `chunkId` 需要载入的 chunk id。
-* `callback(require)` chunk 载入后调用的回调函数。
+- `chunkId` 需要载入的 chunk id。
+- `callback(require)` chunk 载入后调用的回调函数。
 
 
 ### `__webpack_modules__` (webpack 特有变量)

@@ -25,7 +25,7 @@ new webpack.BannerPlugin(options);
 
 ```js
 {
-  banner: string, // 其值为字符串，将作为注释存在
+  banner: string | function, // 其值为字符串或函数，将作为注释存在
   raw: boolean, // 如果值为 true，将直出，不会被作为注释
   entryOnly: boolean, // 如果值为 true，将只在入口 chunks 文件中添加
   test: string | RegExp | Array,
@@ -34,8 +34,25 @@ new webpack.BannerPlugin(options);
 }
 ```
 
+## Usage
 
-## 占位符(Placeholders)
+
+```javascript
+import webpack from 'webpack';
+
+// string
+new webpack.BannerPlugin({
+  banner: 'hello world'
+});
+
+// function
+new webpack.BannerPlugin({
+  banner: (yourVariable) => { return `yourVariable: ${yourVariable}`; }
+});
+```
+
+
+## 占位符(placeholder)
 
 从 webpack 2.5.0 开始，会对 `banner` 字符串中的占位符取值：
 

@@ -1,22 +1,23 @@
 ---
-title: 插件(plugins)
+title: 插件(plugin)
 sort: 5
 contributors:
   - TheLarkInn
   - jhnns
   - rouzbeh84
   - johnstew
+  - MisterDev
   - byzyk
 ---
 
-插件是 webpack 的[支柱](https://github.com/webpack/tapable)功能。webpack 自身也是构建于，你在 webpack 配置中用到的**相同的插件系统**之上！
+__插件__是 webpack 的 [支柱](https://github.com/webpack/tapable) 功能。webpack 自身也是构建于，你在 webpack 配置中用到的__相同的插件系统__之上！
 
-插件目的在于解决 [loader](/concepts/loaders) 无法实现的**其他事**。
+插件目的在于解决 [loader](/concepts/loaders) 无法实现的__其他事__。
 
 
 ## 剖析
 
-webpack **插件**是一个具有 [`apply`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply) 方法的 JavaScript 对象。`apply` 属性会被 webpack compiler 调用，并且 compiler 对象可在**整个**编译生命周期访问。
+webpack __插件__是一个具有 [`apply`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply) 方法的 JavaScript 对象。`apply` 方法会被 webpack compiler 调用，并且 compiler 对象可在__整个__编译生命周期访问。
 
 __ConsoleLogOnBuildWebpackPlugin.js__
 
@@ -36,9 +37,9 @@ compiler hook 的 tap 方法的第一个参数，应该是驼峰式命名的插�
 
 ## 用法
 
-由于**插件**可以携带参数/选项，你必须在 webpack 配置中，向 `plugins` 属性传入 `new` 实例。
+由于__插件__可以携带参数/选项，你必须在 webpack 配置中，向 `plugins` 属性传入 `new` 实例。
 
-根据你的 webpack 用法，这里有多种方式使用插件。
+根据你使用 webpack 的需要，这里有多种方式使用插件。
 
 
 ### 配置
@@ -57,7 +58,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist')
   },
   module: {
-    rules: [
+    rules: [
       {
         test: /\.(js|jsx)$/,
         use: 'babel-loader'
@@ -65,6 +66,7 @@ module.exports = {
     ]
   },
   plugins: [
+    new webpack.ProgressPlugin(),
     new HtmlWebpackPlugin({template: './src/index.html'})
   ]
 };
@@ -73,7 +75,7 @@ module.exports = {
 
 ### Node API
 
-?> 即便使用 Node API，用户也应该在配置中传入 `plugins` 属性。`compiler.apply` 并不是推荐的使用方式。
+在使用 Node API 时，还可以通过配置中的 `plugins` 属性传入插件。
 
 __some-node-script.js__
 
@@ -82,7 +84,8 @@ const webpack = require('webpack'); //访问 webpack 运行时(runtime)
 const configuration = require('./webpack.config.js');
 
 let compiler = webpack(configuration);
-compiler.apply(new webpack.ProgressPlugin());
+
+new webpack.ProgressPlugin().apply(compiler);
 
 compiler.run(function(err, stats) {
   // ...
