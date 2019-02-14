@@ -1,5 +1,5 @@
 ---
-title: 包含统计数据的文件(stats data)
+title: 包含统计数据的文件
 sort: 3
 contributors:
   - skipjack

@@ -1,5 +1,5 @@
 ---
-title: Plugins
+title: plugin
 contributors:
   - simon04
   - gonzoyumo

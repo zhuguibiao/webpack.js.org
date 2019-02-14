@@ -1,5 +1,5 @@
 ---
-title: 命令行接口(command line interface)
+title: 命令行接口
 sort: 2
 contributors:
   - ev1stensberg

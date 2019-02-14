@@ -71,7 +71,3 @@ webpack 是打包代码的全特性工具。它可以在由社区驱动的 plugi
 对于那些对我们的使命感兴趣的人 - 例如风险投资者、政府机构、数字营销公司等 - 我们真诚希望你能够与我们展开合作，通过 webpack 这个最好的 npm package，改善你的产品！所以请毫不犹豫地向我们提出你需要解决的问题。
 
 <!-- add slides here -->
-
-***
-
-> 原文：https://webpack.js.org/contribute/

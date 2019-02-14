@@ -1,5 +1,5 @@
 ---
-title: 模块方法(module methods)
+title: 模块方法
 group: Modules
 sort: 3
 contributors:

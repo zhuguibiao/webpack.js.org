@@ -1,5 +1,5 @@
 ---
-title: 模块热替换(hot module replacement)
+title: 模块热替换
 contributors:
   - sokra
   - skipjack
