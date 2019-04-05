@@ -102,7 +102,7 @@ module: {
 }
 ```
 
-[`require.resolve`](https://nodejs.org/api/all.html#modules_require_resolve) 调用是一个 Node.js 函数
+[`require.resolve`](https://nodejs.org/api/modules.html#modules_require_resolve_request_options) 调用是一个 Node.js 函数
 （与 webpack 处理流程中的 `require.resolve` 无关）。
 `require.resolve` 用来获取模块的绝对路径
 （`"/.../app/node_modules/react/react.js"`）。
@@ -113,7 +113,7 @@ module: {
 
 Please take a moment to read our contributing guidelines if you haven't yet done so.
 
-#### [CONTRIBUTING](https://raw.githubusercontent.com/webpack-contrib/expose-loader/master/.github/CONTRIBUTING)
+#### [CONTRIBUTING](https://raw.githubusercontent.com/webpack-contrib/expose-loader/master/.github/CONTRIBUTING.md)
 
 ## License
 

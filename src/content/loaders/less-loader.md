@@ -277,7 +277,7 @@ file paths in `url(...)` statements.
 如果你从未阅读过我们的贡献指南，
 请在上面花点时间。
 
-#### [贡献指南](https://raw.githubusercontent.com/webpack-contrib/less-loader/master/.github/CONTRIBUTING)
+#### [贡献指南](https://raw.githubusercontent.com/webpack-contrib/less-loader/master/.github/CONTRIBUTING.md)
 
 ## License
 

@@ -36,11 +36,11 @@ module.exports = {
         options: {
           // eslint options (if necessary)
         }
-      },
-    ],
-  },
+      }
+    ]
+  }
   // ...
-}
+};
 ```
 
 When using with transpiling loaders (like `babel-loader`), make sure they are in correct order
@@ -54,15 +54,12 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: [
-          "babel-loader",
-          "eslint-loader",
-        ],
-      },
-    ],
-  },
+        use: ["babel-loader", "eslint-loader"]
+      }
+    ]
+  }
   // ...
-}
+};
 ```
 
 To be safe, you can use `enforce: "pre"` section to check source files, not modified
@@ -77,17 +74,17 @@ module.exports = {
         enforce: "pre",
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: "eslint-loader",
+        loader: "eslint-loader"
       },
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: "babel-loader",
-      },
-    ],
-  },
+        loader: "babel-loader"
+      }
+    ]
+  }
   // ...
-}
+};
 ```
 
 ### Options
@@ -104,8 +101,7 @@ See the [eslint docs](http://eslint.org/docs/developer-guide/nodejs-api#cliengin
 This option will enable
 [ESLint autofix feature](http://eslint.org/docs/user-guide/command-line-interface#fix).
 
-**Be careful: this option might cause webpack to enter an infinite build loop if
-some issues cannot be fixed properly.**
+**Be careful: this option will change source files.**
 
 #### `cache` (default: false)
 
@@ -148,19 +144,19 @@ module.exports = {
 
             // you should return a string
             // DO NOT USE console.*() directly !
-            return "OUTPUT"
+            return "OUTPUT";
           }
         }
-      },
-    ],
-  },
-}
+      }
+    ]
+  }
+};
 ```
 
 #### `eslintPath` (default: "eslint")
 
 Path to `eslint` instance that will be used for linting.  
-If the `eslintPath` is a folder like a official eslint, or specify a `formatter` option. now you dont have to install `eslint` . 
+If the `eslintPath` is a folder like a official eslint, or specify a `formatter` option. now you dont have to install `eslint` .
 
 ```js
 module.exports = {
@@ -172,12 +168,12 @@ module.exports = {
         exclude: /node_modules/,
         loader: "eslint-loader",
         options: {
-          eslintPath: path.join(__dirname, "reusable-eslint"),
+          eslintPath: path.join(__dirname, "reusable-eslint")
         }
-      },
-    ],
-  },
+      }
+    ]
   }
+};
 ```
 
 #### Errors and Warning
@@ -200,12 +196,12 @@ module.exports = {
         exclude: /node_modules/,
         loader: "eslint-loader",
         options: {
-          emitError: true,
+          emitError: true
         }
-      },
-    ],
-  },
-}
+      }
+    ]
+  }
+};
 ```
 
 ##### `emitWarning` (default: `false`)
@@ -226,12 +222,12 @@ module.exports = {
         exclude: /node_modules/,
         loader: "eslint-loader",
         options: {
-          quiet: true,
+          quiet: true
         }
-      },
-    ],
-  },
-}
+      }
+    ]
+  }
+};
 ```
 
 ##### `failOnWarning` (default: `false`)
@@ -248,12 +244,12 @@ module.exports = {
         exclude: /node_modules/,
         loader: "eslint-loader",
         options: {
-          failOnWarning: true,
+          failOnWarning: true
         }
-      },
-    ],
-  },
-}
+      }
+    ]
+  }
+};
 ```
 
 ##### `failOnError` (default: `false`)
@@ -270,15 +266,16 @@ module.exports = {
         exclude: /node_modules/,
         loader: "eslint-loader",
         options: {
-          failOnError: true,
+          failOnError: true
         }
-      },
-    ],
-  },
-}
+      }
+    ]
+  }
+};
 ```
 
 ##### `outputReport` (default: `false`)
+
 Write the output of the errors to a file, for example a checkstyle xml file for use for reporting on Jenkins CI
 
 The `filePath` is relative to the webpack config: output.path
@@ -295,16 +292,15 @@ module.exports = {
         loader: "eslint-loader",
         options: {
           outputReport: {
-            filePath: 'checkstyle.xml',
-            formatter: require('eslint/lib/formatters/checkstyle')
+            filePath: "checkstyle.xml",
+            formatter: require("eslint/lib/formatters/checkstyle")
           }
         }
-      },
-    ],
-  },
-}
+      }
+    ]
+  }
+};
 ```
-
 
 ## Gotchas
 

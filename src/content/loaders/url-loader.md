@@ -17,10 +17,6 @@ repo: https://github.com/webpack-contrib/url-loader
 
 A loader for webpack which transforms files into base64 URIs.
 
-## Requirements
-
-This module requires a minimum of Node v6.9.0 and Webpack v4.0.0.
-
 ## Getting Started
 
 To begin, you'll need to install `url-loader`:
@@ -140,11 +136,11 @@ extensions will be used to lookup the MIME type.
 
 Please take a moment to read our contributing guidelines if you haven't yet done so.
 
-#### [CONTRIBUTING](https://raw.githubusercontent.com/webpack-contrib/url-loader/master/.github/CONTRIBUTING.md)
+[CONTRIBUTING](https://raw.githubusercontent.com/webpack-contrib/url-loader/master/.github/CONTRIBUTING.md)
 
 ## License
 
-#### [MIT](https://raw.githubusercontent.com/webpack-contrib/url-loader/master/LICENSE)
+[MIT](https://raw.githubusercontent.com/webpack-contrib/url-loader/master/LICENSE)
 
 [npm]: https://img.shields.io/npm/v/url-loader.svg
 [npm-url]: https://npmjs.com/package/url-loader

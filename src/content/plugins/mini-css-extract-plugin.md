@@ -120,17 +120,13 @@ While webpack 5 is likely to come with a CSS minimizer built-in, with webpack 4 
 **webpack.config.js**
 
 ```js
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const TerserJSPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 module.exports = {
   optimization: {
     minimizer: [
-      new UglifyJsPlugin({
-        cache: true,
-        parallel: true,
-        sourceMap: true // set to true if you want JS source maps
-      }),
+      new TerserJSPlugin({}),
       new OptimizeCSSAssetsPlugin({})
     ]
   },
@@ -267,6 +263,18 @@ module.exports = {
 }
 ```
 
+#### Long Term Caching
+
+For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.
+
+### Media Query Plugin
+
+If you'd like to extract the media queries from the extracted CSS (so mobile users don't need to load desktop or tablet specific CSS anymore) you should use one of the following plugins:
+
+- [Media Query Plugin](https://github.com/SassNinja/media-query-plugin)
+- [Media Query Splitting Plugin](https://github.com/mike-diamond/media-query-splitting-plugin)
+
+
 ## Maintainers
 
 <table>
@@ -283,19 +291,15 @@ module.exports = {
   <tbody>
 </table>
 
-#### Long Term Caching
-
-For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.
-
 
 ## License
 
-#### [MIT](https://raw.githubusercontent.com/webpack-contrib/mini-css-extract-plugin/master/LICENSE)
+[MIT](https://raw.githubusercontent.com/webpack-contrib/mini-css-extract-plugin/master/LICENSE)
 
-[npm]: https://img.shields.io/npm/v/webpack-contrib/mini-css-extract-plugin.svg
+[npm]: https://img.shields.io/npm/v/mini-css-extract-plugin.svg
 [npm-url]: https://npmjs.com/package/mini-css-extract-plugin
 
-[node]: https://img.shields.io/node/v/webpack-contrib/mini-css-extract-plugin.svg
+[node]: https://img.shields.io/node/v/mini-css-extract-plugin.svg
 [node-url]: https://nodejs.org
 
 [deps]: https://david-dm.org/webpack-contrib/mini-css-extract-plugin.svg
