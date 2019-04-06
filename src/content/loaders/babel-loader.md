@@ -12,6 +12,10 @@ repo: https://github.com/babel/babel-loader
 
 **注意**：请在 Babel [Issues](https://github.com/babel/babel/issues) tracker 上报告输出时遇到的问题。
 
+## 中文文档
+
+<a href="https://babel.docschina.org" target="_blank" style="font-size: 24px;">Babel 中文文档</a>
+
 ## 安装
 
 > webpack 4.x | babel-loader 8.x | babel 7.x
@@ -45,7 +49,7 @@ module: {
 
 ## 选项
 
-查看 `babel` [选项](https://babeljs.io/docs/en/options)。
+查看 `babel` [选项](https://babel.docschina.org/docs/en/options)。
 
 你可以使用 [`options`](https://webpack.js.org/configuration/module/#rule-options-rule-query) 属性，来向 loader 传递 options 选项：
 
@@ -73,9 +77,9 @@ module: {
 
 * `cacheIdentifier`：默认是由 `@babel/core` 版本号，`babel-loader` 版本号，`.babelrc` 文件内容（存在的情况下），环境变量 `BABEL_ENV` 的值（没有时降级到 `NODE_ENV`）组成的一个字符串。可以设置为一个自定义的值，在 identifier 改变后，来强制缓存失效。
 
-* `cacheCompression`: Default `true`. When set, each Babel transform output will be compressed with Gzip. If you want to opt-out of cache compression, set it to `false` -- your project may benefit from this if it transpiles thousands of files.
+* `cacheCompression`：默认值为 `true`。当设置此值时，会使用 Gzip 压缩每个 Babel transform 输出。如果你想要退出缓存压缩，将它设置为 `false` -- 如果你的项目中有数千个文件需要压缩转译，那么设置此选项可能会从中收益。
 
-* `customize`: Default `null`. The path of a module that exports a `custom` callback [like the one that you'd pass to `.custom()`](#customized-loader). Since you already have to make a new file to use this, it is recommended that you instead use `.custom` to create a wrapper loader. Only use this is you _must_ continue using `babel-loader` directly, but still want to customize.
+* `customize`: 默认值为 `null`。导出 `custom` 回调函数的模块路径，[例如传入 `.custom()` 的 callback 函数](#自定义-loader)。由于你必须创建一个新文件才能使用它，建议改为使用 `.custom` 来创建一个包装 loader。只有在你_必须_继续直接使用 `babel-loader` 但又想自定义的情况下，才使用这项配置。
 
 ## 疑难解答
 
@@ -95,7 +99,7 @@ Babel 对一些公共方法使用了非常小的辅助代码，比如 `_extend`�
 
 下面的配置禁用了 Babel 自动对每个文件的 runtime 注入，而是引入 `@babel/plugin-transform-runtime` 并且使所有辅助代码从这里引用。
 
-更多信息请查看 [文档](https://babeljs.io/docs/plugins/transform-runtime/)。
+更多信息请查看 [文档](https://babel.docschina.org/docs/en/babel-plugin-transform-runtime/)。
 
 **注意**：你必须执行 `npm install -D @babel/plugin-transform-runtime` 来把它包含到你的项目中，然后使用 `npm install @babel/runtime` 把 `@babel/runtime` 安装为一个依赖。
 
@@ -163,7 +167,7 @@ require('@babel/runtime/core-js/promise').default = require('bluebird');
 require('./app');
 ```
 
-### `babel` 的 Node.js API 已经被移到 `babel-core` 中。（The Node.js API for `babel` has been moved to `babel-core`.）
+### `babel` 的 Node.js API 已经被移到 `babel-core` 中。（原文：The Node.js API for `babel` has been moved to `babel-core`.）
 
 如果你收到这个信息，这说明你有一个已经安装的 `babel` npm package，并且在 webpack 配置中使用 loader 简写方式（在 webpack 2.x 版本中将不再支持这种方式）。
 ```javascript
@@ -184,23 +188,23 @@ webpack 将尝试读取 `babel` package 而不是 `babel-loader`。
   }
 ```
 
-## Customized Loader
+## 自定义 loader
 
-`babel-loader` exposes a loader-builder utility that allows users to add custom handling
-of Babel's configuration for each file that it processes.
+`babel-loader` 提供了一个 loader-builder 工具函数，
+允许用户为 Babel 处理过的每个文件添加自定义处理选项。
 
-`.custom` accepts a callback that will be called with the loader's instance of
-`babel` so that tooling can ensure that it using exactly the same `@babel/core`
-instance as the loader itself.
+`.custom` 接收一个 callback 函数，
+它将被调用，并传入 loader 中的 `babel` 实例，
+因此，此工具函数才能够完全确保它使用与 loader 的 `@babel/core` 相同的实例。
 
-In cases where you want to customize without actually having a file to call `.custom`, you
-may also pass the `customize` option with a string pointing at a file that exports
-your `custom` callback function.
+如果你想自定义，但实际上某个文件又不想调用 `.custom`，
+可以向 `customize` 选项传入一个字符串，
+此字符串指向一个导出 `custom` 回调函数的文件。
 
-### Example
+### 示例
 
 ```js
-// Export from "./my-custom-loader.js" or whatever you want.
+// 从 "./my-custom-loader.js" 中导出，或者任何你想要的文件中导出。
 module.exports = require("babel-loader").custom(babel => {
   function myPlugin() {
     return {
@@ -209,21 +213,21 @@ module.exports = require("babel-loader").custom(babel => {
   }
 
   return {
-    // Passed the loader options.
+    // 传给 loader 的选项。
     customOptions({ opt1, opt2, ...loader }) {
       return {
-        // Pull out any custom options that the loader might have.
+        // 获取 loader 可能会有的自定义选项
         custom: { opt1, opt2 },
 
-        // Pass the options back with the two custom options removed.
+        // 传入"移除了两个自定义选项"后的选项
         loader,
       };
     },
 
-    // Passed Babel's 'PartialConfig' object.
+    // 提供 Babel 的 'PartialConfig' 对象
     config(cfg) {
       if (cfg.hasFilesystemConfig()) {
-        // Use the normal config
+        // 使用正常的配置
         return cfg.options;
       }
 
@@ -232,7 +236,7 @@ module.exports = require("babel-loader").custom(babel => {
         plugins: [
           ...(cfg.options.plugins || []),
 
-          // Include a custom plugin in the options.
+          // 在选项中包含自定义 plugin
           myPlugin,
         ],
       };
@@ -249,7 +253,7 @@ module.exports = require("babel-loader").custom(babel => {
 ```
 
 ```js
-// And in your Webpack config
+// 然后，在你的 webpack config 文件中
 module.exports = {
   // ..
   module: {
@@ -264,19 +268,19 @@ module.exports = {
 
 ### `customOptions(options: Object): { custom: Object, loader: Object }`
 
-Given the loader's options, split custom options out of `babel-loader`'s
-options.
+指定的 loader 的选项，
+从 `babel-loader` 选项中分离出自定义选项。
 
 
 ### `config(cfg: PartialConfig): Object`
 
-Given Babel's `PartialConfig` object, return the `options` object that should
-be passed to `babel.transform`.
+指定的 Babel 的 `PartialConfig` 对象，
+返回应该被传递给 `babel.transform` 的 `option` 对象。
 
 
 ### `result(result: Result): Result`
 
-Given Babel's result object, allow loaders to make additional tweaks to it.
+指定的 Babel 结果对象，允许 loaders 对它进行额外的调整。
 
 
 ## License
