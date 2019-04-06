@@ -51,7 +51,7 @@ __webpack.config.js__
   module.exports = {
     entry: './src/index.js',
     plugins: [
-      new CleanWebpackPlugin(['dist']),
+      new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
 -       title: 'Output Management'
 +       title: 'Caching'
@@ -103,7 +103,7 @@ __webpack.config.js__
   module.exports = {
     entry: './src/index.js',
     plugins: [
-      new CleanWebpackPlugin(['dist']),
+      new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
         title: 'Caching'
     ],
@@ -146,7 +146,7 @@ __webpack.config.js__
   module.exports = {
     entry: './src/index.js',
     plugins: [
-      new CleanWebpackPlugin(['dist']),
+      new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
         title: 'Caching'
       }),
@@ -260,7 +260,7 @@ __webpack.config.js__
   module.exports = {
     entry: './src/index.js',
     plugins: [
-      new CleanWebpackPlugin(['dist']),
+      new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
         title: 'Caching'
       }),

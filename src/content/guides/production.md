@@ -64,7 +64,7 @@ __webpack.common.js__
 +     app: './src/index.js'
 +   },
 +   plugins: [
-+     new CleanWebpackPlugin(['dist']),
++     new CleanWebpackPlugin(),
 +     new HtmlWebpackPlugin({
 +       title: 'Production'
 +     })

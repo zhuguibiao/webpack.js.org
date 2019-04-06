@@ -11,7 +11,7 @@ contributors:
 
 T> 本指南继续沿用 [`管理资源`](/guides/asset-management) 指南中的代码示例。
 
-到目前为止，我们都是在 `index.html` 文件中手动引入所有资源，然而随着应用程序增长，并且一旦开始 [在文件名中使用 hash](/guides/caching)] 并输出 [多个 bundle](/guides/code-splitting)，如果继续手动管理 `index.html` 文件，就会变得困难起来。然而，通过一些插件可以使这个过程更容易管控。
+到目前为止，我们都是在 `index.html` 文件中手动引入所有资源，然而随着应用程序增长，并且一旦开始 [在文件名中使用 hash](/guides/caching) 并输出 [多个 bundle](/guides/code-splitting)，如果继续手动管理 `index.html` 文件，就会变得困难起来。然而，通过一些插件可以使这个过程更容易管控。
 
 ## 预先准备
 
@@ -194,7 +194,7 @@ __webpack.config.js__
       print: './src/print.js'
     },
     plugins: [
-+     new CleanWebpackPlugin(['dist']),
++     new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
         title: '管理输出'
       })

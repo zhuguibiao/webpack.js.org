@@ -58,7 +58,7 @@ __webpack.config.js__
 +     hot: true
     },
     plugins: [
-      new CleanWebpackPlugin(['dist']),
+      new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
         title: '模块热替换'
       }),
@@ -249,7 +249,7 @@ __webpack.config.js__
 +     ]
 +   },
     plugins: [
-      new CleanWebpackPlugin(['dist']),
+      new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
         title: '模块热替换'
       }),

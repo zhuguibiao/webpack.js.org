@@ -74,7 +74,7 @@ __webpack.config.js__
       print: './src/print.js'
     },
     plugins: [
-      new CleanWebpackPlugin(['dist']),
+      new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
 -       title: '管理输出'
 +       title: '渐进式网络应用程序'
