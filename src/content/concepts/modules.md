@@ -41,7 +41,7 @@ webpack 社区已经为各种流行语言和语言处理器创建了 _loader_，
 
 - [CoffeeScript](http://coffeescript.org)
 - [TypeScript](https://www.typescriptlang.org)
-- [ESNext (Babel)](https://babeljs.io)
+- [ESNext (Babel)](https://babel.docschina.org/)
 - [Sass](http://sass-lang.com)
 - [Less](http://lesscss.org)
 - [Stylus](http://stylus-lang.com)

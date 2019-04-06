@@ -259,7 +259,7 @@ __webpack.config.js__
 
 目前为止我们所讨论的所有内容都是处理那些遗留的 package，让我们进入到第二个话题：__polyfill__。
 
-有很多方法来加载 polyfill。例如，想要引入 [`babel-polyfill`](https://babeljs.io/docs/usage/polyfill/) 我们只需如下操作：
+有很多方法来加载 polyfill。例如，想要引入 [`babel-polyfill`](https://babel.docschina.org/docs/en/babel-polyfill/) 我们只需如下操作：
 
 ``` bash
 npm install --save babel-polyfill
@@ -429,7 +429,7 @@ __src/index.js__
 
 ## 进一步优化
 
-`babel-preset-env` package 通过 [browserslist](https://github.com/browserslist/browserslist) 来转译那些你浏览器中不支持的特性。这个 preset 使用 [`useBuiltIns`](https://babeljs.io/docs/en/babel-preset-env#usebuiltins) 选项，默认值是 `false`，这种方式可以将全局 `babel-polyfill` 导入，改进为更细粒度的 `import` 格式：
+`babel-preset-env` package 通过 [browserslist](https://github.com/browserslist/browserslist) 来转译那些你浏览器中不支持的特性。这个 preset 使用 [`useBuiltIns`](https://babel.docschina.org/docs/en/babel-preset-env#usebuiltins) 选项，默认值是 `false`，这种方式可以将全局 `babel-polyfill` 导入，改进为更细粒度的 `import` 格式：
 
 ``` js
 import 'core-js/modules/es7.string.pad-start';
