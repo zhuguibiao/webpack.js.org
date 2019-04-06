@@ -60,7 +60,7 @@ module.exports = {
     // 必须是绝对路径（使用 Node.js 的 path 模块）
     <details><summary>[filename](/configuration/output#output-filename): "bundle.js", // string</summary>
     [filename](/configuration/output#output-filename): "[name].js", // 用于多个入口点(entry point)（出口点？）
-    [filename](/configuration/output#output-filename): "[chunkhash].js", // 用于[长效缓存](/guides/cache)
+    [filename](/configuration/output#output-filename): "[chunkhash].js", // 用于[长效缓存](/guides/caching)
     </details>
     // 「入口分块(entry chunk)」的文件名模板
     <details><summary>[publicPath](/configuration/output#output-publicpath): "/assets/", // string</summary>
