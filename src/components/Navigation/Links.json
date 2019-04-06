@@ -25,8 +25,8 @@
     "url": "//medium.com/webpack"
   },
   {
-    "title": "印记中文",
-    "url": "//docschina.org",
-    "className": "docschina"
+    "isYinji": true,
+    "title": "<i className=\"iconfont\" style=\"padding-top: 5px; font-size: 62px; display: inline-block; color: #85c3e1;\">&#xe646;</i>",
+    "url": "//docschina.org"
   }
 ]

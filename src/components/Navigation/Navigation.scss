@@ -75,7 +75,12 @@
   }
 
   &.docschina {
-    color: #ffdd66;
+    padding-top: 1px;
+    display: inline-block;
+    color: #85c3e1;
+    .iconfont {
+      font-size: 62px;
+    }
   }
 
   &--active:after {

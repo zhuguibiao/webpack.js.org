@@ -26,6 +26,12 @@ export default class Navigation extends React.Component {
               let active = this._isActive(link);
               let activeMod = active ? 'navigation__link--active' : '';
 
+              if (link.isYinji) {
+                return (
+                  <a key={'&#xe646'} href="//docschina.org/" target="_blank" className="navigation__link docschina"><i className="iconfont">&#xe646;</i></a>
+                );
+              }
+
               return (
                 <Link
                   key={ `navigation__link-${link.title}` }
