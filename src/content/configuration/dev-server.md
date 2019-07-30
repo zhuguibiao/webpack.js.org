@@ -1,6 +1,6 @@
 ---
 title: DevServer
-sort: 9
+sort: 11
 contributors:
   - sokra
   - skipjack
@@ -10,6 +10,9 @@ contributors:
   - byzyk
   - EugeneHlushko
   - Yiidiir
+  - Loonride
+  - dmohns
+  - EslamHiko
 ---
 
 [webpack-dev-server](https://github.com/webpack/webpack-dev-server) can be used to quickly develop an application. See the [development guide](/guides/development/) to get started.
@@ -172,11 +175,13 @@ webpack-dev-server --bonjour
 
 ## `devServer.clientLogLevel`
 
-`string: 'none' | 'info' | 'error' | 'warning'`
+`string: 'silent' | 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'none' | 'warning'`
+
+`none` and `warning` are going to be deprecated at the next major version.
 
 When using _inline mode_, the console in your DevTools will show you messages e.g. before reloading, before an error or when [Hot Module Replacement](/concepts/hot-module-replacement/) is enabled. Defaults to `info`.
 
-`devServer.clientLogLevel` may be too verbose, you can turn logging off by setting it to  `'none'`.
+`devServer.clientLogLevel` may be too verbose, you can turn logging off by setting it to  `'silent'`.
 
 __webpack.config.js__
 
@@ -184,7 +189,7 @@ __webpack.config.js__
 module.exports = {
   //...
   devServer: {
-    clientLogLevel: 'none'
+    clientLogLevel: 'silent'
   }
 };
 ```
@@ -192,7 +197,7 @@ module.exports = {
 Usage via the CLI
 
 ```bash
-webpack-dev-server --client-log-level none
+webpack-dev-server --client-log-level silent
 ```
 
 ## `devServer.color` - CLI only
@@ -472,6 +477,58 @@ webpack-dev-server --hot-only
 ```
 
 
+## `devServer.http2`
+
+`boolean: false`
+
+Serve over HTTP/2 using [spdy](https://www.npmjs.com/package/spdy). This option is ignored for Node 10.0.0 and above, as spdy is broken for those versions. The dev server will migrate over to Node's built-in HTTP/2 once [Express](https://expressjs.com/) supports it.
+
+If `devServer.http2` is not explicitly set to `false`, it will default to `true` when [`devServer.https`](#devserverhttps) is enabled. When `devServer.http2` is enabled but the server is unable to serve over HTTP/2, the server defaults to HTTPS.
+
+HTTP/2 with a self-signed certificate:
+
+__webpack.config.js__
+
+```javascript
+module.exports = {
+  //...
+  devServer: {
+    http2: true
+  }
+};
+```
+
+Provide your own certificate using the [https](#devserverhttps) option:
+
+__webpack.config.js__
+
+```javascript
+module.exports = {
+  //...
+  devServer: {
+    http2: true,
+    https: {
+      key: fs.readFileSync('/path/to/server.key'),
+      cert: fs.readFileSync('/path/to/server.crt'),
+      ca: fs.readFileSync('/path/to/ca.pem'),
+    }
+  }
+};
+```
+
+Usage via CLI
+
+```bash
+webpack-dev-server --http2
+```
+
+To pass your own certificate via CLI, use the following options
+
+```bash
+webpack-dev-server --http2 --key /path/to/server.key --cert /path/to/server.crt --cacert /path/to/ca.pem
+```
+
+
 ## `devServer.https`
 
 `boolean` `object`
@@ -549,6 +606,43 @@ webpack-dev-server --info=false
 ```
 
 
+## `devServer.injectClient`
+
+`boolean: false` `function (compilerConfig)`
+
+Tells `devServer` to inject a client. Setting `devServer.injectClient` to `true` will result in always injecting a client. It is possible to provide a function to inject conditionally:
+
+
+```javascript
+module.exports = {
+  //...
+  devServer: {
+    injectClient: (compilerConfig) => compilerConfig.name === 'only-include'
+  }
+};
+```
+
+
+## `devServer.injectHot`
+
+`boolean: false` `function (compilerConfig)`
+
+Tells `devServer` to inject a Hot Module Replacement. Setting `devServer.injectHot` to `true` will result in always injecting. It is possible to provide a function to inject conditionally:
+
+
+```javascript
+module.exports = {
+  //...
+  devServer: {
+    hot: true,
+    injectHot: (compilerConfig) => compilerConfig.name === 'only-include'
+  }
+};
+```
+
+W> Make sure that [`devServer.hot`](#devserverhot) is set to `true` because `devServer.injectHot` only works with HMR.
+
+
 ## `devServer.inline`
 
 `boolean`
@@ -603,6 +697,50 @@ webpack-dev-server --lazy
 T> [`watchOptions`](#devserver-watchoptions-) will have no effect when used with __lazy mode__.
 
 T> If you use the CLI, make sure __inline mode__ is disabled.
+
+## `devServer.liveReload`
+
+`boolean: true`
+
+By default, the dev-server will reload/refresh the page when file changes are detected. [`devServer.hot`](#devserverhot) option must be disabled or [`devServer.watchContentBase`](#devserverwatchcontentbase) option must be enabled in order for `liveReload` to take effect. Disable `devServer.liveReload` by setting it to `false`:
+
+
+__webpack.config.js__
+
+```javascript
+module.exports = {
+  //...
+  devServer: {
+    liveReload: false
+  }
+};
+```
+
+Usage via the CLI
+
+```bash
+webpack-dev-server --no-live-reload
+```
+
+
+## `devServer.mimeTypes` 🔑
+
+`object`
+
+Allows dev-server to register custom mime types.
+The object is passed to the underlying `webpack-dev-middleware`.
+See [documentation](https://github.com/webpack/webpack-dev-middleware#mimetypes) for usage notes.
+
+__webpack.config.js__
+
+```javascript
+module.exports = {
+  //...
+  devServer: {
+    mimeTypes: { 'text/html': ['phtml'] }
+  }
+};
+```
 
 
 ## `devServer.noInfo` 🔑
@@ -924,8 +1062,10 @@ module.exports = {
   //...
   devServer: {
     proxy: {
-      '/api': 'http://localhost:3000',
-      changeOrigin: true
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true
+      }
     }
   }
 };
@@ -992,8 +1132,8 @@ module.exports = {
 The bundle will now be available as `http://localhost:8080/assets/bundle.js`.
 
 T> Make sure `devServer.publicPath` always starts and ends with a forward slash.
-
-It is also possible to use a full URL. This is necessary for [Hot Module Replacement](/concepts/hot-module-replacement/).
+  
+It is also possible to use a full URL.
 
 __webpack.config.js__
 
@@ -1034,6 +1174,22 @@ Usage via the CLI
 webpack-dev-server --quiet
 ```
 
+## `devServer.serveIndex`
+
+`boolean: true`
+
+Tells dev-server to use [`serveIndex`](https://github.com/expressjs/serve-index) middleware when enabled.
+
+[`serveIndex`](https://github.com/expressjs/serve-index) middleware generates directory listings on viewing directories that don't have an index.html file.
+
+```javascript
+module.exports = {
+  //...
+  devServer: {
+    serveIndex: true
+  }
+};
+```
 
 ## `devServer.setup`
 
@@ -1084,6 +1240,24 @@ webpack-dev-server --socket socket
 ```
 
 
+## `devServer.sockHost`
+
+`string`
+
+Tells clients connected to `devServer` to use provided socket host.
+
+__webpack.config.js__
+
+```javascript
+module.exports = {
+  //...
+  devServer: {
+    sockHost: 'myhost.test'
+  }
+};
+```
+
+
 ## `devServer.sockPath`
 
 `string: '/sockjs-node'`
@@ -1101,6 +1275,28 @@ module.exports = {
 };
 ```
 
+Usage via the CLI
+
+```bash
+webpack-dev-server --sockPath /socket
+```
+
+## `devServer.sockPort`
+
+`number` `string`
+
+Tells clients connected to `devServer` to use provided socket port.
+
+__webpack.config.js__
+
+```javascript
+module.exports = {
+  //...
+  devServer: {
+    sockPort: 8080
+  }
+};
+```
 
 ## `devServer.staticOptions`
 

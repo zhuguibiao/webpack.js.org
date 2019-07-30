@@ -1,6 +1,6 @@
 ---
 title: Shimming
-sort: 13
+sort: 19
 contributors:
   - pksjce
   - jhnns
@@ -9,9 +9,11 @@ contributors:
   - svyandun
   - byzyk
   - EugeneHlushko
+  - AnayaDesign
   - dhurlburtusa
   - plr108
   - NicolasLetellier
+  - wizardofhogwarts
 related:
   - title: Reward modern browser users script
     url: https://hackernoon.com/10-things-i-learned-making-the-fastest-site-in-the-world-18a0e1cdf4a7#c665
@@ -46,9 +48,9 @@ webpack-demo
 |- /node_modules
 ```
 
-Remember that `lodash` package we were using? For demonstration purposes, let's say we wanted to instead provide this as a global throughout our application. To do this, we can use the `ProvidePlugin`.
+Remember that `lodash` package we were using? For demonstration purposes, let's say we wanted to instead provide this as a global throughout our application. To do this, we can use `ProvidePlugin`.
 
-The [`ProvidePlugin`](/plugins/provide-plugin) makes a package available as a variable in every module compiled through webpack. If webpack sees that variable used, it will include the given package in the final bundle. Let's go ahead by removing the `import` statement for `lodash` and instead providing it via the plugin:
+The [`ProvidePlugin`](/plugins/provide-plugin) makes a package available as a variable in every module compiled through webpack. If webpack sees that variable used, it will include the given package in the final bundle. Let's go ahead by removing the `import` statement for `lodash` and instead provide it via the plugin:
 
 __src/index.js__
 
@@ -56,7 +58,7 @@ __src/index.js__
 - import _ from 'lodash';
 -
   function component() {
-    var element = document.createElement('div');
+    const element = document.createElement('div');
 
 -   // Lodash, now imported by this script
     element.innerHTML = _.join(['Hello', 'webpack'], ' ');
@@ -107,7 +109,7 @@ __src/index.js__
 
 ``` diff
   function component() {
-    var element = document.createElement('div');
+    const element = document.createElement('div');
 
 -   element.innerHTML = _.join(['Hello', 'webpack'], ' ');
 +   element.innerHTML = join(['Hello', 'webpack'], ' ');
@@ -148,7 +150,7 @@ Some legacy modules rely on `this` being the `window` object. Let's update our `
 
 ``` diff
   function component() {
-    var element = document.createElement('div');
+    const element = document.createElement('div');
 
     element.innerHTML = join(['Hello', 'webpack'], ' ');
 +
@@ -212,8 +214,8 @@ __project__
 __src/globals.js__
 
 ``` js
-var file = 'blah.txt';
-var helpers = {
+const file = 'blah.txt';
+const helpers = {
   test: function() { console.log('test something'); },
   parse: function() { console.log('parse something'); }
 };
@@ -275,7 +277,7 @@ __src/index.js__
 + import 'babel-polyfill';
 +
   function component() {
-    var element = document.createElement('div');
+    const element = document.createElement('div');
 
     element.innerHTML = join(['Hello', 'webpack'], ' ');
 
@@ -304,7 +306,7 @@ __src/index.js__
 - import 'babel-polyfill';
 -
   function component() {
-    var element = document.createElement('div');
+    const element = document.createElement('div');
 
     element.innerHTML = join(['Hello', 'webpack'], ' ');
 
@@ -382,13 +384,13 @@ __dist/index.html__
     <head>
       <title>Getting Started</title>
 +     <script>
-+       var modernBrowser = (
++       const modernBrowser = (
 +         'fetch' in window &&
 +         'assign' in Object
 +       );
 +
 +       if ( !modernBrowser ) {
-+         var scriptElement = document.createElement('script');
++         const scriptElement = document.createElement('script');
 +
 +         scriptElement.async = false;
 +         scriptElement.src = '/polyfills.bundle.js';
@@ -408,7 +410,7 @@ __src/index.js__
 
 ``` diff
   function component() {
-    var element = document.createElement('div');
+    const element = document.createElement('div');
 
     element.innerHTML = join(['Hello', 'webpack'], ' ');
 

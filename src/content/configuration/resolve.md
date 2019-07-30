@@ -1,6 +1,6 @@
 ---
 title: Resolve
-sort: 7
+sort: 8
 contributors:
   - sokra
   - skipjack
@@ -12,6 +12,7 @@ contributors:
   - numb86
   - jgravois
   - EugeneHlushko
+  - Aghassi
 ---
 
 These options change how modules are resolved. webpack provides reasonable defaults, but it is possible to change the resolving in detail. Have a look at [Module Resolution](/concepts/module-resolution) for more explanation of how the resolver works.
@@ -112,6 +113,8 @@ The following table explains other cases:
 
 `/abc/node_modules` may resolve in `/node_modules` too.
 
+W> `resolve.alias` takes precedence over other module resolutions.
+
 
 ### `resolve.aliasFields`
 
@@ -178,6 +181,8 @@ module.exports = {
 
 `boolean: false`
 
+W> Removed in webpack 5
+
 Tells webpack whether to require to use an extension for modules (e.g. loaders).
 
 __webpack.config.js__
@@ -217,7 +222,7 @@ which is what enables users to leave off the extension when importing:
 import File from '../path/to/file';
 ```
 
-W> Using this will __override the default array__, meaning that webpack will no longer try to resolve modules using the default extensions. For modules that are imported with their extension, e.g. `import SomeFile from './somefile.ext'`, to be properly resolved, a string containing "\*" must be included in the array.
+W> Using this will __override the default array__, meaning that webpack will no longer try to resolve modules using the default extensions.
 
 
 ### `resolve.mainFields`
@@ -438,6 +443,8 @@ T> Note that you can use alias here and other features familiar from resolve. Fo
 ### `resolveLoader.moduleExtensions`
 
 `[string]`
+
+W> Removed in webpack 5
 
 The extensions/suffixes that are used when resolving loaders. Since version two, we [strongly recommend](/migrate/3/#automatic-loader-module-name-extension-removed) using the full name, e.g. `example-loader`, as much as possible for clarity. However, if you really wanted to exclude the `-loader` bit, i.e. just use `example`, you can use this option to do so:
 

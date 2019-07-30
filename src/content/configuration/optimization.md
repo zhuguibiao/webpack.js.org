@@ -1,6 +1,6 @@
 ---
 title: Optimization
-sort: 8
+sort: 9
 contributors:
   - EugeneHlushko
   - jeremenichelli
@@ -291,9 +291,9 @@ module.exports = {
 
 ## `optimization.removeAvailableModules`
 
-`bool: true`
+`bool`
 
-Tells webpack to detect and remove modules from chunks when these modules are already included in all parents. Setting `optimization.removeAvailableModules` to `false` will disable this optimization.
+Tells webpack to detect and remove modules from chunks when these modules are already included in all parents. Setting `optimization.removeAvailableModules` to `false` will disable this optimization. Disabled by default for [mode](/configuration/mode/) `development` and enabled for [mode](/configuration/mode/) `production`.
 
 __webpack.config.js__
 

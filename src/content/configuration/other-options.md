@@ -1,6 +1,6 @@
 ---
 title: Other Options
-sort: 16
+sort: 19
 contributors:
   - sokra
   - skipjack
@@ -47,7 +47,7 @@ As it happens, the AMD support in webpack ignores the defined name anyways.
 
 ## `bail`
 
-`boolean`
+`bool`
 
 Fail out on the first error instead of tolerating it. By default webpack will log these errors in red in the terminal, as well as the browser console when using HMR, but continue bundling. To enable it:
 
@@ -65,9 +65,9 @@ This will force webpack to exit its bundling process.
 
 ## `cache`
 
-`boolean` `object`
+`bool` `object`
 
-Cache the generated webpack modules and chunks to improve build speed. Caching is enabled by default while in watch mode. To disable caching simply pass:
+Cache the generated webpack modules and chunks to improve build speed. Caching will be automatically enabled by default while in [watch mode](/configuration/watch#watch) and webpack is set to mode [`development`](/configuration/mode#mode-development). To enable caching manually set it to `true`:
 
 __webpack.config.js__
 
@@ -182,5 +182,59 @@ __webpack.config.js__
 module.exports = {
   //...
   name: 'admin-app'
+};
+```
+
+### infrastructureLogging
+
+Options for infrastructure level logging.
+
+`object: {}`
+
+#### infrastructureLogging.level
+
+`string`
+
+Enable infrastructure logging output. Similar to [`stats.logging`](/configuration/stats/#stats) option but for infrastructure. No default value is given.
+
+Possible values:
+
+- `'none'` - disable logging
+- `'error'` - errors only
+- `'warn'` - errors and warnings only
+- `'info'` - errors, warnings, and info messages
+- `'log'` - errors, warnings, info messages, log messages, groups, clears. Collapsed groups are displayed in a collapsed state.
+- `'verbose'` - log everything except debug and trace. Collapsed groups are displayed in expanded state.
+
+__webpack.config.js__
+
+```javascript
+module.exports = {
+  //...
+  infrastructureLogging: {
+    level: 'info'
+  }
+};
+```
+
+#### infrastructureLogging.debug
+
+`string` `RegExp` `(name) => boolean` `[string, RegExp, (name) => boolean]`
+
+Enable debug information of specified loggers such as plugins or loaders. Similar to [`stats.loggingDebug`](/configuration/stats/#stats) option but for infrastructure. No default value is given.
+
+__webpack.config.js__
+
+```javascript
+module.exports = {
+  //...
+  infrastructureLogging: {
+    level: 'info',
+    debug: [
+      'MyPlugin',
+      /MyPlugin/,
+      (name) => name.contains('MyPlugin')
+    ]
+  }
 };
 ```

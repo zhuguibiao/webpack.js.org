@@ -1,6 +1,6 @@
 ---
 title: Mode
-sort: 4
+sort: 5
 contributors:
   - EugeneHlushko
   - byzyk
@@ -80,6 +80,7 @@ module.exports = {
 -   noEmitOnErrors: false,
 -   checkWasmTypes: false,
 -   minimize: false,
+-   removeAvailableModules: false
 - },
 - plugins: [
 -   new webpack.NamedModulesPlugin(),

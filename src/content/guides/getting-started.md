@@ -1,6 +1,6 @@
 ---
 title: Getting Started
-sort: 2
+sort: 1
 contributors:
   - bebraw
   - varunjayaraman
@@ -20,9 +20,10 @@ contributors:
   - ztomasze
   - Spiral90210
   - byzyk
+  - wizardofhogwarts
 ---
 
-Webpack is used to compile JavaScript modules. Once [installed](/guides/installation), you can interface with webpack either from its [CLI](/api/cli) or [API](/api/node). If you're still new to webpack, please read through the [core concepts](/concepts) and [this comparison](/comparison) to learn why you might use it over the other tools that are out in the community.
+webpack is used to compile JavaScript modules. Once [installed](/guides/installation), you can interface with webpack either from its [CLI](/api/cli) or [API](/api/node). If you're still new to webpack, please read through the [core concepts](/concepts) and [this comparison](/comparison) to learn why you might use it over the other tools that are out in the community.
 
 ## Basic Setup
 
@@ -54,7 +55,7 @@ __src/index.js__
 
 ``` javascript
 function component() {
-  let element = document.createElement('div');
+  const element = document.createElement('div');
 
   // Lodash, currently included via a script, is required for this line to work
   element.innerHTML = _.join(['Hello', 'webpack'], ' ');
@@ -119,7 +120,7 @@ Let's use webpack to manage these scripts instead.
 
 ## Creating a Bundle
 
-First we'll tweak our directory structure slightly, separating the "source" code (`/src`) from our "distribution" code (`/dist`). The "source" code is the code that we'll write and edit. The "distribution" code is the minimized and optimized `output` of our build process that will eventually be loaded in the browser:
+First we'll tweak our directory structure slightly, separating the "source" code (`/src`) from our "distribution" code (`/dist`). The "source" code is the code that we'll write and edit. The "distribution" code is the minimized and optimized `output` of our build process that will eventually be loaded in the browser. Tweak the directory structure as follows:
 
 __project__
 
@@ -149,7 +150,7 @@ __src/index.js__
 + import _ from 'lodash';
 +
   function component() {
-    let element = document.createElement('div');
+    const element = document.createElement('div');
 
 -   // Lodash, currently included via a script, is required for this line to work
     element.innerHTML = _.join(['Hello', 'webpack'], ' ');
@@ -199,6 +200,8 @@ You can also set it to 'none' to disable any default behavior. Learn more: https
 T> Your output may vary a bit, but if the build is successful then you are good to go. Also, don't worry about the warning, we'll tackle that later.
 
 Open `index.html` in your browser and, if everything went right, you should see the following text: 'Hello webpack'.
+
+W> If you are getting a syntax error in the middle of minified JavaScript when opening `index.html` in the browser, set [`development mode`](/configuration/mode/#mode-development) and run `npx webpack` again. This is related to running `npx webpack` on latest Node.js (v12.5+) instead of [LTS version](https://nodejs.org/en/).
 
 
 ## Modules
